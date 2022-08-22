@@ -5,6 +5,11 @@ import javax.swing.Icon
 
 class AleoFileType : LanguageFileType(AleoLanguage.INSTANCE) {
 
+    companion object {
+        @Suppress("unused")
+        val INSTANCE = AleoFileType()
+    }
+
     override fun getName(): String {
         return "Aleo"
     }
