@@ -1,0 +1,51 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>im.mrx.leolanguage</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>Leo / Aleo</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="leo@mrx.im" url="https://mrx.im">Haruka Ma</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+Unofficial Leo / Aleo language support. <br/>
+<br/>
+  ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType
+                name="Leo"
+                implementationClass="im.mrx.leolanguage.LeoFileType"
+                fieldName="INSTANCE"
+                language="Leo"
+                extensions="leo"/>
+        <fileType
+                name="Aleo"
+                implementationClass="im.mrx.leolanguage.AleoFileType"
+                fieldName="INSTANCE"
+                language="Aleo"
+                extensions="aleo"/>
+        <lang.parserDefinition
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.LeoParserDefinition"/>
+        <lang.syntaxHighlighter
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.LeoSyntaxHighlighter"/>
+        <annotator
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.LeoHighlightingAnnotator"/>
+        <colorSettingsPage implementation="im.mrx.leolanguage.LeoColorSettingsPage"/>
+    </extensions>
+</idea-plugin>

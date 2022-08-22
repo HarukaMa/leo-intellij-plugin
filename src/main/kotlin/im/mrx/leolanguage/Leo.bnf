@@ -1,0 +1,312 @@
+{
+  parserClass="im.mrx.leolanguage.parser.LeoParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  extends(".*expression")=expression
+  extends(".*operator_call")=expression
+  psiClassPrefix="Leo"
+  psiImplClassSuffix="Impl"
+  psiPackage="im.mrx.leolanguage.psi"
+  psiImplPackage="im.mrx.leolanguage.psi.impl"
+
+  elementTypeHolderClass="im.mrx.leolanguage.psi.LeoTypes"
+  elementTypeClass="im.mrx.leolanguage.psi.LeoElementType"
+  tokenTypeClass="im.mrx.leolanguage.psi.LeoTokenType"
+
+  tokens = [
+    ascii = "regexp:[\u0000-\u007F]"
+    safe-nonascii = "regexp:[\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
+    character = "regexp:[\u0000-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
+    horizontal-tab = "\t"
+    line-feed = "regexp:\n"
+    carriage-return = "regexp:\r"
+    space = " "
+    double-quote = "\""
+    single-quote = "\'"
+    line-terminator = "regexp:\n|\r|\r\n"
+    whitespace = "regexp: |\t|\n|\r|\r\n"
+    not-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
+    not-star-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0029\u002B-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
+    not-star-or-slash-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0029\u002B-\u002E\u0030-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
+    not-double-quote-or-backslash-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
+    end-of-line-comment = "regexp:(//[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*)"
+    block-comment = "regexp:(/[*](?:[^*]|[*][^/])*[*]/)"
+    keyword = "regexp:address|bool|circuit|console|const|constant|else|field|for|function|group|i8|i16|i32|i64|i128|if|in|let|public|record|return|scalar|string|u8|u16|u32|u64|u128"
+    uppercase-letter = "regexp:[A-Z]"
+    lowercase-letter = "regexp:[a-z]"
+    letter = "regexp:[a-zA-Z]"
+    decimal-digit = "regexp:[0-9]"
+    octal-digit = "regexp:[0-7]"
+    hexadecimal-digit = "regexp:[0-9a-f]"
+    identifier = "regexp:[a-zA-Z][a-zA-Z0-9_]*"
+    numeral = "regexp:[0-9]+"
+    unsigned-literal = "regexp:[0-9]+u(8|16|32|64|128)"
+    signed-literal = "regexp:[0-9]+i(8|16|32|64|128)"
+    field-literal = "regexp:[0-9]+field"
+    product-group-literal = "regexp:[0-9]+group"
+    scalar-literal = "regexp:[0-9]+scalar"
+    boolean-literal = "regexp:true|false"
+    address-literal = "regexp:aleo1[a-z0-9]{58}"
+    single-quote-escape = "regexp:\\'"
+    double-quote-escape = "regexp:\\\""
+    backslash-escape = "regexp:\\"
+    line-feed-escape = "regexp:\\n"
+    carriage-return-escape = "regexp:\\r"
+    horizontal-tab-escape = "regexp:\\t"
+    null-character-escape = "regexp:\\0"
+    simple-character-escape = "regexp:(\\'|\\\"|\\|\\n|\\r|\\t|\\0)"
+    ascii-character-escape = "regexp:\\x[0-7][0-9a-f]"
+    unicode-character-escape = "regexp:\\u\{[0-9a-f]{1,6}}"
+    string-literal = "regexp:\"([\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]|\\'|\\\"|\\|\\n|\\r|\\t|\\0|\\x[0-7][0-9a-f]|\\u\{[0-9a-f]{1,6}})*\""
+    integer-literal = "regexp:[0-9]+[ui](8|16|32|64|128)"
+    numeric-literal = "regexp:[0-9]+([ui](8|16|32|64|128)|field|group|scalar)"
+//    atomic-literal = "regexp:[0-9]+([ui](8|16|32|64|128)|field|group|scalar)|true|false|aleo1[a-z0-9]{58}|\"([\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]|\\'|\\\"|\\|\\n|\\r|\\t|\\0|\\x[0-7][0-9a-f]|\\u\{[0-9a-f]{1,6}})*\""
+    annotation = "regexp:@[a-zA-Z][a-zA-Z0-9_]*"
+    symbol = "regexp:!|&&|\|\||==|!=|<|<=|>|>=|&|\||\^|<<|>>|\+|-|\*|/|%|\*\*|=|\+=|-=|\*=|/=|%=|\*\*=|<<=|>>=|&=|\|=|\^=|&&=|\|\|=|\(|\)|\[|]|\{|}|,|\.|\.\.|;|:|::|\?|->|_|\)group"
+
+    // highlighting tokens
+
+    braces = "regexp:[{}]"
+    parens = "regexp:[()]"
+    brackets = "regexp:[\[\]]"
+    dot = "."
+    comma = ","
+    semicolon = ";"
+
+    ]
+
+}
+
+//token ::= keyword
+//      | identifier
+//      | atomic-literal
+//      | numeral
+//      | annotation
+//      | symbol
+
+//lexeme ::= token | comment | whitespace
+
+file ::= declaration*
+
+unsigned_type ::= "u8" | "u16" | "u32" | "u64" | "u128"
+
+signed_type ::= "i8" | "i16" | "i32" | "i64" | "i128"
+
+integer_type ::= unsigned_type | signed_type
+
+field_type ::= "field"
+
+group_type ::= "group"
+
+scalar_type ::= "scalar"
+
+arithmetic_type ::= integer_type | field_type | group_type | scalar_type
+
+boolean_type ::= "bool"
+
+address_type ::= "address"
+
+string_type ::= "string"
+
+primitive_type ::=  boolean_type | arithmetic_type | address_type | string_type
+
+named_type ::= primitive_type | identifier
+
+tuple_type ::= "(" [ type { "," type }+ [ "," ] ] ")"
+
+type ::= named_type | tuple_type
+
+group_coordinate ::= ( [ "-" ] numeral ) | "+" | "-" | "_"
+
+affine_group_literal ::= "(" group_coordinate "," group_coordinate ")group"
+
+atomic_literal ::= numeric-literal
+               | boolean-literal
+               | address-literal
+               | string-literal
+
+literal ::= atomic_literal | affine_group_literal
+
+private group_literal ::= product-group-literal | affine_group_literal
+
+expression ::= conditional_ternary_expression
+             | conditional_disjunctive_expression
+             | conditional_conjunctive_expression
+             | equality_expression_group
+             | ordering_expression_group
+             | exclusive_disjunctive_expression
+             | disjunctive_expression
+             | conjunctive_expression
+             | shift_expression_group
+             | additive_expression_group
+             | multiplicative_expression_group
+             | exponential_expression
+             | unary_expression_group
+             | postfix_expression_group
+             | primary_expression
+
+private equality_expression_group ::= equality_expression | inequality_expression
+private ordering_expression_group ::= ordering_less_expression | ordering_greater_expression | ordering_less_or_equal_expression | ordering_greater_or_equal_expression
+private shift_expression_group ::= shift_left_expression | shift_right_expression
+private additive_expression_group ::= additive_add_expression | additive_sub_expression
+private multiplicative_expression_group ::= multiplicative_mul_expression | multiplicative_div_expression | multiplicative_mod_expression
+private unary_expression_group ::= unary_not_expression | unary_minus_expression { rightAssociative = true }
+private postfix_expression_group ::= tuple_component_expression | circuit_component_expression | operator_call
+
+conditional_ternary_expression ::= expression "?" expression ":" expression { rightAssociative = true }
+
+conditional_disjunctive_expression ::= expression "||" expression
+
+conditional_conjunctive_expression ::= expression "&&" expression
+
+equality_expression ::= expression "==" expression
+inequality_expression ::= expression "!=" expression
+
+ordering_less_expression ::= expression "<" expression
+ordering_greater_expression ::= expression ">" expression
+ordering_less_or_equal_expression ::= expression "<=" expression
+ordering_greater_or_equal_expression ::= expression ">=" expression
+
+exclusive_disjunctive_expression ::= expression "^" expression
+
+disjunctive_expression ::= expression "|" expression
+
+conjunctive_expression ::= expression "&" expression
+
+shift_left_expression ::= expression "<<" expression
+shift_right_expression ::= expression ">>" expression
+
+additive_add_expression ::= expression "+" expression
+additive_sub_expression ::= expression "-" expression
+
+multiplicative_mul_expression ::= expression "*" expression
+multiplicative_div_expression ::= expression "/" expression
+multiplicative_mod_expression ::= expression "%" expression
+
+exponential_expression ::= expression "**" expression
+
+unary_not_expression ::= "!" expression
+unary_minus_expression ::= "-" expression
+
+tuple_component_expression ::= expression "." numeral
+circuit_component_expression ::= expression "." identifier
+private operator_call ::= unary_operator_call | binary_operator_call
+unary_operator_call ::= expression "." identifier "(" ")"
+binary_operator_call ::= expression "." identifier "(" expression [ "," ] ")"
+
+primary_expression ::= literal
+                   | variable_or_free_constant
+                   | associated_constant
+                   | "(" expression ")"
+                   | free_function_call
+                   | static_function_call
+                   | tuple_expression
+                   | circuit_expression
+
+variable_or_free_constant ::= identifier
+
+associated_constant ::= named_type "::" identifier
+
+free_function_call ::= identifier function_arguments
+
+static_function_call ::= named_type "::" identifier function_arguments
+
+function_arguments ::= "(" [ expression ( "," expression )* [ "," ] ] ")"
+
+tuple_expression ::= "(" [ expression { "," expression }+ [ "," ] ] ")"
+
+circuit_expression ::= identifier "{" circuit_component_initializer
+                                    ( "," circuit_component_initializer )*
+                                    [ "," ] "}"
+
+circuit_component_initializer ::= identifier
+                              | identifier ":" expression
+
+statement ::= return_statement
+          | variable_declaration
+          | constant_declaration
+          | conditional_statement
+          | loop_statement
+          | assignment_statement
+          | console_statement
+          | block // { recoverWhile = statement_recover }
+
+//private statement_recover ::= !( ";" | "}" | identifier | keyword | line-terminator )
+
+block ::= "{" statement* "}" { pin = 1 }
+
+return_statement ::= "return" expression ";" { pin = 1 }
+
+variable_declaration ::= "let" identifier ":" type "=" expression ";" { pin = 1 }
+
+constant_declaration ::= "const" identifier ":" type "=" expression ";" { pin = 1 }
+
+branch ::= "if" expression block { pin = 1 }
+
+conditional_statement ::= branch
+                      | branch "else" block
+                      | branch "else" conditional_statement
+
+loop_statement ::= "for" identifier ":" type
+                 "in" expression ".." [ "=" ] expression
+                 block { pin = 1 }
+
+assignment_operator ::= "="
+                    | "+="
+                    | "-="
+                    | "*="
+                    | "/="
+                    | "%="
+                    | "**="
+                    | "<<="
+                    | ">>="
+                    | "&="
+                    | "|="
+                    | "^="
+                    | "&&="
+                    | "||="
+
+assignment_statement ::= expression assignment_operator expression ";" {pin = 2  rightAssociative = true}
+
+console_statement ::= "console" "." console_call ";" { pin = 1 }
+
+private console_call ::= assert_call
+             | assert_equal_call
+             | assert_not_equal_call
+
+assert_call ::= "assert" "(" expression ")"
+
+assert_equal_call ::= "assert_eq" "(" expression "," expression [ "," ] ")"
+
+assert_not_equal_call ::= "assert_neq" "(" expression "," expression [ "," ] ")"
+
+function_declaration ::= annotation* "function" identifier
+                       "(" [ function_parameters ] ")" "->" type
+                       block { pin = 2 }
+
+function_parameters ::= function_parameter ( "," function_parameter )* [ "," ] { pin(".*") = 1 }
+
+function_parameter ::= [ "public" | "constant" | "const" ]
+                     identifier ":" type
+
+circuit_declaration ::= "circuit" identifier
+                      "{" circuit_component_declarations "}" { pin = 1 }
+
+circuit_component_declarations ::= circuit_component_declaration
+                                 *( "," circuit_component_declaration )
+                                 [ "," ]
+
+circuit_component_declaration ::= identifier ":" type
+
+record_declaration ::= "record" identifier
+                     "{" circuit_component_declarations "}" { pin = 1 }
+
+private comment ::= end-of-line-comment | block-comment
+
+declaration ::= function_declaration
+            | circuit_declaration
+            | record_declaration
+            | comment // {recoverWhile=declaration_recover}
+
+//private declaration_recover ::= !( "@" identifier | "function" | "circuit" | "record" )
