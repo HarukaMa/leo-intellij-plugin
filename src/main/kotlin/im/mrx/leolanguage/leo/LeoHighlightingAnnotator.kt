@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
+import im.mrx.leolanguage.psi.LeoDeclaration
 import im.mrx.leolanguage.psi.LeoFunctionDeclaration
 import im.mrx.leolanguage.psi.LeoFunctionParameter
 import im.mrx.leolanguage.psi.LeoFunctionParameters
@@ -57,6 +58,8 @@ class LeoHighlightingAnnotator : Annotator {
             CIRCUIT_COMPONENT_EXPRESSION -> CIRCUIT_COMPONENT_KEY
             CIRCUIT_COMPONENT_INITIALIZER -> CIRCUIT_COMPONENT_KEY
             VARIABLE_OR_FREE_CONSTANT -> highlightFunctionParameter(element)
+            NAMED_TYPE -> highlightRecordName(element)
+            CIRCUIT_EXPRESSION -> highlightRecordName(element)
             else -> null
         }
     }
@@ -67,6 +70,20 @@ class LeoHighlightingAnnotator : Annotator {
         for (parameter in PsiTreeUtil.getChildrenOfType(parameters, LeoFunctionParameter::class.java) ?: return null) {
             if (parameter.firstChild.text == element.text) {
                 return FUNCTION_PARAMETER_KEY
+            }
+        }
+        return null
+    }
+
+    private fun highlightRecordName(element: PsiElement): TextAttributesKey? {
+        val file = element.containingFile
+        val declarations =
+            PsiTreeUtil.getChildrenOfType(file.originalElement, LeoDeclaration::class.java) ?: return null
+        for (declaration in declarations) {
+            if (declaration.firstChild.elementType == RECORD_DECLARATION) {
+                if (declaration.firstChild.firstChild.nextSibling.nextSibling.text == element.text) {
+                    return RECORD_DECLARATION_KEY
+                }
             }
         }
         return null
