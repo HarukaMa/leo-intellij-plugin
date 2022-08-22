@@ -27,25 +27,25 @@ Unofficial Leo / Aleo language support. <br/>
     <extensions defaultExtensionNs="com.intellij">
         <fileType
                 name="Leo"
-                implementationClass="im.mrx.leolanguage.LeoFileType"
+                implementationClass="im.mrx.leolanguage.leo.LeoFileType"
                 fieldName="INSTANCE"
                 language="Leo"
                 extensions="leo"/>
         <fileType
                 name="Aleo"
-                implementationClass="im.mrx.leolanguage.AleoFileType"
+                implementationClass="im.mrx.leolanguage.aleo.AleoFileType"
                 fieldName="INSTANCE"
                 language="Aleo"
                 extensions="aleo"/>
         <lang.parserDefinition
                 language="Leo"
-                implementationClass="im.mrx.leolanguage.LeoParserDefinition"/>
+                implementationClass="im.mrx.leolanguage.leo.LeoParserDefinition"/>
         <lang.syntaxHighlighter
                 language="Leo"
-                implementationClass="im.mrx.leolanguage.LeoSyntaxHighlighter"/>
+                implementationClass="im.mrx.leolanguage.leo.LeoSyntaxHighlighter"/>
         <annotator
                 language="Leo"
-                implementationClass="im.mrx.leolanguage.LeoHighlightingAnnotator"/>
-        <colorSettingsPage implementation="im.mrx.leolanguage.LeoColorSettingsPage"/>
+                implementationClass="im.mrx.leolanguage.leo.LeoHighlightingAnnotator"/>
+        <colorSettingsPage implementation="im.mrx.leolanguage.leo.LeoColorSettingsPage"/>
     </extensions>
 </idea-plugin>

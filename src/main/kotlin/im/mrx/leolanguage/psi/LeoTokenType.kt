@@ -1,7 +1,7 @@
 package im.mrx.leolanguage.psi
 
 import com.intellij.psi.tree.IElementType
-import im.mrx.leolanguage.LeoLanguage
+import im.mrx.leolanguage.leo.LeoLanguage
 
 class LeoTokenType(name: String) : IElementType(name, LeoLanguage.INSTANCE) {
 //    override fun toString(): String {
