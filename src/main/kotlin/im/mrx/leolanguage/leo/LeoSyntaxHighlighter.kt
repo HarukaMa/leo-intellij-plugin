@@ -16,7 +16,7 @@ class LeoSyntaxHighlighter : SyntaxHighlighterBase() {
         return LeoLexerAdapter()
     }
 
-    override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey?> {
+    override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
         val key = when (tokenType) {
             LeoTypes.KEYWORD -> KEYWORD
             LeoTypes.IDENTIFIER -> IDENTIFIER

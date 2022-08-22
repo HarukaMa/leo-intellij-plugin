@@ -22,7 +22,7 @@ class LeoHighlightingAnnotator : Annotator {
         }
         val attribute = when (element) {
 
-            is LeafPsiElement -> highlight_leaf(element)
+            is LeafPsiElement -> highlightLeaf(element)
             else -> null
         } ?: return
 
@@ -31,20 +31,27 @@ class LeoHighlightingAnnotator : Annotator {
             .create()
     }
 
-    private fun highlight_leaf(element: PsiElement): TextAttributesKey? {
+    private fun highlightLeaf(element: PsiElement): TextAttributesKey? {
         return when (element.elementType) {
             ANNOTATION -> ANNOTATION_KEY
-            IDENTIFIER -> highlight_identifier(element)
+            IDENTIFIER -> highlightIdentifier(element)
             else -> null
         }
     }
 
-    private fun highlight_identifier(element: PsiElement): TextAttributesKey? {
+    private fun highlightIdentifier(element: PsiElement): TextAttributesKey? {
         val parent = element.parent
 
         return when (parent.elementType) {
             FUNCTION_DECLARATION -> FUNCTION_DECLARATION_KEY
             FUNCTION_PARAMETER -> FUNCTION_PARAMETER_KEY
+            RECORD_DECLARATION -> RECORD_DECLARATION_KEY
+            VARIABLE_DECLARATION -> VARIABLE_DECLARATION_KEY
+            FREE_FUNCTION_CALL -> FREE_FUNCTION_CALL_KEY
+            STATIC_FUNCTION_CALL -> STATIC_FUNCTION_CALL_KEY
+            CIRCUIT_COMPONENT_DECLARATION -> CIRCUIT_COMPONENT_KEY
+            CIRCUIT_COMPONENT_EXPRESSION -> CIRCUIT_COMPONENT_KEY
+            CIRCUIT_COMPONENT_INITIALIZER -> CIRCUIT_COMPONENT_KEY
             else -> null
         }
     }
@@ -58,6 +65,21 @@ class LeoHighlightingAnnotator : Annotator {
         val FUNCTION_PARAMETER_KEY = TextAttributesKey.createTextAttributesKey(
             "LEO_FUNCTION_PARAMETER",
             DefaultLanguageHighlighterColors.PARAMETER
+        )
+        val RECORD_DECLARATION_KEY = TextAttributesKey.createTextAttributesKey(
+            "LEO_RECORD_DECLARATION", DefaultLanguageHighlighterColors.INTERFACE_NAME
+        )
+        val VARIABLE_DECLARATION_KEY = TextAttributesKey.createTextAttributesKey(
+            "LEO_VARIABLE_DECLARATION", DefaultLanguageHighlighterColors.LOCAL_VARIABLE
+        )
+        val FREE_FUNCTION_CALL_KEY = TextAttributesKey.createTextAttributesKey(
+            "LEO_FREE_FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL
+        )
+        val STATIC_FUNCTION_CALL_KEY = TextAttributesKey.createTextAttributesKey(
+            "LEO_STATIC_FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL
+        )
+        val CIRCUIT_COMPONENT_KEY = TextAttributesKey.createTextAttributesKey(
+            "LEO_CIRCUIT_COMPONENT_DECLARATION", DefaultLanguageHighlighterColors.INSTANCE_FIELD
         )
     }
 }
