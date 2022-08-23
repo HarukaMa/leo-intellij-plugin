@@ -23,7 +23,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
-import im.mrx.leolanguage.psi.LeoTypes
+import im.mrx.leolanguage.leo.psi.LeoTypes
 import org.jetbrains.annotations.NotNull
 
 class LeoSyntaxHighlighter : SyntaxHighlighterBase() {

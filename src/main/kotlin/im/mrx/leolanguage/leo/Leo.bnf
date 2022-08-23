@@ -23,12 +23,12 @@
   extends(".*operator_call")=expression
   psiClassPrefix="Leo"
   psiImplClassSuffix="Impl"
-  psiPackage="im.mrx.leolanguage.psi"
-  psiImplPackage="im.mrx.leolanguage.psi.impl"
+  psiPackage="im.mrx.leolanguage.leo.psi"
+  psiImplPackage="im.mrx.leolanguage.leo.psi.impl"
 
-  elementTypeHolderClass="im.mrx.leolanguage.psi.LeoTypes"
-  elementTypeClass="im.mrx.leolanguage.psi.LeoElementType"
-  tokenTypeClass="im.mrx.leolanguage.psi.LeoTokenType"
+  elementTypeHolderClass="im.mrx.leolanguage.leo.psi.LeoTypes"
+  elementTypeClass="im.mrx.leolanguage.leo.psi.LeoElementType"
+  tokenTypeClass="im.mrx.leolanguage.leo.psi.LeoTokenType"
 
   tokens = [
     ascii = "regexp:[\u0000-\u007F]"

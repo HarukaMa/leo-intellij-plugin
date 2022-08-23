@@ -3,7 +3,7 @@ package im.mrx.leolanguage.leo;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.lexer.FlexLexer;
 
-import static im.mrx.leolanguage.psi.LeoTypes.*;
+import static im.mrx.leolanguage.leo.psi.LeoTypes.*;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
 

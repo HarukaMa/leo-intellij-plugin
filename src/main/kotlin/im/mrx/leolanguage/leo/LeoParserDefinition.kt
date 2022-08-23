@@ -27,10 +27,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
-
+import im.mrx.leolanguage.leo.psi.LeoFile
+import im.mrx.leolanguage.leo.psi.LeoTypes
 import im.mrx.leolanguage.parser.LeoParser
-import im.mrx.leolanguage.psi.LeoFile
-import im.mrx.leolanguage.psi.LeoTypes
 
 class LeoParserDefinition : ParserDefinition {
 

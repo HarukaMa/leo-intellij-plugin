@@ -25,10 +25,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
-import im.mrx.leolanguage.psi.LeoAnnotation
-import im.mrx.leolanguage.psi.LeoDeclaration
-import im.mrx.leolanguage.psi.LeoFunctionDeclaration
-import im.mrx.leolanguage.psi.LeoTypes.*
+import im.mrx.leolanguage.leo.psi.LeoAnnotation
+import im.mrx.leolanguage.leo.psi.LeoDeclaration
+import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
+import im.mrx.leolanguage.leo.psi.LeoTypes.*
 
 class LeoHighlightingAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {

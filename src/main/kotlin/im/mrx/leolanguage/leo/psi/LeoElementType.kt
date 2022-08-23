@@ -14,13 +14,13 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.psi
+package im.mrx.leolanguage.leo.psi
 
 import com.intellij.psi.tree.IElementType
 import im.mrx.leolanguage.leo.LeoLanguage
 
-class LeoTokenType(name: String) : IElementType(name, LeoLanguage.INSTANCE) {
-//    override fun toString(): String {
-//        return "LeoTokenType." + super.toString()
-//    }
+class LeoElementType(name: String) : IElementType(name, LeoLanguage.INSTANCE) {
+    override fun toString(): String {
+        return "LeoElementType." + super.toString()
+    }
 }

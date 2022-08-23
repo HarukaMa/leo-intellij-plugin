@@ -14,13 +14,18 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.psi
+package im.mrx.leolanguage.leo.psi
 
-import com.intellij.psi.tree.IElementType
+import com.intellij.extapi.psi.PsiFileBase
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.psi.FileViewProvider
+import im.mrx.leolanguage.leo.LeoFileType
 import im.mrx.leolanguage.leo.LeoLanguage
 
-class LeoElementType(name: String) : IElementType(name, LeoLanguage.INSTANCE) {
+class LeoFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, LeoLanguage.INSTANCE) {
+    override fun getFileType(): FileType = LeoFileType.INSTANCE
+
     override fun toString(): String {
-        return "LeoElementType." + super.toString()
+        return "Leo File"
     }
 }
