@@ -237,7 +237,7 @@ tuple_expression ::= "(" [ expression { "," expression }+ [ "," ] ] ")"
 
 circuit_expression ::= identifier "{" circuit_component_initializer
                                     ( "," circuit_component_initializer )*
-                                    [ "," ] "}" { pin = 2 }
+                                    [ "," ] "}" { pin = "," }
 
 circuit_component_initializer ::= identifier ":" expression | identifier
 
