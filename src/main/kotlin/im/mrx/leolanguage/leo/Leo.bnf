@@ -14,6 +14,7 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
+//noinspection BnfSuspiciousTokenForFile
 {
   parserClass="im.mrx.leolanguage.leo.LeoParser"
 
@@ -147,6 +148,7 @@ private atomic_literal ::= numeric-literal
 
 private literal ::= atomic_literal | affine_group_literal
 
+//noinspection BnfUnusedRule
 private group_literal ::= product-group-literal | affine_group_literal
 
 expression ::= conditional_ternary_expression
@@ -223,7 +225,9 @@ primary_expression ::= literal
                    | circuit_expression
                    | variable_or_free_constant
 
-variable_or_free_constant ::= identifier
+variable_or_free_constant ::= identifier {
+    mixin = "im.mrx.leolanguage.leo.psi.LeoVariableOrFreeConstantImplMixin"
+}
 
 associated_constant ::= named_type "::" identifier
 
@@ -256,9 +260,17 @@ block ::= "{" statement* "}" { pin = 1 }
 
 return_statement ::= "return" expression ";" { pin = 1 }
 
-variable_declaration ::= "let" identifier ":" type "=" expression ";" { pin = 1 }
+variable_declaration ::= "let" identifier ":" type "=" expression ";" {
+    pin = 1
+    implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+}
 
-constant_declaration ::= "const" identifier ":" type "=" expression ";" { pin = 1 }
+constant_declaration ::= "const" identifier ":" type "=" expression ";" {
+    pin = 1
+    implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+}
 
 branch ::= "if" expression block { pin = 1 }
 
@@ -301,24 +313,42 @@ assert_not_equal_call ::= "assert_neq" "(" expression "," expression [ "," ] ")"
 
 function_declaration ::= annotation* "function" identifier
                        "(" [ function_parameters ] ")" "->" type
-                       block { pin = 2 }
+                       block {
+                        pin = 2
+                        implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                        mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+                        }
 
 function_parameters ::= function_parameter ( "," function_parameter )* [ "," ] { pin = 1 }
 
 function_parameter ::= [ "public" | "constant" | "const" ]
-                     identifier ":" type
+                     identifier ":" type {
+                        implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                        mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+                     }
 
 circuit_declaration ::= "circuit" identifier
-                      "{" circuit_component_declarations "}" { pin = 1 }
+                      "{" circuit_component_declarations "}" {
+                        pin = 1
+                        implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                        mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+                      }
 
 circuit_component_declarations ::= circuit_component_declaration
                                  ( "," circuit_component_declaration )*
                                  [ "," ]
 
-circuit_component_declaration ::= identifier ":" type
+circuit_component_declaration ::= identifier ":" type {
+    implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+}
 
 record_declaration ::= "record" identifier
-                     "{" circuit_component_declarations "}" { pin = 1 }
+                     "{" circuit_component_declarations "}" {
+                        pin = 1
+                        implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                        mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+                    }
 
 private comment ::= end-of-line-comment | block-comment
 

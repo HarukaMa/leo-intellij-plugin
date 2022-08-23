@@ -77,7 +77,7 @@ class LeoHighlightingAnnotator : Annotator {
         val function = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java) ?: return null
         val parameters = function.functionParameters ?: return null
         for (parameter in parameters.functionParameterList) {
-            if (parameter.identifier.text == element.text) {
+            if (parameter.name == element.text) {
                 return FUNCTION_PARAMETER_KEY
             }
         }
@@ -90,7 +90,7 @@ class LeoHighlightingAnnotator : Annotator {
             PsiTreeUtil.getChildrenOfType(file.originalElement, LeoDeclaration::class.java) ?: return null
         for (declaration in declarations) {
             declaration.recordDeclaration?.let {
-                if (it.identifier?.text == element.text) {
+                if (it.name == element.text) {
                     return RECORD_DECLARATION_KEY
                 }
             }
