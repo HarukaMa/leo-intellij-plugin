@@ -41,8 +41,10 @@ class LeoTypeReference(element: LeoNamedType) : PsiReferenceBase<LeoNamedType>(e
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             val element = ref.element
             PsiTreeUtil.getChildrenOfType(element.containingFile, LeoDeclaration::class.java)?.forEach {
-                if (it.recordDeclaration?.name == element.text || it.circuitDeclaration?.name == element.text) {
-                    return it
+                if (it.recordDeclaration?.name == element.text) {
+                    return it.recordDeclaration
+                } else if (it.circuitDeclaration?.name == element.text) {
+                    return it.circuitDeclaration
                 }
             }
 

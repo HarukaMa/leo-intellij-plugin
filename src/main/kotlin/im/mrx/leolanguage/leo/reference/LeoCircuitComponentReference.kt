@@ -24,7 +24,8 @@ import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import im.mrx.leolanguage.leo.psi.LeoCircuitComponentExpression
 import im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifier
-import im.mrx.leolanguage.leo.psi.LeoDeclaration
+import im.mrx.leolanguage.leo.psi.LeoCircuitDeclaration
+import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
 
 class LeoCircuitComponentReference(element: LeoCircuitComponentIdentifier) :
     PsiReferenceBase<LeoCircuitComponentIdentifier>(element) {
@@ -42,13 +43,14 @@ class LeoCircuitComponentReference(element: LeoCircuitComponentIdentifier) :
             val element = ref.element
             val typeElement = (element.parent as LeoCircuitComponentExpression).getTypeElement() ?: return null
 
-            if (typeElement is LeoDeclaration) {
-                typeElement.circuitDeclaration?.circuitComponentDeclarations?.circuitComponentDeclarationList?.forEach {
+            if (typeElement is LeoCircuitDeclaration) {
+                typeElement.circuitComponentDeclarations?.circuitComponentDeclarationList?.forEach {
                     if (it.name == element.text) {
                         return it
                     }
                 }
-                typeElement.recordDeclaration?.circuitComponentDeclarations?.circuitComponentDeclarationList?.forEach {
+            } else if (typeElement is LeoRecordDeclaration) {
+                typeElement.circuitComponentDeclarations?.circuitComponentDeclarationList?.forEach {
                     if (it.name == element.text) {
                         return it
                     }
