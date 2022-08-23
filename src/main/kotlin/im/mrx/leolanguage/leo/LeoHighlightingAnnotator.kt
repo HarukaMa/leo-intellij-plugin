@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
+import im.mrx.leolanguage.psi.LeoAnnotation
 import im.mrx.leolanguage.psi.LeoDeclaration
 import im.mrx.leolanguage.psi.LeoFunctionDeclaration
 import im.mrx.leolanguage.psi.LeoTypes.*
@@ -35,7 +36,7 @@ class LeoHighlightingAnnotator : Annotator {
             return
         }
         val attribute = when (element) {
-
+            is LeoAnnotation -> ANNOTATION_KEY
             is LeafPsiElement -> highlightLeaf(element)
             else -> null
         } ?: return
@@ -47,7 +48,6 @@ class LeoHighlightingAnnotator : Annotator {
 
     private fun highlightLeaf(element: PsiElement): TextAttributesKey? {
         return when (element.elementType) {
-            ANNOTATION -> ANNOTATION_KEY
             IDENTIFIER -> highlightIdentifier(element)
             else -> null
         }
