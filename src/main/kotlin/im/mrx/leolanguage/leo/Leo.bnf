@@ -129,9 +129,11 @@ address_type ::= "address"
 
 string_type ::= "string"
 
-private primitive_type ::=  boolean_type | arithmetic_type | address_type | string_type
+primitive_type ::=  boolean_type | arithmetic_type | address_type | string_type
 
-named_type ::= primitive_type | identifier
+named_type ::= primitive_type | identifier {
+    mixin = "im.mrx.leolanguage.leo.psi.LeoNamedTypeImplMixin"
+}
 
 tuple_type ::= "(" [ type { "," type }+ [ "," ] ] ")"
 
@@ -211,7 +213,13 @@ unary_not_expression ::= "!" expression
 unary_minus_expression ::= "-" expression
 
 tuple_component_expression ::= expression "." numeral
-circuit_component_expression ::= expression "." identifier
+circuit_component_identifier ::= identifier {
+ mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifierImplMixin"
+}
+circuit_component_expression ::= expression "." circuit_component_identifier {
+ implements = "im.mrx.leolanguage.leo.psi.LeoCircuitComponentExpressionExt"
+ mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitComponentExpressionImplMixin"
+}
 private operator_call ::= unary_operator_call | binary_operator_call
 unary_operator_call ::= expression "." identifier "(" ")"
 binary_operator_call ::= expression "." identifier "(" expression [ "," ] ")"

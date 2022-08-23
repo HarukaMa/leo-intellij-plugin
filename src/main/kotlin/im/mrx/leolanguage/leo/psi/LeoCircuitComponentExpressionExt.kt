@@ -16,16 +16,10 @@
 
 package im.mrx.leolanguage.leo.psi
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement
-import com.intellij.lang.ASTNode
-import com.intellij.psi.PsiReference
-import im.mrx.leolanguage.leo.reference.LeoVariableReference
+import com.intellij.psi.PsiElement
 
-abstract class LeoVariableOrFreeConstantImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
-    LeoVariableOrFreeConstant {
+interface LeoCircuitComponentExpressionExt {
 
-    override fun getReference(): PsiReference? {
-        return LeoVariableReference(this)
-    }
+    fun getTypeElement(): PsiElement?
 
 }

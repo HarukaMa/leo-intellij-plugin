@@ -14,7 +14,7 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.leo.psi
+package im.mrx.leolanguage.leo.reference
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.ElementManipulators
@@ -22,12 +22,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import com.intellij.psi.util.PsiTreeUtil
+import im.mrx.leolanguage.leo.psi.LeoCircuitComponentExpression
+import im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifier
+import im.mrx.leolanguage.leo.psi.LeoDeclaration
 
-class LeoVariableReference(element: LeoVariableOrFreeConstant) : PsiReferenceBase<LeoVariableOrFreeConstant>(element) {
-
-//    constructor(element: LeoVariableOrFreeConstant, textRange: TextRange) : super(element, textRange)
-
+class LeoCircuitComponentReference(element: LeoCircuitComponentIdentifier) :
+    PsiReferenceBase<LeoCircuitComponentIdentifier>(element) {
     override fun resolve(): PsiElement? {
         return ResolveCache.getInstance(element.project).resolveWithCaching(this, Resolver, false, false)
     }
@@ -36,28 +36,21 @@ class LeoVariableReference(element: LeoVariableOrFreeConstant) : PsiReferenceBas
         return ElementManipulators.getValueTextRange(element)
     }
 
-
     object Resolver : ResolveCache.Resolver {
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             val element = ref.element
-            var block = PsiTreeUtil.getParentOfType(element, LeoBlock::class.java)
-            while (block != null) {
-                block.variableDeclarationList.let {
-                    for (variable in it) {
-                        if (variable.name == element.text) {
-                            return variable
-                        }
+            val typeElement = (element.parent as LeoCircuitComponentExpression).getTypeElement() ?: return null
+
+            if (typeElement is LeoDeclaration) {
+                typeElement.circuitDeclaration?.circuitComponentDeclarations?.circuitComponentDeclarationList?.forEach {
+                    if (it.name == element.text) {
+                        return it
                     }
                 }
-                block = PsiTreeUtil.getParentOfType(block, LeoBlock::class.java)
-            }
-            val function = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
-                ?: error("Variable outside of functions")
-            function.functionParameters!!.functionParameterList.let {
-                for (parameter in it) {
-                    if (parameter.name == element.text) {
-                        return parameter
+                typeElement.recordDeclaration?.circuitComponentDeclarations?.circuitComponentDeclarationList?.forEach {
+                    if (it.name == element.text) {
+                        return it
                     }
                 }
             }
@@ -66,5 +59,4 @@ class LeoVariableReference(element: LeoVariableOrFreeConstant) : PsiReferenceBas
         }
 
     }
-
 }

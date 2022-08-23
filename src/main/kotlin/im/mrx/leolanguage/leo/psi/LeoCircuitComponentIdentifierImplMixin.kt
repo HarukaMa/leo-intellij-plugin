@@ -19,13 +19,13 @@ package im.mrx.leolanguage.leo.psi
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiReference
-import im.mrx.leolanguage.leo.reference.LeoVariableReference
+import im.mrx.leolanguage.leo.reference.LeoCircuitComponentReference
 
-abstract class LeoVariableOrFreeConstantImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
-    LeoVariableOrFreeConstant {
+abstract class LeoCircuitComponentIdentifierImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
+    LeoCircuitComponentIdentifier {
 
     override fun getReference(): PsiReference? {
-        return LeoVariableReference(this)
+        return LeoCircuitComponentReference(this)
     }
 
 }
