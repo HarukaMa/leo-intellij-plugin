@@ -15,7 +15,7 @@
  */
 
 {
-  parserClass="im.mrx.leolanguage.parser.LeoParser"
+  parserClass="im.mrx.leolanguage.leo.LeoParser"
 
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
@@ -112,7 +112,7 @@ unsigned_type ::= "u8" | "u16" | "u32" | "u64" | "u128"
 
 signed_type ::= "i8" | "i16" | "i32" | "i64" | "i128"
 
-integer_type ::= unsigned_type | signed_type
+private integer_type ::= unsigned_type | signed_type
 
 field_type ::= "field"
 
@@ -120,7 +120,7 @@ group_type ::= "group"
 
 scalar_type ::= "scalar"
 
-arithmetic_type ::= integer_type | field_type | group_type | scalar_type
+private arithmetic_type ::= integer_type | field_type | group_type | scalar_type
 
 boolean_type ::= "bool"
 
@@ -128,24 +128,24 @@ address_type ::= "address"
 
 string_type ::= "string"
 
-primitive_type ::=  boolean_type | arithmetic_type | address_type | string_type
+private primitive_type ::=  boolean_type | arithmetic_type | address_type | string_type
 
 named_type ::= primitive_type | identifier
 
 tuple_type ::= "(" [ type { "," type }+ [ "," ] ] ")"
 
-type ::= named_type | tuple_type
+private type ::= named_type | tuple_type
 
 group_coordinate ::= ( [ "-" ] numeral ) | "+" | "-" | "_"
 
 affine_group_literal ::= "(" group_coordinate "," group_coordinate ")group"
 
-atomic_literal ::= numeric-literal
+private atomic_literal ::= numeric-literal
                | boolean-literal
                | address-literal
                | string-literal
 
-literal ::= atomic_literal | affine_group_literal
+private literal ::= atomic_literal | affine_group_literal
 
 private group_literal ::= product-group-literal | affine_group_literal
 
@@ -241,7 +241,7 @@ circuit_expression ::= identifier "{" circuit_component_initializer
 
 circuit_component_initializer ::= identifier ":" expression | identifier
 
-statement ::= return_statement
+private statement ::= return_statement
           | variable_declaration
           | constant_declaration
           | conditional_statement
