@@ -77,6 +77,7 @@ BRACKETS=[\[\]]
   "."                                                                  { return DOT; }
   ","                                                                  { return COMMA; }
   ";"                                                                  { return SEMICOLON; }
+  "@"                                                                  { return AT; }
 
   {NUMERAL}                                                            { yybegin(NUMERIC); }
 //  {ASCII}                                                              { return ASCII; }
