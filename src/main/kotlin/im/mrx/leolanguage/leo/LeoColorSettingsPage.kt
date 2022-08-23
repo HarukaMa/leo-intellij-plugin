@@ -57,7 +57,7 @@ class LeoColorSettingsPage : ColorSettingsPage {
             // The 'test' main function.
             <ANNOTATION>@program</ANNOTATION>
             function <FUNCTION_DECLARATION>main</FUNCTION_DECLARATION>(public <FUNCTION_PARAMETER>a</FUNCTION_PARAMETER>: u32, <FUNCTION_PARAMETER>b</FUNCTION_PARAMETER>: u32) -> u32 {
-                let c: u32 = a + b;
+                let c: u32 = <FUNCTION_PARAMETER>a</FUNCTION_PARAMETER> + <FUNCTION_PARAMETER>b</FUNCTION_PARAMETER>;
                 return c;
             }
         """.trimIndent()

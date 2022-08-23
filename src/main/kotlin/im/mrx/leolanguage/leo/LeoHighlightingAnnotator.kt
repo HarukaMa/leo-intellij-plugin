@@ -16,8 +16,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import im.mrx.leolanguage.psi.LeoDeclaration
 import im.mrx.leolanguage.psi.LeoFunctionDeclaration
-import im.mrx.leolanguage.psi.LeoFunctionParameter
-import im.mrx.leolanguage.psi.LeoFunctionParameters
 import im.mrx.leolanguage.psi.LeoTypes.*
 
 class LeoHighlightingAnnotator : Annotator {
@@ -66,9 +64,9 @@ class LeoHighlightingAnnotator : Annotator {
 
     private fun highlightFunctionParameter(element: PsiElement): TextAttributesKey? {
         val function = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java) ?: return null
-        val parameters = PsiTreeUtil.getChildOfType(function, LeoFunctionParameters::class.java) ?: return null
-        for (parameter in PsiTreeUtil.getChildrenOfType(parameters, LeoFunctionParameter::class.java) ?: return null) {
-            if (parameter.firstChild.text == element.text) {
+        val parameters = function.functionParameters ?: return null
+        for (parameter in parameters.functionParameterList) {
+            if (parameter.identifier.text == element.text) {
                 return FUNCTION_PARAMETER_KEY
             }
         }
@@ -80,8 +78,8 @@ class LeoHighlightingAnnotator : Annotator {
         val declarations =
             PsiTreeUtil.getChildrenOfType(file.originalElement, LeoDeclaration::class.java) ?: return null
         for (declaration in declarations) {
-            if (declaration.firstChild.elementType == RECORD_DECLARATION) {
-                if (declaration.firstChild.firstChild.nextSibling.nextSibling.text == element.text) {
+            declaration.recordDeclaration?.let {
+                if (it.identifier?.text == element.text) {
                     return RECORD_DECLARATION_KEY
                 }
             }
