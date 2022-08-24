@@ -23,6 +23,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.LeoFileType
 
 class LeoPsiFactory {
+
+    companion object {
+        val instance = LeoPsiFactory()
+    }
+
     fun createIdentifier(project: Project, name: String): PsiElement {
         val file = PsiFileFactory.getInstance(project)
             .createFileFromText("temp.leo", LeoFileType.INSTANCE, "function ${name}() {}")

@@ -18,6 +18,7 @@ package im.mrx.leolanguage.leo.psi
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import im.mrx.leolanguage.leo.reference.LeoVariableReference
 
@@ -26,6 +27,10 @@ abstract class LeoVariableOrFreeConstantImplMixin(node: ASTNode) : ASTWrapperPsi
 
     override fun getReference(): PsiReference? {
         return LeoVariableReference(this)
+    }
+
+    override fun referenceNameElement(): PsiElement? {
+        return this.identifier
     }
 
 }

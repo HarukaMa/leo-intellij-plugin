@@ -16,21 +16,8 @@
 
 package im.mrx.leolanguage.leo.psi
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement
-import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
-import im.mrx.leolanguage.leo.reference.LeoCircuitExpressionIdentifierReference
 
-abstract class LeoCircuitExpressionIdentifierImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
-    LeoCircuitExpressionIdentifier {
-
-    override fun getReference(): PsiReference? {
-        return LeoCircuitExpressionIdentifierReference(this)
-    }
-
-    override fun referenceNameElement(): PsiElement? {
-        return this.identifier
-    }
-
+interface LeoReferenceElement : PsiElement {
+    fun referenceNameElement(): PsiElement?
 }

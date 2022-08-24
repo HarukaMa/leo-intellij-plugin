@@ -38,7 +38,7 @@ abstract class LeoNamedElementImpl(node: ASTNode) : ASTWrapperPsiElement(node), 
     }
 
     override fun setName(name: String): PsiElement {
-        nameIdentifier?.replace(LeoPsiFactory().createIdentifier(project, name))
+        nameIdentifier?.replace(LeoPsiFactory.instance.createIdentifier(project, name))
         return this
     }
 

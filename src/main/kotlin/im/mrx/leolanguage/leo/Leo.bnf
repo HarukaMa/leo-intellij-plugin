@@ -132,6 +132,7 @@ string_type ::= "string"
 primitive_type ::=  boolean_type | arithmetic_type | address_type | string_type
 
 named_type ::= primitive_type | identifier {
+    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedTypeImplMixin"
 }
 
@@ -214,6 +215,7 @@ unary_minus_expression ::= "-" expression
 
 tuple_component_expression ::= expression "." numeral
 circuit_component_identifier ::= identifier {
+ implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
  mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifierImplMixin"
 }
 circuit_component_expression ::= expression "." circuit_component_identifier {
@@ -234,6 +236,7 @@ primary_expression ::= literal
                    | variable_or_free_constant
 
 variable_or_free_constant ::= identifier {
+    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
     mixin = "im.mrx.leolanguage.leo.psi.LeoVariableOrFreeConstantImplMixin"
 }
 
@@ -248,6 +251,7 @@ function_arguments ::= "(" [ expression ( "," expression )* [ "," ] ] ")"
 tuple_expression ::= "(" [ expression { "," expression }+ [ "," ] ] ")"
 
 circuit_expression_identifier ::= identifier {
+ implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
  mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitExpressionIdentifierImplMixin"
 }
 

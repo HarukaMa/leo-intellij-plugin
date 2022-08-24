@@ -16,27 +16,20 @@
 
 package im.mrx.leolanguage.leo.reference
 
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
-import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.psi.LeoBlock
 import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
 import im.mrx.leolanguage.leo.psi.LeoVariableOrFreeConstant
 
-class LeoVariableReference(element: LeoVariableOrFreeConstant) : PsiReferenceBase<LeoVariableOrFreeConstant>(element) {
+class LeoVariableReference(element: LeoVariableOrFreeConstant) : LeoReferenceBase<LeoVariableOrFreeConstant>(element) {
 
 //    constructor(element: LeoVariableOrFreeConstant, textRange: TextRange) : super(element, textRange)
 
     override fun resolve(): PsiElement? {
         return ResolveCache.getInstance(element.project).resolveWithCaching(this, Resolver, false, false)
-    }
-
-    override fun getRangeInElement(): TextRange {
-        return ElementManipulators.getValueTextRange(element)
     }
 
 

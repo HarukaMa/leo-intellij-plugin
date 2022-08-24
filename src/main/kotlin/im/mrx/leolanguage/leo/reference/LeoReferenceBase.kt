@@ -14,23 +14,25 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.leo.psi
+package im.mrx.leolanguage.leo.reference
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement
-import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
-import im.mrx.leolanguage.leo.reference.LeoCircuitExpressionIdentifierReference
+import com.intellij.psi.PsiReferenceBase
+import im.mrx.leolanguage.leo.psi.LeoPsiFactory
+import im.mrx.leolanguage.leo.psi.LeoReferenceElement
 
-abstract class LeoCircuitExpressionIdentifierImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
-    LeoCircuitExpressionIdentifier {
+abstract class LeoReferenceBase<T : LeoReferenceElement>(element: T) : PsiReferenceBase<T>(element) {
 
-    override fun getReference(): PsiReference? {
-        return LeoCircuitExpressionIdentifierReference(this)
+    override fun handleElementRename(newElementName: String): PsiElement {
+        val identifier = element.referenceNameElement() ?: return element
+        identifier.replace(LeoPsiFactory.instance.createIdentifier(element.project, newElementName))
+        return element
     }
 
-    override fun referenceNameElement(): PsiElement? {
-        return this.identifier
+    override fun getRangeInElement(): TextRange {
+        return ElementManipulators.getValueTextRange(element)
     }
 
 }
