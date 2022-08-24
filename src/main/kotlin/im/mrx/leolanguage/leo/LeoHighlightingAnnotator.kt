@@ -25,9 +25,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
-import im.mrx.leolanguage.leo.psi.LeoAnnotation
-import im.mrx.leolanguage.leo.psi.LeoDeclaration
-import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
+import im.mrx.leolanguage.leo.psi.*
 import im.mrx.leolanguage.leo.psi.LeoTypes.*
 
 class LeoHighlightingAnnotator : Annotator {
@@ -37,7 +35,7 @@ class LeoHighlightingAnnotator : Annotator {
         }
         val attribute = when (element) {
             is LeoAnnotation -> ANNOTATION_KEY
-            is LeafPsiElement -> highlightLeaf(element)
+            is LeafPsiElement -> highlightLeaf(element, holder)
             else -> null
         } ?: return
 
@@ -46,14 +44,14 @@ class LeoHighlightingAnnotator : Annotator {
             .create()
     }
 
-    private fun highlightLeaf(element: PsiElement): TextAttributesKey? {
+    private fun highlightLeaf(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
         return when (element.elementType) {
-            IDENTIFIER -> highlightIdentifier(element)
+            IDENTIFIER -> highlightIdentifier(element, holder)
             else -> null
         }
     }
 
-    private fun highlightIdentifier(element: PsiElement): TextAttributesKey? {
+    private fun highlightIdentifier(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
         val parent = element.parent
 
         return when (parent.elementType) {
@@ -66,14 +64,14 @@ class LeoHighlightingAnnotator : Annotator {
             CIRCUIT_COMPONENT_DECLARATION -> CIRCUIT_COMPONENT_KEY
             CIRCUIT_COMPONENT_IDENTIFIER -> CIRCUIT_COMPONENT_KEY
             CIRCUIT_COMPONENT_INITIALIZER -> CIRCUIT_COMPONENT_KEY
-            VARIABLE_OR_FREE_CONSTANT -> highlightFunctionParameter(element)
-            NAMED_TYPE -> highlightRecordName(element)
-            CIRCUIT_EXPRESSION_IDENTIFIER -> highlightRecordName(element)
+            VARIABLE_OR_FREE_CONSTANT -> highlightVariable(element, holder)
+            NAMED_TYPE -> highlightRecordName(element, holder)
+            CIRCUIT_EXPRESSION_IDENTIFIER -> highlightRecordName(element, holder)
             else -> null
         }
     }
 
-    private fun highlightFunctionParameter(element: PsiElement): TextAttributesKey? {
+    private fun highlightVariable(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
         val function = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java) ?: return null
         val parameters = function.functionParameters ?: return null
         for (parameter in parameters.functionParameterList) {
@@ -81,10 +79,16 @@ class LeoHighlightingAnnotator : Annotator {
                 return FUNCTION_PARAMETER_KEY
             }
         }
+        (element.parent as LeoVariableOrFreeConstant).reference?.resolve()?.let {
+            if (it is LeoVariableDeclaration) {
+                return VARIABLE_DECLARATION_KEY
+            }
+        }
+        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference: ${element.text}").create()
         return null
     }
 
-    private fun highlightRecordName(element: PsiElement): TextAttributesKey? {
+    private fun highlightRecordName(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
         val file = element.containingFile
         val declarations =
             PsiTreeUtil.getChildrenOfType(file.originalElement, LeoDeclaration::class.java) ?: return null
@@ -94,6 +98,10 @@ class LeoHighlightingAnnotator : Annotator {
                     return RECORD_DECLARATION_KEY
                 }
             }
+        }
+        if (element.parent.elementType == CIRCUIT_EXPRESSION_IDENTIFIER) {
+            holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved circuit / record reference: ${element.text}")
+                .create()
         }
         return null
     }
