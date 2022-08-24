@@ -48,7 +48,7 @@ class LeoVariableReference(element: LeoVariableOrFreeConstant) : PsiReferenceBas
             while (block != null) {
                 block.variableDeclarationList.forEach {
                     if (it.name == element.text) {
-                        return it.identifier
+                        return it
                     }
                 }
                 block = PsiTreeUtil.getParentOfType(block, LeoBlock::class.java)
@@ -57,7 +57,7 @@ class LeoVariableReference(element: LeoVariableOrFreeConstant) : PsiReferenceBas
                 ?: error("Variable outside of functions")
             function.functionParameters!!.functionParameterList.forEach {
                 if (it.name == element.text) {
-                    return it.identifier
+                    return it
                 }
             }
 

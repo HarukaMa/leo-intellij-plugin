@@ -46,13 +46,13 @@ class LeoCircuitComponentReference(element: LeoCircuitComponentIdentifier) :
             if (typeElement is LeoCircuitDeclaration) {
                 typeElement.circuitComponentDeclarations?.circuitComponentDeclarationList?.forEach {
                     if (it.name == element.text) {
-                        return it.identifier
+                        return it
                     }
                 }
             } else if (typeElement is LeoRecordDeclaration) {
                 typeElement.circuitComponentDeclarations?.circuitComponentDeclarationList?.forEach {
                     if (it.name == element.text) {
-                        return it.identifier
+                        return it
                     }
                 }
             }

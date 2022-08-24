@@ -43,9 +43,9 @@ class LeoCircuitExpressionIdentifierReference(element: LeoCircuitExpressionIdent
             val element = ref.element as LeoCircuitExpressionIdentifier
             PsiTreeUtil.getChildrenOfType(element.containingFile, LeoDeclaration::class.java)?.forEach {
                 if (it.recordDeclaration?.name == element.text) {
-                    return it.recordDeclaration!!.identifier
+                    return it.recordDeclaration
                 } else if (it.circuitDeclaration?.name == element.text) {
-                    return it.circuitDeclaration!!.identifier
+                    return it.circuitDeclaration
                 }
             }
 

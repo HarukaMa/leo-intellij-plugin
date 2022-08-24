@@ -80,7 +80,7 @@ class LeoHighlightingAnnotator : Annotator {
             }
         }
         (element.parent as LeoVariableOrFreeConstant).reference?.resolve()?.let {
-            if (it.parent is LeoVariableDeclaration) {
+            if (it is LeoVariableDeclaration) {
                 return VARIABLE_DECLARATION_KEY
             }
         }
