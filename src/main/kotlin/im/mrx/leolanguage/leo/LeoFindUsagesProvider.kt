@@ -21,6 +21,7 @@ import com.intellij.lang.cacheBuilder.WordsScanner
 import com.intellij.lang.findUsages.FindUsagesProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.elementType
 import im.mrx.leolanguage.leo.psi.LeoNamedElement
 import im.mrx.leolanguage.leo.psi.LeoTypes.*
 
@@ -46,7 +47,15 @@ class LeoFindUsagesProvider : FindUsagesProvider {
     }
 
     override fun getType(element: PsiElement): String {
-        return "TODO Type"
+        return when (element.elementType) {
+            RECORD_DECLARATION -> "record"
+            CIRCUIT_DECLARATION -> "circuit"
+            VARIABLE_DECLARATION -> "variable"
+            FUNCTION_DECLARATION -> "function"
+            CIRCUIT_COMPONENT_DECLARATION -> "circuit component"
+            FUNCTION_PARAMETER -> "parameter"
+            else -> "unknown type"
+        }
     }
 
     override fun getDescriptiveName(element: PsiElement): String {
