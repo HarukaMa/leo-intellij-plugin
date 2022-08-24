@@ -24,13 +24,15 @@
     <name>Leo / Aleo</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="leo@mrx.im" url="https://mrx.im">Haruka Ma</vendor>
+    <vendor email="leo@mrx.im" url="https://github.com/HarukaMa/leo-intellij-plugin">Haruka Ma</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
 Unofficial Leo / Aleo language support. <br/>
+<br/>
+<b>NOTE: </b>Aleo instructions support is missing right now.
 <br/>
   ]]></description>
 
