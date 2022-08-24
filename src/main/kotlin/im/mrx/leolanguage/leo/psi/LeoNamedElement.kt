@@ -41,5 +41,9 @@ abstract class LeoNamedElementImpl(node: ASTNode) : ASTWrapperPsiElement(node), 
         nameIdentifier?.replace(LeoPsiFactory().createIdentifier(project, name))
         return this
     }
+
+    override fun getTextOffset(): Int {
+        return nameIdentifier?.textOffset ?: super.getTextOffset()
+    }
 }
 
