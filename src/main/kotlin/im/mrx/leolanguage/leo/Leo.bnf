@@ -247,7 +247,11 @@ function_arguments ::= "(" [ expression ( "," expression )* [ "," ] ] ")"
 
 tuple_expression ::= "(" [ expression { "," expression }+ [ "," ] ] ")"
 
-circuit_expression ::= identifier "{" circuit_component_initializer
+circuit_expression_identifier ::= identifier {
+ mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitExpressionIdentifierImplMixin"
+}
+
+circuit_expression ::= circuit_expression_identifier "{" circuit_component_initializer
                                     ( "," circuit_component_initializer )*
                                     [ "," ] "}" { pin = "," }
 

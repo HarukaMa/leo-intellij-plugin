@@ -68,7 +68,7 @@ class LeoHighlightingAnnotator : Annotator {
             CIRCUIT_COMPONENT_INITIALIZER -> CIRCUIT_COMPONENT_KEY
             VARIABLE_OR_FREE_CONSTANT -> highlightFunctionParameter(element)
             NAMED_TYPE -> highlightRecordName(element)
-            CIRCUIT_EXPRESSION -> highlightRecordName(element)
+            CIRCUIT_EXPRESSION_IDENTIFIER -> highlightRecordName(element)
             else -> null
         }
     }
