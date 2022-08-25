@@ -32,13 +32,16 @@
     <description><![CDATA[
 Unofficial Leo / Aleo language support. <br/>
 <br/>
-<b>NOTE: </b>Aleo instructions support is missing right now.
+<b>NOTE: </b>Aleo instructions support is missing right now. <br/>
 <br/>
+For more info on Leo language: <a href="https://leo-lang.org/">leo-lang.org</a> <br/>
+For more info on Aleo: <a href="https://www.aleo.org/">aleo.org</a> <br/>
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
@@ -49,12 +52,6 @@ Unofficial Leo / Aleo language support. <br/>
                 fieldName="INSTANCE"
                 language="Leo"
                 extensions="leo"/>
-        <fileType
-                name="Aleo"
-                implementationClass="im.mrx.leolanguage.aleo.AleoFileType"
-                fieldName="INSTANCE"
-                language="Aleo"
-                extensions="aleo"/>
         <lang.parserDefinition
                 language="Leo"
                 implementationClass="im.mrx.leolanguage.leo.LeoParserDefinition"/>
@@ -71,5 +68,12 @@ Unofficial Leo / Aleo language support. <br/>
         <lang.foldingBuilder
                 language="Leo"
                 implementationClass="im.mrx.leolanguage.leo.LeoFoldingBuilder"/>
+
+        <fileType
+                name="Aleo"
+                implementationClass="im.mrx.leolanguage.aleo.AleoFileType"
+                fieldName="INSTANCE"
+                language="Aleo"
+                extensions="aleo"/>
     </extensions>
 </idea-plugin>
