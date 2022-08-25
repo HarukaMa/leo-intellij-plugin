@@ -22,6 +22,7 @@ import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import im.mrx.leolanguage.leo.psi.LeoBlock
 import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
 import im.mrx.leolanguage.leo.psi.LeoVisitor
 
@@ -40,6 +41,10 @@ class LeoFoldingBuilder : FoldingBuilderEx() {
         override fun visitRecordDeclaration(o: LeoRecordDeclaration) {
             val block = o.circuitComponentDeclarations ?: return
             descriptors.add(FoldingDescriptor(block, block.textRange))
+        }
+
+        override fun visitBlock(o: LeoBlock) {
+            descriptors.add(FoldingDescriptor(o, o.textRange))
         }
     }
 
