@@ -68,5 +68,8 @@ Unofficial Leo / Aleo language support. <br/>
         <lang.findUsagesProvider
                 language="Leo"
                 implementationClass="im.mrx.leolanguage.leo.LeoFindUsagesProvider"/>
+        <lang.foldingBuilder
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.leo.LeoFoldingBuilder"/>
     </extensions>
 </idea-plugin>

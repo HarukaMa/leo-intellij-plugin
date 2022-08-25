@@ -344,15 +344,15 @@ function_parameter ::= [ "public" | "constant" | "const" ]
                      }
 
 circuit_declaration ::= "circuit" identifier
-                      "{" circuit_component_declarations "}" {
+                      circuit_component_declarations {
                         pin = 1
                         implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
                         mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
                       }
 
-circuit_component_declarations ::= circuit_component_declaration
+circuit_component_declarations ::= "{" circuit_component_declaration
                                  ( "," circuit_component_declaration )*
-                                 [ "," ]
+                                 [ "," ] "}"
 
 circuit_component_declaration ::= identifier ":" type {
     implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
@@ -360,7 +360,7 @@ circuit_component_declaration ::= identifier ":" type {
 }
 
 record_declaration ::= "record" identifier
-                     "{" circuit_component_declarations "}" {
+                     circuit_component_declarations {
                         pin = 1
                         implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
                         mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
