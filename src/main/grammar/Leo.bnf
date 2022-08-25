@@ -268,9 +268,9 @@ private statement ::= return_statement
           | loop_statement
           | assignment_statement
           | console_statement
-          | block // { recoverWhile = statement_recover }
+          | block { recoverWhile = statement_recover }
 
-//private statement_recover ::= !( ";" | "}" | identifier | keyword | line-terminator )
+private statement_recover ::= !( ";" | "}" | identifier | keyword | line-terminator )
 
 block ::= "{" statement* "}" { pin = 1 }
 
@@ -292,7 +292,7 @@ branch ::= "if" expression block { pin = 1 }
 
 conditional_statement ::= branch
                       | branch "else" block
-                      | branch "else" conditional_statement
+                      | branch "else" conditional_statement { pin(".*") = 1 }
 
 loop_statement ::= "for" identifier ":" type
                  "in" expression ".." [ "=" ] expression
@@ -371,6 +371,6 @@ private comment ::= end-of-line-comment | block-comment
 declaration ::= function_declaration
             | circuit_declaration
             | record_declaration
-            | comment // {recoverWhile=declaration_recover}
+            | comment  {recoverWhile=declaration_recover}
 
-//private declaration_recover ::= !( "@" identifier | "function" | "circuit" | "record" )
+private declaration_recover ::= !( "@" | "function" | "circuit" | "record" | comment)

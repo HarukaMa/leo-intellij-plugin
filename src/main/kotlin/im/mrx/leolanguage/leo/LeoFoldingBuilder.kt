@@ -20,13 +20,14 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.folding.FoldingBuilderEx
 import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.psi.LeoBlock
 import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
 import im.mrx.leolanguage.leo.psi.LeoVisitor
 
-class LeoFoldingBuilder : FoldingBuilderEx() {
+class LeoFoldingBuilder : FoldingBuilderEx(), DumbAware {
     override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean): Array<FoldingDescriptor> {
         val descriptors = ArrayList<FoldingDescriptor>()
         val visitor = FoldingVisitor(descriptors)
@@ -40,6 +41,7 @@ class LeoFoldingBuilder : FoldingBuilderEx() {
     private class FoldingVisitor(val descriptors: ArrayList<FoldingDescriptor>) : LeoVisitor() {
         override fun visitRecordDeclaration(o: LeoRecordDeclaration) {
             val block = o.circuitComponentDeclarations ?: return
+
             descriptors.add(FoldingDescriptor(block, block.textRange))
         }
 
