@@ -19,7 +19,6 @@ package im.mrx.leolanguage.leo.reference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import im.mrx.leolanguage.leo.psi.LeoCircuitComponentExpression
 import im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifier
 import im.mrx.leolanguage.leo.psi.LeoCircuitDeclaration
 import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
@@ -34,8 +33,8 @@ class LeoCircuitComponentReference(element: LeoCircuitComponentIdentifier) :
     object Resolver : ResolveCache.Resolver {
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
-            val element = ref.element
-            val typeElement = (element.parent as LeoCircuitComponentExpression).getTypeElement() ?: return null
+            val element = ref.element as LeoCircuitComponentIdentifier
+            val typeElement = element.getTypeElement() ?: return null
 
             if (typeElement is LeoCircuitDeclaration) {
                 typeElement.circuitComponentDeclarations?.circuitComponentDeclarationList?.forEach {

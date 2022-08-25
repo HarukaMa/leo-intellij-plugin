@@ -16,23 +16,10 @@
 
 package im.mrx.leolanguage.leo.psi
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement
-import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 
-abstract class LeoCircuitComponentExpressionImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
-    LeoCircuitComponentExpression {
+interface LeoCircuitComponentIdentifierExt {
 
-    override fun getTypeElement(): PsiElement? {
-        if (expression.firstChild is LeoVariableOrFreeConstant) {
-            val reference = expression.firstChild.reference?.resolve() ?: return null
-            for (child in reference.children) {
-                if (child is LeoNamedType) {
-                    return child.reference?.resolve()
-                }
-            }
-        }
-        return null
-    }
+    fun getTypeElement(): PsiElement?
 
 }

@@ -215,13 +215,13 @@ unary_minus_expression ::= "-" expression
 
 tuple_component_expression ::= expression "." numeral
 circuit_component_identifier ::= identifier {
- implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+ implements = [
+   "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+   "im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifierExt"
+ ]
  mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifierImplMixin"
 }
-circuit_component_expression ::= expression "." circuit_component_identifier {
- implements = "im.mrx.leolanguage.leo.psi.LeoCircuitComponentExpressionExt"
- mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitComponentExpressionImplMixin"
-}
+circuit_component_expression ::= expression "." circuit_component_identifier
 private operator_call ::= unary_operator_call | binary_operator_call
 unary_operator_call ::= expression "." identifier "(" ")"
 binary_operator_call ::= expression "." identifier "(" expression [ "," ] ")"
@@ -259,7 +259,7 @@ circuit_expression ::= circuit_expression_identifier "{" circuit_component_initi
                                     ( "," circuit_component_initializer )*
                                     [ "," ] "}" { pin = "," }
 
-circuit_component_initializer ::= identifier ":" expression | identifier
+circuit_component_initializer ::= circuit_component_identifier ":" expression | circuit_component_identifier
 
 private statement ::= return_statement
           | variable_declaration

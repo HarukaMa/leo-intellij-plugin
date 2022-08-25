@@ -33,4 +33,25 @@ abstract class LeoCircuitComponentIdentifierImplMixin(node: ASTNode) : ASTWrappe
         return this.identifier
     }
 
+    override fun getTypeElement(): PsiElement? {
+        when (parent) {
+            is LeoCircuitComponentExpression -> {
+                val expression = (parent as? LeoCircuitComponentExpression)?.expression as LeoPrimaryExpression
+                val reference = expression.variableOrFreeConstant?.reference?.resolve() ?: return null
+                for (child in reference.children) {
+                    if (child is LeoNamedType) {
+                        return child.reference?.resolve()
+                    }
+                }
+            }
+
+            is LeoCircuitComponentInitializer -> {
+                val expression = parent.parent as? LeoCircuitExpression ?: return null
+                return expression.circuitExpressionIdentifier.reference?.resolve()
+            }
+        }
+
+        return null
+    }
+
 }
