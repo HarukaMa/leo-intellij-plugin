@@ -129,7 +129,7 @@ class LeoHighlightingAnnotator : Annotator {
             "LEO_STATIC_FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL
         )
         val CIRCUIT_COMPONENT_KEY = TextAttributesKey.createTextAttributesKey(
-            "LEO_CIRCUIT_COMPONENT_DECLARATION", DefaultLanguageHighlighterColors.INSTANCE_FIELD
+            "LEO_CIRCUIT_COMPONENT_DECLARATION", DefaultLanguageHighlighterColors.STATIC_FIELD
         )
     }
 }
