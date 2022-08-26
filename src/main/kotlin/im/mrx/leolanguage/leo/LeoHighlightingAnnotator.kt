@@ -62,8 +62,9 @@ class LeoHighlightingAnnotator : Annotator {
             FREE_FUNCTION_CALL -> FREE_FUNCTION_CALL_KEY
             STATIC_FUNCTION_CALL -> STATIC_FUNCTION_CALL_KEY
             CIRCUIT_COMPONENT_DECLARATION -> CIRCUIT_COMPONENT_KEY
-            CIRCUIT_COMPONENT_IDENTIFIER -> CIRCUIT_COMPONENT_KEY
             CIRCUIT_COMPONENT_INITIALIZER -> CIRCUIT_COMPONENT_KEY
+
+            CIRCUIT_COMPONENT_IDENTIFIER -> highlightCircuitComponentWithReference(element, holder)
             VARIABLE_OR_FREE_CONSTANT -> highlightVariable(element, holder)
             NAMED_TYPE -> highlightRecordName(element, holder)
             CIRCUIT_EXPRESSION_IDENTIFIER -> highlightRecordName(element, holder)
@@ -103,6 +104,21 @@ class LeoHighlightingAnnotator : Annotator {
             holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved circuit / record reference: ${element.text}")
                 .create()
         }
+        return null
+    }
+
+    private fun highlightCircuitComponentWithReference(
+        element: PsiElement,
+        holder: AnnotationHolder
+    ): TextAttributesKey? {
+        val circuitComponent = element.parent as LeoCircuitComponentIdentifier
+        val reference = circuitComponent.reference ?: return null
+        reference.resolve()?.let {
+            return CIRCUIT_COMPONENT_KEY
+        }
+
+        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved circuit component reference: ${element.text}")
+            .create()
         return null
     }
 
