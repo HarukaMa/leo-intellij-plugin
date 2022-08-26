@@ -104,6 +104,9 @@ class LeoHighlightingAnnotator : Annotator {
             holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved circuit / record reference: ${element.text}")
                 .create()
         }
+        // TODO: named_type -> identifier but not user-defined type?
+        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference: ${element.text}")
+            .create()
         return null
     }
 
