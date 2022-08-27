@@ -33,7 +33,7 @@ abstract class LeoStubbedElementImpl<T : StubElement<PsiElement>> : StubBasedPsi
     // the issue is how the stub element is being extended by the psi element
     // TODO: help is needed to make it work
     @Suppress("UNCHECKED_CAST")
-    constructor(stub: StubElement<PsiElement>, type: IStubElementType<*, *>) : super(stub as T, type)
+    constructor(stub: StubElement<*>, type: IStubElementType<*, *>) : super(stub as T, type)
 
     private fun nameIdentifier(): PsiElement? {
         return findChildByType(LeoTypes.IDENTIFIER)

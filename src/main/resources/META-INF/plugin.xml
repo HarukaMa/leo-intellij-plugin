@@ -86,6 +86,9 @@ Preview version 0.0.1-3: <br/>
         <stubElementTypeHolder class="im.mrx.leolanguage.leo.psi.LeoElementType"/>
         <gotoSymbolContributor implementation="im.mrx.leolanguage.leo.LeoGotoSymbolContributor"/>
         <stubIndex implementation="im.mrx.leolanguage.leo.stub.LeoNamedElementIndex"/>
+        <lang.psiStructureViewFactory
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.leo.LeoStructureViewFactory"/>
 
         <fileType
                 name="Aleo"
