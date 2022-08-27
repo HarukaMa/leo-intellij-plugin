@@ -89,6 +89,9 @@ Preview version 0.0.1-3: <br/>
         <lang.psiStructureViewFactory
                 language="Leo"
                 implementationClass="im.mrx.leolanguage.leo.LeoStructureViewFactory"/>
+        <completion.contributor
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.leo.completion.LeoCompletionContributor"/>
 
         <fileType
                 name="Aleo"
