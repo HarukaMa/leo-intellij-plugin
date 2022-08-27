@@ -331,8 +331,12 @@ function_declaration ::= annotation* "function" identifier
                        "(" [ function_parameters ] ")" "->" type
                        block {
                         pin = 2
-                        implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
-                        mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+                        implements = [
+                          "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                          "com.intellij.psi.StubBasedPsiElement"
+                        ]
+                        mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"
+                        elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
                         }
 
 function_parameters ::= function_parameter ( "," function_parameter )* [ "," ] { pin = 1 }
@@ -346,8 +350,12 @@ function_parameter ::= [ "public" | "constant" | "const" ]
 circuit_declaration ::= "circuit" identifier
                       circuit_component_declarations {
                         pin = 1
-                        implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
-                        mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+                        implements = [
+                          "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                          "com.intellij.psi.StubBasedPsiElement"
+                        ]
+                        mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"
+                        elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
                       }
 
 circuit_component_declarations ::= "{" circuit_component_declaration
@@ -362,8 +370,12 @@ circuit_component_declaration ::= identifier ":" type {
 record_declaration ::= "record" identifier
                      circuit_component_declarations {
                         pin = 1
-                        implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
-                        mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+                        implements = [
+                          "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                          "com.intellij.psi.StubBasedPsiElement"
+                        ]
+                        mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"
+                        elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
                     }
 
 private comment ::= end-of-line-comment | block-comment

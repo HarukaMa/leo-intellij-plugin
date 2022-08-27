@@ -29,11 +29,12 @@ import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 import im.mrx.leolanguage.leo.psi.LeoFile
 import im.mrx.leolanguage.leo.psi.LeoTypes
+import im.mrx.leolanguage.leo.stub.LeoFileStubType
 
 class LeoParserDefinition : ParserDefinition {
 
     companion object {
-        val FILE = IFileElementType(LeoLanguage.INSTANCE)
+        val FILE = LeoFileStubType.INSTANCE
         val WHITESPACE = TokenSet.create(TokenType.WHITE_SPACE)
         val COMMENT = TokenSet.create(LeoTypes.END_OF_LINE_COMMENT, LeoTypes.BLOCK_COMMENT)
         val STRING = TokenSet.create(LeoTypes.STRING_LITERAL)
