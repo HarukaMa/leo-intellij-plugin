@@ -274,17 +274,26 @@ private statement_recover ::= !( ";" | "}" | identifier | keyword | line-termina
 
 block ::= "{" statement* "}" { pin = 1 }
 
-return_statement ::= "return" expression ";" { pin = 1 }
+return_statement ::= "return" expression ";" {
+    pin = 1
+    implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
+}
 
 variable_declaration ::= "let" identifier ":" type "=" expression ";" {
     pin = 1
-    implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+    implements = [
+        "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+        "im.mrx.leolanguage.leo.psi.LeoStatement"
+    ]
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
 }
 
 constant_declaration ::= "const" identifier ":" type "=" expression ";" {
     pin = 1
-    implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+    implements = [
+        "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+        "im.mrx.leolanguage.leo.psi.LeoStatement"
+    ]
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
 }
 
@@ -292,11 +301,17 @@ branch ::= "if" expression block { pin = 1 }
 
 conditional_statement ::= branch
                       | branch "else" block
-                      | branch "else" conditional_statement { pin(".*") = 1 }
+                      | branch "else" conditional_statement {
+    pin(".*") = 1
+    implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
+}
 
 loop_statement ::= "for" identifier ":" type
                  "in" expression ".." [ "=" ] expression
-                 block { pin = 1 }
+                 block {
+    pin = 1
+    implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
+}
 
 assignment_operator ::= "="
                     | "+="
@@ -313,9 +328,16 @@ assignment_operator ::= "="
                     | "&&="
                     | "||="
 
-assignment_statement ::= expression assignment_operator expression ";" {pin = 2  rightAssociative = true}
+assignment_statement ::= expression assignment_operator expression ";" {
+    pin = 2
+    rightAssociative = true
+    implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
+}
 
-console_statement ::= "console" "." console_call ";" { pin = 1 }
+console_statement ::= "console" "." console_call ";" {
+    pin = 1
+    implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
+}
 
 private console_call ::= assert_call
              | assert_equal_call

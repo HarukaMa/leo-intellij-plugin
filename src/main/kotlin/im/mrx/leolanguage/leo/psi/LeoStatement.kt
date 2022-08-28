@@ -14,22 +14,8 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.leo.completion
+package im.mrx.leolanguage.leo.psi
 
-import com.intellij.codeInsight.completion.CompletionContributor
-import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.psi.PsiElement
 
-class LeoCompletionContributor : CompletionContributor() {
-
-    init {
-        extend(LeoTypeCompletionProvider)
-        extend(LeoCircuitExpressionIdentifierCompletionProvider)
-        extend(LeoCircuitComponentCompletionProvider)
-        extend(LeoVariableCompletionProvider)
-    }
-
-    private fun extend(p: LeoCompletionProvider) {
-        extend(CompletionType.BASIC, p.elementPattern, p)
-    }
-
-}
+interface LeoStatement : PsiElement
