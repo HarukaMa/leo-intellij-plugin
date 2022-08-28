@@ -24,6 +24,7 @@ class LeoCompletionContributor : CompletionContributor() {
     init {
         extend(LeoTypeCompletionProvider)
         extend(LeoCircuitExpressionIdentifierCompletionProvider)
+        extend(LeoCircuitComponentCompletionProvider)
     }
 
     private fun extend(p: LeoCompletionProvider) {

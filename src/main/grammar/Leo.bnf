@@ -257,7 +257,7 @@ circuit_expression_identifier ::= identifier {
 
 circuit_expression ::= circuit_expression_identifier "{" circuit_component_initializer
                                     ( "," circuit_component_initializer )*
-                                    [ "," ] "}" { pin = "," }
+                                    [ "," ] "}" { pin = 2 }
 
 circuit_component_initializer ::= circuit_component_identifier ":" expression | circuit_component_identifier
 
