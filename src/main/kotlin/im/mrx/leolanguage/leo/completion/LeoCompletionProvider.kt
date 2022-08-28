@@ -16,18 +16,11 @@
 
 package im.mrx.leolanguage.leo.completion
 
-import com.intellij.codeInsight.completion.CompletionContributor
-import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.patterns.ElementPattern
+import com.intellij.psi.PsiElement
 
-class LeoCompletionContributor : CompletionContributor() {
-
-    init {
-        extend(LeoTypeCompletionProvider)
-        extend(LeoCircuitExpressionIdentifierCompletionProvider)
-    }
-
-    private fun extend(p: LeoCompletionProvider) {
-        extend(CompletionType.BASIC, p.elementPattern, p)
-    }
-
+abstract class LeoCompletionProvider : CompletionProvider<CompletionParameters>() {
+    abstract val elementPattern: ElementPattern<PsiElement>
 }
