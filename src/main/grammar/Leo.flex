@@ -62,7 +62,6 @@ NUMERIC_LITERAL=[0-9]+([ui](8|16|32|64|128)|field|group|scalar)
 //ATOMIC_LITERAL=[0-9]+([ui](8|16|32|64|128)|field|group|scalar)|true|false|aleo1[a_z0-9]{58}|\"([\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]|\'|\\\"|\\|\\n|\\r|\\t|\\0|\\x[0-7][0-9a_f]|\\u\{[0-9a_f]{1,6}})*\"
 //ANNOTATION=\@[a-zA-Z][a-zA-Z0-9_]*
 SYMBOL=\!|&&|\|\||==|\!=|<|<=|>|>=|&|\||\^|<<|>>|\+|-|\*|"/"|%|\*\*|=|\+=|-=|\*=|"/"=|%=|\*\*=|<<=|>>=|&=|\|=|\^=|&&=|\|\|=|\(|\)|\[|]|\{|}|,|\.|\.\.|;|:|::|\?|->|_|\)group
-BRACES=[{}]
 PARENS=[()]
 BRACKETS=[\[\]]
 
@@ -77,7 +76,12 @@ BRACKETS=[\[\]]
   "."                                                                  { return DOT; }
   ","                                                                  { return COMMA; }
   ";"                                                                  { return SEMICOLON; }
+  ":"                                                                  { return COLON; }
+  "::"                                                                 { return DOUBLE_COLON; }
   "@"                                                                  { return AT; }
+  "{"                                                                  { return LBRACE; }
+  "}"                                                                  { return RBRACE; }
+  ")group"                                                             { return GROUP_END; }
 
   {NUMERAL}                                                            { yybegin(NUMERIC); }
 //  {ASCII}                                                              { return ASCII; }
@@ -124,7 +128,6 @@ BRACKETS=[\[\]]
 //  {INTEGER_LITERAL}                                                    { return INTEGER_LITERAL; }
   {NUMERIC_LITERAL}                                                    { return NUMERIC_LITERAL; }
 //  {ATOMIC_LITERAL}                                                     { return ATOMIC_LITERAL; }
-  {BRACES}                                                             { return BRACES; }
   {PARENS}                                                             { return PARENS; }
   {BRACKETS}                                                           { return BRACKETS; }
   {SYMBOL}                                                             { return SYMBOL; }

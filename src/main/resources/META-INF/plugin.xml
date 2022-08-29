@@ -92,6 +92,12 @@ Preview version 0.0.1-3: <br/>
         <completion.contributor
                 language="Leo"
                 implementationClass="im.mrx.leolanguage.leo.completion.LeoCompletionContributor"/>
+        <lang.formatter
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.leo.formatting.LeoFormattingModelBuilder"/>
+        <lang.braceMatcher
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.leo.formatting.LeoPairedBraceMatcher"/>
 
         <fileType
                 name="Aleo"

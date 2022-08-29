@@ -43,7 +43,8 @@ class LeoSyntaxHighlighter : SyntaxHighlighterBase() {
             LeoTypes.END_OF_LINE_COMMENT -> LINE_COMMENT
             LeoTypes.PARENS -> PARENS
             LeoTypes.BRACKETS -> BRACKETS
-            LeoTypes.BRACES -> BRACES
+            LeoTypes.LBRACE -> BRACES
+            LeoTypes.RBRACE -> BRACES
             LeoTypes.SEMICOLON -> SEMICOLON
             LeoTypes.DOT -> DOT
             LeoTypes.COMMA -> COMMA
