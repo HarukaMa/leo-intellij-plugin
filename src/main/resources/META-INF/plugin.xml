@@ -115,5 +115,8 @@ Preview version 0.0.1-3: <br/>
                 fieldName="INSTANCE"
                 language="Aleo"
                 extensions="aleo"/>
+        <lang.parserDefinition
+                language="Aleo"
+                implementationClass="im.mrx.leolanguage.aleo.AleoParserDefinition"/>
     </extensions>
 </idea-plugin>

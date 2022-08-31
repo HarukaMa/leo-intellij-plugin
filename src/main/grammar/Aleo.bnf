@@ -1,0 +1,139 @@
+/*
+ * Copyright (c) 2022 Haruka Ma
+ * This file is part of Leo / Aleo IntelliJ plugin.
+ *
+ * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Leo / Aleo IntelliJ plugin is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+//noinspection BnfSuspiciousTokenForFile
+{
+  parserClass="im.mrx.leolanguage.aleo.AleoParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Aleo"
+  psiImplClassSuffix="Impl"
+  psiPackage="im.mrx.leolanguage.aleo.psi"
+  psiImplPackage="im.mrx.leolanguage.aleo.psi.impl"
+
+  elementTypeHolderClass="im.mrx.leolanguage.aleo.psi.AleoTypes"
+  elementTypeClass="im.mrx.leolanguage.aleo.psi.AleoElementType"
+  tokenTypeClass="im.mrx.leolanguage.aleo.psi.AleoTokenType"
+
+  tokens = [
+    address = "regexp:aleo1[ac-hj-np-z02-9]{58}"
+    boolean = "regexp:true|false"
+    base_register = "regexp:r[0-9]+"
+    identifier = "regexp:[A-Za-z_][A-Za-z0-9_]*"
+    string = "regexp:\"([\x00-\x21\x23-\x5b\u005d-\uffff]|\\\"|\\\\)*\""
+    numeral = "regexp:[0-9]+"
+    comment = "regexp://.*"
+
+
+    semicolon = ";"
+    colon = ":"
+    dot = "."
+    as = "as"
+  ]
+}
+
+root ::= import* title definition*
+
+import ::= "import" program_id ";" { pin = 1 }
+
+title ::= "program" program_id ";" { pin = 1 }
+
+definition ::= interface | record | function | closure
+
+interface ::= "interface" identifier ":" interface_component* { pin = 1 }
+
+interface_component ::= identifier "as" plain_type ";"
+
+record ::= "record" identifier ":" record_entry* { pin = 1 }
+
+record_entry ::= identifier "as" entry_type ";"
+
+function ::= "function" identifier ":" input instruction instruction* output { pin = 1 }
+
+closure ::= "closure" identifier ":" input instruction instruction* output { pin = 1 }
+
+input ::= "input" base_register "as" in_out_type ";"
+         ("input" base_register "as" in_out_type ";") * { pin(".*") = 1}
+
+private instruction ::= unary | binary | ternary | assert | cast | call
+
+output ::= ("output" register "as" in_out_type ";") * { pin(".*") = 1}
+
+unary ::= unary_op operand "into" register ";" { pin = 1 }
+
+binary ::= binary_op operand operand "into" register ";" { pin = 1 }
+
+ternary ::= ternary_op operand operand operand "into" register ";" { pin = 1 }
+
+assert ::= assert_op operand operand ";" { pin = 1 }
+
+unary_op ::= "abs" | "abs.w" | "double" | "inv"
+            | "neg" | "not" | "square" | "sqrt"
+            | "hash.bhp256" | "hash.bhp512" | "hash.bhp768" | "hash.bhp1024"
+            | "hash.ped64" | "hash.ped128"
+            | "hash.psd2" | "hash.psd4" | "hash.psd8"
+
+binary_op ::= "add" | "add.w" | "sub" | "sub.w" | "mul" | "mul.w"
+            | "div" | "div.w" | "rem" | "rem.w" | "pow" | "pow.w"
+            | "shl" | "shl.w" | "shr" | "shr.w"
+            | "and" | "or" | "xor" | "nand" | "nor"
+            | "gt" | "gte" | "lt" | "lte" | "is.eq" | "is.neq"
+            | "commit.bhp256" | "commit.bhp512" | "commit.bhp768" | "commit.bhp1024"
+            | "commit.ped64" | "commit.ped128"
+
+ternary_op ::= "ternary"
+
+assert_op ::= "assert.eq" | "assert.neq"
+
+cast ::= "cast" operand (operand)* "into" register "as" register_type ";" { pin = 1 }
+
+call ::= "call" callee operand* "into" register* ";" { pin = 1 }
+
+callee ::= identifier | external_id
+
+operand ::= literal | register
+
+literal ::= address | boolean | string | arithmetic
+
+arithmetic ::= [ "-" ] numeral arithmetic_type
+
+
+program_id ::= identifier ( "." identifier )*
+
+
+register ::= base_register ( "." identifier )*
+
+
+plain_type ::= primitive_type | identifier
+
+primitive_type ::= arithmetic_type | "address" | "bool" | "string"
+
+arithmetic_type ::= "field" | "group" | "scalar"
+                    | "u8" | "u16" | "u32" | "u64" | "u128"
+                    | "i8" | "i16" | "i32" | "i64" | "i128"
+
+entry_visibility ::= "public" | "private" | "constant"
+
+entry_type ::= plain_type "." entry_visibility
+
+record_type ::= ( identifier | external_id ) ".record"
+
+register_type ::= record_type | plain_type
+
+in_out_type ::= record_type | entry_type
+
+external_id ::= program_id | identifier

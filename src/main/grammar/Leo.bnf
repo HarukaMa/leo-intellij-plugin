@@ -405,11 +405,8 @@ record_declaration ::= "record" identifier
                         elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
                     }
 
-private comment ::= end-of-line-comment | block-comment
-
 declaration ::= function_declaration
             | circuit_declaration
-            | record_declaration
-            | comment  {recoverWhile=declaration_recover}
+            | record_declaration {recoverWhile=declaration_recover}
 
-private declaration_recover ::= !( "@" | "function" | "circuit" | "record" | comment)
+private declaration_recover ::= !( "@" | "function" | "circuit" | "record" )
