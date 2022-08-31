@@ -30,6 +30,8 @@
   tokenTypeClass="im.mrx.leolanguage.aleo.psi.AleoTokenType"
 
   tokens = [
+    keyword = "regexp:import|program|interface|record|function|closure|into|as|public|private|constant"
+    instruction_name = "regexp:input|output|cast|call|abs|abs.w|double|inv|neg|not|square|sqrt|hash.bhp256|hash.bhp512|hash.bhp768|hash.bhp1024|hash.ped64|hash.ped128|hash.psd2|hash.psd4|hash.psd8|add|add.w|sub|sub.w|mul|mul.w|div|div.w|rem|rem.w|pow|pow.w|shl|shl.w|shr|shr.w|and|or|xor|nand|nor|gt|gte|lt|lte|is.eq|is.neq|commit.bhp256|commit.bhp512|commit.bhp768|commit.bhp1024|commit.ped64|commit.ped128|ternary|assert.eq|assert.neq"
     address = "regexp:aleo1[ac-hj-np-z02-9]{58}"
     boolean = "regexp:true|false"
     base_register = "regexp:r[0-9]+"
@@ -62,16 +64,15 @@ record ::= "record" identifier ":" record_entry* { pin = 1 }
 
 record_entry ::= identifier "as" entry_type ";"
 
-function ::= "function" identifier ":" input instruction instruction* output { pin = 1 }
+function ::= "function" identifier ":" input input* instruction instruction* output* { pin = 1 }
 
-closure ::= "closure" identifier ":" input instruction instruction* output { pin = 1 }
+closure ::= "closure" identifier ":" input input *instruction instruction* output* { pin = 1 }
 
-input ::= "input" base_register "as" in_out_type ";"
-         ("input" base_register "as" in_out_type ";") * { pin(".*") = 1}
+input ::= "input" base_register "as" in_out_type ";" { pin = 1 }
 
 private instruction ::= unary | binary | ternary | assert | cast | call
 
-output ::= ("output" register "as" in_out_type ";") * { pin(".*") = 1}
+output ::= "output" register "as" in_out_type ";" { pin = 1 }
 
 unary ::= unary_op operand "into" register ";" { pin = 1 }
 
@@ -120,7 +121,7 @@ register ::= base_register ( "." identifier )*
 
 plain_type ::= primitive_type | identifier
 
-primitive_type ::= arithmetic_type | "address" | "bool" | "string"
+primitive_type ::= arithmetic_type | address | boolean | string
 
 arithmetic_type ::= "field" | "group" | "scalar"
                     | "u8" | "u16" | "u32" | "u64" | "u128"
