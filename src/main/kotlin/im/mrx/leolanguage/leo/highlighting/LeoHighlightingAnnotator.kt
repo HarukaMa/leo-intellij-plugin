@@ -99,6 +99,11 @@ class LeoHighlightingAnnotator : Annotator {
                     return RECORD_DECLARATION_KEY
                 }
             }
+            declaration.circuitDeclaration?.let {
+                if (it.name == element.text) {
+                    return RECORD_DECLARATION_KEY
+                }
+            }
         }
         if (element.parent.elementType == CIRCUIT_EXPRESSION_IDENTIFIER) {
             holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved circuit / record reference: ${element.text}")
