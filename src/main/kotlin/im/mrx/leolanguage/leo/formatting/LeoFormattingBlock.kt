@@ -52,6 +52,8 @@ class LeoFormattingBlock(
             .around(LeoTypes.SYMBOL).spaces(1)
             .after(LeoTypes.COMMA).spaces(1)
             .before(LeoTypes.BLOCK).spaces(1)
+            .after(LeoTypes.LPAREN).spaces(0)
+            .before(LeoTypes.RPAREN).spaces(0)
             .getSpacing(this, child1, child2)
     }
 
