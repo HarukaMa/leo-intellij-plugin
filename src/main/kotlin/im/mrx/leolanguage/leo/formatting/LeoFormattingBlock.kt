@@ -59,8 +59,8 @@ class LeoFormattingBlock(
     }
 
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes {
-        println(newChildIndex)
-        println(node)
+//        println(newChildIndex)
+//        println(node)
         if (node.psi is LeoBlock || node.psi is LeoCircuitExpression || node.psi is LeoCircuitComponentDeclarations) {
 //            if (newChildIndex > 0) {
             return ChildAttributes(Indent.getNormalIndent(), null)
