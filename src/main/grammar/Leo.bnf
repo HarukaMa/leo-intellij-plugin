@@ -254,7 +254,9 @@ static_function_call ::= named_type "::" identifier function_arguments
 
 function_arguments ::= "(" [ expression ( "," expression )* [ "," ] ] ")"
 
-tuple_expression ::= "(" [ expression { "," expression }+ [ "," ] ] ")"
+tuple_expression ::= "(" [ expression { "," expression }+ [ "," ] ] ")" {
+ extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
+}
 
 circuit_expression_identifier ::= identifier {
  implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
@@ -263,9 +265,12 @@ circuit_expression_identifier ::= identifier {
 
 circuit_expression ::= circuit_expression_identifier "{" circuit_component_initializer
                                     ( "," circuit_component_initializer )*
-                                    [ "," ] "}" { pin = 2 }
+                                    [ "," ] "}" {
+ pin = ","
+ extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
+}
 
-circuit_component_initializer ::= circuit_component_identifier ":" expression | circuit_component_identifier
+circuit_component_initializer ::= circuit_component_identifier ":" expression | circuit_component_identifier { pin = ":" }
 
 private statement ::= return_statement
           | variable_declaration
