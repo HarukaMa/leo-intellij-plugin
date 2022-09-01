@@ -23,7 +23,7 @@ import static im.mrx.leolanguage.aleo.psi.AleoTypes.*;
 WHITE_SPACE=\s+
 
 COMMENT=\/\/.*
-KEYWORD=import|program|interface|record|function|closure|into|as|field|group|scalar|u8|u16|u32|u64|u128|i8|i16|i32|i64|i128|boolean
+KEYWORD=import|program|interface|record|function|closure|into|as|field|group|scalar|u8|u16|u32|u64|u128|i8|i16|i32|i64|i128|address|boolean|string
 INSTRUCTION_NAME=input|output|cast|call|abs|abs.w|double|inv|neg|not|square|sqrt|hash.bhp256|hash.bhp512|hash.bhp768|hash.bhp1024|hash.ped64|hash.ped128|hash.psd2|hash.psd4|hash.psd8|add|add.w|sub|sub.w|mul|mul.w|div|div.w|rem|rem.w|pow|pow.w|shl|shl.w|shr|shr.w|and|or|xor|nand|nor|gt|gte|lt|lte|is.eq|is.neq|commit.bhp256|commit.bhp512|commit.bhp768|commit.bhp1024|commit.ped64|commit.ped128|ternary|assert.eq|assert.neq
 ENTRY_VISIBILITY=public|private|constant
 ADDRESS=aleo1[ac-hj-np-z02-9]{58}
