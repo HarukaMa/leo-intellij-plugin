@@ -45,6 +45,7 @@ class LeoFormattingBlock(
 
     override fun getSpacing(child1: Block?, child2: Block): Spacing? {
         return SpacingBuilder(ctx.codeStyleSettings, LeoLanguage.INSTANCE)
+            .before(LeoTypes.COLON).spaces(0)
             .after(LeoTypes.COLON).spaces(1)
             .before(LeoTypes.LBRACE).spaces(1)
             .after(LeoTypes.LBRACE).spaces(1)
