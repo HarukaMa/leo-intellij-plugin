@@ -48,7 +48,7 @@ class LeoVariableReference(element: LeoVariableOrFreeConstant) : LeoReferenceBas
             }
             val function = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
                 ?: error("Variable outside of functions")
-            function.functionParameters!!.functionParameterList.forEach {
+            function.functionParameters?.functionParameterList?.forEach {
                 if (it.name == element.text) {
                     return it
                 }
