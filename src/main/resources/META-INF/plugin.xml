@@ -118,5 +118,12 @@ Preview version 0.0.1-3: <br/>
         <lang.parserDefinition
                 language="Aleo"
                 implementationClass="im.mrx.leolanguage.aleo.AleoParserDefinition"/>
+        <lang.syntaxHighlighter
+                language="Aleo"
+                implementationClass="im.mrx.leolanguage.aleo.highlighting.AleoSyntaxHighlighter"/>
+        <annotator
+                language="Aleo"
+                implementationClass="im.mrx.leolanguage.aleo.highlighting.AleoHighlightingAnnotator"/>
+        <colorSettingsPage implementation="im.mrx.leolanguage.aleo.highlighting.AleoColorSettingsPage"/>
     </extensions>
 </idea-plugin>

@@ -21,7 +21,7 @@ plugins {
 }
 
 group = "im.mrx"
-version = "0.0.2"
+version = "0.1.0"
 
 sourceSets["main"].java.srcDirs("src/main/gen")
 
@@ -61,6 +61,6 @@ tasks {
 
     publishPlugin {
         token.set(System.getenv("PUBLISH_TOKEN"))
-        channels.set(listOf("Stable", "Preview"))
+        channels.set(listOf("Stable"))
     }
 }
