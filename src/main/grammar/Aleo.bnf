@@ -37,6 +37,7 @@
     base_register = "regexp:r[0-9]+"
     identifier = "regexp:[A-Za-z_][A-Za-z0-9_]*"
     string = "regexp:\"([\x00-\x21\x23-\x5b\u005d-\uffff]|\\\"|\\\\)*\""
+    arithmetic_literal = "regexp:[0-9]+([ui](8|16|32|64|128)|field|group|scalar)"
     numeral = "regexp:[0-9]+"
     comment = "regexp://.*"
 
@@ -110,7 +111,7 @@ operand ::= literal | register
 
 literal ::= address | boolean | string | arithmetic
 
-arithmetic ::= [ "-" ] numeral arithmetic_type
+arithmetic ::= [ "-" ] arithmetic_literal
 
 
 program_id ::= identifier ( "." identifier )*

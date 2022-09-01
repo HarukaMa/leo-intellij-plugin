@@ -44,7 +44,7 @@ class AleoSyntaxHighlighter : SyntaxHighlighterBase() {
             AleoTypes.BASE_REGISTER -> REGISTER
             AleoTypes.STRING -> STRING
             AleoTypes.COMMENT -> COMMENT
-            AleoTypes.ARITHMETIC -> NUMBER
+            AleoTypes.ARITHMETIC_LITERAL -> NUMBER
             TokenType.BAD_CHARACTER -> BAD_CHARACTER
 
             else -> null

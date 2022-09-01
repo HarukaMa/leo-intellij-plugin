@@ -19,7 +19,7 @@ import static im.mrx.leolanguage.aleo.psi.AleoTypes.*;
 
 %state STRING_STATE
 
-EOL=\R
+//EOL=\R
 WHITE_SPACE=\s+
 
 COMMENT=\/\/.*
@@ -30,6 +30,7 @@ BASE_REGISTER=r[0-9]+
 BOOLEAN=true|false
 IDENTIFIER=[A-Za-z_][A-Za-z0-9_]*
 STRING=\"([\x00-\x21\x23-\x5b\u005d-\uffff]|\\\"|\\\\)*\"
+ARITHMETIC_LITERAL=[0-9]+([ui](8|16|32|64|128)|field|group|scalar)
 NUMERAL=[0-9]+
 
 %%
@@ -51,6 +52,7 @@ NUMERAL=[0-9]+
   {BOOLEAN}          { return BOOLEAN; }
   {IDENTIFIER}       { return IDENTIFIER; }
   {STRING}           { return STRING; }
+  {ARITHMETIC_LITERAL} { return ARITHMETIC_LITERAL; }
   {NUMERAL}          { return NUMERAL; }
 
 }
