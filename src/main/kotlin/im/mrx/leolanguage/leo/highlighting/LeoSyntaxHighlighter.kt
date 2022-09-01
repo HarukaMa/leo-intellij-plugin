@@ -36,6 +36,7 @@ class LeoSyntaxHighlighter : SyntaxHighlighterBase() {
     override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
         val key = when (tokenType) {
             LeoTypes.KEYWORD -> KEYWORD
+            LeoTypes.BOOLEAN_LITERAL -> KEYWORD
             LeoTypes.IDENTIFIER -> IDENTIFIER
             LeoTypes.STRING_LITERAL -> STRING
             LeoTypes.NUMERIC_LITERAL -> NUMBER
