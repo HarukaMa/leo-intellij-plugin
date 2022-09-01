@@ -67,13 +67,25 @@ record_entry ::= identifier "as" entry_type ";"
 
 function ::= "function" identifier ":" input input* instruction instruction* output* { pin = 1 }
 
-closure ::= "closure" identifier ":" input input *instruction instruction* output* { pin = 1 }
+closure ::= "closure" identifier ":" input input* instruction instruction* output* { pin = 1 }
 
-input ::= "input" base_register "as" in_out_type ";" { pin = 1 }
+input ::= "input" base_register "as" in_out_type ";" {
+ pin = 1
+ recoverWhile = input_recover
+}
 
-private instruction ::= unary | binary | ternary | assert | cast | call
+private input_recover ::= !( "input" | instruction_name )
 
-output ::= "output" register "as" in_out_type ";" { pin = 1 }
+private instruction ::= unary | binary | ternary | assert | cast | call { recoverWhile = instruction_recover }
+
+private instruction_recover ::= !( instruction_name | "output" )
+
+output ::= "output" register "as" in_out_type ";" {
+ pin = 1
+ recoverWhile = output_recover
+}
+
+private output_recover ::= !( "output" )
 
 unary ::= unary_op operand "into" register ";" { pin = 1 }
 
