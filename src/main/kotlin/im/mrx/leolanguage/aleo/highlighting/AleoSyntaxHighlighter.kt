@@ -33,7 +33,6 @@ class AleoSyntaxHighlighter : SyntaxHighlighterBase() {
 
     override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
         val key = when (tokenType) {
-            AleoTypes.KEYWORD -> KEYWORD
             AleoTypes.INSTRUCTION_NAME -> INSTRUCTION_NAME
             AleoTypes.ADDRESS -> ADDRESS
             AleoTypes.BOOLEAN -> KEYWORD
@@ -45,6 +44,8 @@ class AleoSyntaxHighlighter : SyntaxHighlighterBase() {
             AleoTypes.STRING -> STRING
             AleoTypes.COMMENT -> COMMENT
             AleoTypes.ARITHMETIC_LITERAL -> NUMBER
+            AleoTypes.ENTRY_VISIBILITY -> ENTRY_VISIBILITY
+            AleoTypes.KEYWORD -> KEYWORD
             TokenType.BAD_CHARACTER -> BAD_CHARACTER
 
             else -> null
@@ -76,6 +77,10 @@ class AleoSyntaxHighlighter : SyntaxHighlighterBase() {
         val INSTRUCTION_NAME = TextAttributesKey.createTextAttributesKey(
             "ALEO_INSTRUCTION_NAME",
             DefaultLanguageHighlighterColors.INSTANCE_FIELD
+        )
+        val ENTRY_VISIBILITY = TextAttributesKey.createTextAttributesKey(
+            "ALEO_ENTRY_VISIBILITY",
+            DefaultLanguageHighlighterColors.STATIC_FIELD
         )
     }
 }

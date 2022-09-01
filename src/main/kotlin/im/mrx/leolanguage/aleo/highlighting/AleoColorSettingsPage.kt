@@ -35,6 +35,7 @@ class AleoColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor("Register", AleoSyntaxHighlighter.REGISTER),
             AttributesDescriptor("Comment", AleoSyntaxHighlighter.COMMENT),
             AttributesDescriptor("Address", AleoSyntaxHighlighter.ADDRESS),
+            AttributesDescriptor("Visibility", AleoSyntaxHighlighter.ENTRY_VISIBILITY),
             AttributesDescriptor("Braces and Operators//Semicolon", AleoSyntaxHighlighter.SEMICOLON),
             AttributesDescriptor("Braces and Operators//Dot", AleoSyntaxHighlighter.DOT),
         )
