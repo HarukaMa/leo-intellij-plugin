@@ -310,10 +310,9 @@ constant_declaration ::= "const" identifier ":" type "=" expression ";" {
 
 branch ::= "if" expression block { pin = 1 }
 
-conditional_statement ::= branch
-                      | branch "else" block
-                      | branch "else" conditional_statement {
-    pin(".*") = 1
+conditional_statement ::= branch "else" block
+                      | branch "else" conditional_statement
+                      | branch {
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
 
