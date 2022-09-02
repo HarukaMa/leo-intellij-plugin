@@ -82,13 +82,18 @@ function ::= "function" identifier ":" input input* instruction instruction* out
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-closure ::= "closure" identifier ":" input input* instruction instruction* output* {
+closure ::= "closure" identifier ":" closure_input closure_input* instruction instruction* closure_output* {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
 input ::= "input" base_register "as" in_out_type ";" {
+ pin = 1
+ recoverWhile = input_recover
+}
+
+closure_input ::= "input" base_register "as" closure_in_out_type ";" {
  pin = 1
  recoverWhile = input_recover
 }
@@ -100,6 +105,11 @@ private instruction ::= unary | binary | ternary | assert | cast | call { recove
 private instruction_recover ::= !( instruction_name | "output" | 'closure' | 'function' | 'interface' | 'record' )
 
 output ::= "output" register "as" in_out_type ";" {
+ pin = 1
+ recoverWhile = output_recover
+}
+
+closure_output ::= "output" register "as" closure_in_out_type ";" {
  pin = 1
  recoverWhile = output_recover
 }
@@ -169,5 +179,7 @@ record_type ::= ( identifier | external_id ) ".record"
 register_type ::= record_type | plain_type
 
 in_out_type ::= record_type | entry_type
+
+closure_in_out_type ::= record_type | plain_type
 
 external_id ::= program_id | identifier
