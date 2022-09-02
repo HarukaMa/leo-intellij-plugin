@@ -40,26 +40,26 @@ Implemented features: <br/>
 <li>Basic code completion</li>
 <li>Code formatting</li>
 </ul>
-<b>NOTE: </b>Aleo instructions support is missing right now. <br/>
+<b>NOTE: </b>Some features are not supported for Aleo instructions. <br/>
+Please leave feedbacks if you have feature requests.
 <br/>
 For more info on Leo language: <a href="https://leo-lang.org/">leo-lang.org</a> <br/>
 For more info on Aleo: <a href="https://www.aleo.org/">aleo.org</a> <br/>
   ]]></description>
 
     <change-notes><![CDATA[
+Preview version 0.1.0: <br/>
+<ul>
+<li>Added basic Aleo instruction support</li>
+<li>Fixed some highlighting and formatting issues for Leo</li>
+</ul>
+<br/>
 Version 0.0.2: <br/>
 <ul>
 <li>Added basic code completion</li>
 <li>Added basic formatting rules</li>
 <li>Implemented structure view</li>
 <li>Implemented go to symbol</li>
-</ul>
-<br/>
-Preview version 0.0.1-3: <br/>
-<ul>
-<li>Added code folding support</li>
-<li>Added parser recovering</li>
-<li>Reference circuit components in circuit expressions</li>
 </ul>
 ]]></change-notes>
 
