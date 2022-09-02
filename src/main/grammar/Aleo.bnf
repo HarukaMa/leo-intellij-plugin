@@ -60,17 +60,33 @@ definition ::= interface | record | function | closure { recoverWhile = definiti
 
 private definition_recover ::= !( 'closure' | 'function' | 'interface' | 'record' )
 
-interface ::= "interface" identifier ":" interface_component* { pin = 1 }
+interface ::= "interface" identifier ":" interface_component* {
+ pin = 1
+ implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
+ mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
+}
 
 interface_component ::= identifier "as" plain_type ";"
 
-record ::= "record" identifier ":" record_entry* { pin = 1 }
+record ::= "record" identifier ":" record_entry* {
+ pin = 1
+ implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
+ mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
+}
 
 record_entry ::= identifier "as" entry_type ";"
 
-function ::= "function" identifier ":" input input* instruction instruction* output* { pin = 1 }
+function ::= "function" identifier ":" input input* instruction instruction* output* {
+ pin = 1
+ implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
+ mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
+}
 
-closure ::= "closure" identifier ":" input input* instruction instruction* output* { pin = 1 }
+closure ::= "closure" identifier ":" input input* instruction instruction* output* {
+ pin = 1
+ implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
+ mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
+}
 
 input ::= "input" base_register "as" in_out_type ";" {
  pin = 1
@@ -135,7 +151,10 @@ program_id ::= identifier ( "." identifier )*
 register ::= base_register ( "." identifier )*
 
 
-plain_type ::= primitive_type | identifier
+plain_type ::= primitive_type | identifier {
+ implements = "im.mrx.leolanguage.aleo.psi.AleoReferenceElement"
+ mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedTypeImplMixin"
+}
 
 primitive_type ::= arithmetic_type | "address" | "boolean" | "string"
 
