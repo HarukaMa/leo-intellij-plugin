@@ -108,6 +108,9 @@ Version 0.0.2: <br/>
         <lang.braceMatcher
                 language="Leo"
                 implementationClass="im.mrx.leolanguage.leo.formatting.LeoPairedBraceMatcher"/>
+        <lang.commenter
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.leo.LeoCommenter"/>
 
         <fileType
                 name="Aleo"
@@ -125,5 +128,8 @@ Version 0.0.2: <br/>
                 language="Aleo"
                 implementationClass="im.mrx.leolanguage.aleo.highlighting.AleoHighlightingAnnotator"/>
         <colorSettingsPage implementation="im.mrx.leolanguage.aleo.highlighting.AleoColorSettingsPage"/>
+        <lang.commenter
+                language="Aleo"
+                implementationClass="im.mrx.leolanguage.aleo.AleoCommenter"/>
     </extensions>
 </idea-plugin>
