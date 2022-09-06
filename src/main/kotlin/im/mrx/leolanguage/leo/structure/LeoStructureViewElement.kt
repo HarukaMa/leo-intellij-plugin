@@ -21,6 +21,7 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.psi.*
 import javax.swing.Icon
 
@@ -28,15 +29,36 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
     override fun getPresentation(): ItemPresentation {
         return element.presentation ?: object : ItemPresentation {
             override fun getPresentableText(): String? {
-                return when (element) {
-                    is LeoRecordDeclaration -> "record ${element.name}"
-                    is LeoCircuitDeclaration -> "circuit ${element.name}"
-                    is LeoFunctionDeclaration -> "function ${element.name}"
-                    else -> element.name
+                if (element is LeoFunctionDeclaration) {
+                    val parameters = element.functionParameters?.functionParameterList?.map { it.namedType?.text }
+                    var returnsElement = element.block?.prevSibling
+                    while (returnsElement !is LeoNamedType && returnsElement !is LeoTupleType) {
+                        returnsElement = returnsElement?.prevSibling
+                    }
+                    val returns = when (returnsElement) {
+                        is LeoNamedType -> returnsElement.text
+                        is LeoTupleType -> returnsElement.text
+                        else -> null
+                    }
+                    return "${element.name}(${parameters?.joinToString(", ")}) -> $returns"
                 }
+                return element.name
             }
 
-            override fun getIcon(unused: Boolean): Icon? = null
+            override fun getIcon(unused: Boolean): Icon? {
+                return when (element) {
+                    is LeoRecordDeclaration -> AleoIcons.RECORD
+                    is LeoCircuitDeclaration -> AleoIcons.CIRCUIT
+                    is LeoFunctionDeclaration -> {
+                        if (element.annotationList.any { it.text == "@program" }) {
+                            return AleoIcons.FUNCTION
+                        }
+                        return AleoIcons.CLOSURE
+                    }
+
+                    else -> null
+                }
+            }
         }
     }
 

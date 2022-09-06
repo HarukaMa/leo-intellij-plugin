@@ -1,0 +1,23 @@
+<!--
+  - Copyright (c) 2022 Haruka Ma
+  - This file is part of Leo / Aleo IntelliJ plugin.
+  -
+  - Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
+  - under the terms of the GNU General Public License as published by the Free Software
+  - Foundation, either version 3 of the License, or (at your option) any later version.
+  -
+  - Leo / Aleo IntelliJ plugin is distributed in the hope that it will be useful, but
+  - WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  - or FITNESS FOR A PARTICULAR PURPOSE.See the GNU General Public License for more details.
+  -
+  - You should have received a copy of the GNU General Public License along with
+  - Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 2048 2048">
+    <rect fill-opacity="0.6" x="0" y="0" width="2048" height="2048" rx="512" ry="512" fill="#ff88ba"></rect>
+    <g transform="scale(0.75)">
+        <path fill-opacity="0.7" transform="translate(675.84, 1965.6) rotate(180) scale(-1, 1)" fill="#231f20"
+              d="M1061 57q-74 -43 -152.5 -64.5t-160.5 -21.5q-260 0 -406.5 156t-146.5 432t146.5 432t406.5 156q81 0 158 -21t155 -65v-193q-73 65 -146.5 94t-166.5 29q-173 0 -266 -112t-93 -320q0 -207 93.5 -319.5t265.5 -112.5q96 0 172 29.5t141 91.5v-191z"></path>
+    </g>
+</svg>
