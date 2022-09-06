@@ -30,15 +30,19 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
         return element.presentation ?: object : ItemPresentation {
             override fun getPresentableText(): String? {
                 if (element is LeoFunctionDeclaration) {
-                    val parameters = element.functionParameters?.functionParameterList?.map { it.namedType?.text }
+                    val parameters =
+                        element.functionParameters?.functionParameterList?.map { it.namedType?.text ?: "?" }
                     var returnsElement = element.block?.prevSibling
                     while (returnsElement !is LeoNamedType && returnsElement !is LeoTupleType) {
                         returnsElement = returnsElement?.prevSibling
+                        if (returnsElement == null) {
+                            break
+                        }
                     }
                     val returns = when (returnsElement) {
                         is LeoNamedType -> returnsElement.text
                         is LeoTupleType -> returnsElement.text
-                        else -> null
+                        else -> "?"
                     }
                     return "${element.name}(${parameters?.joinToString(", ")}) -> $returns"
                 }
