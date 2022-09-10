@@ -248,7 +248,12 @@ variable_or_free_constant ::= identifier {
 
 associated_constant ::= named_type "::" identifier
 
-free_function_call ::= identifier function_arguments
+function_identifier ::= identifier {
+ implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+ mixin = "im.mrx.leolanguage.leo.psi.LeoFunctionIdentifierImplMixin"
+}
+
+free_function_call ::= function_identifier function_arguments
 
 static_function_call ::= named_type "::" identifier function_arguments
 
