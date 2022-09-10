@@ -111,6 +111,9 @@ Version 0.0.2: <br/>
         <lang.commenter
                 language="Leo"
                 implementationClass="im.mrx.leolanguage.leo.LeoCommenter"/>
+        <lang.documentationProvider
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.leo.LeoDocumentationProvider"/>
 
         <fileType
                 name="Aleo"
