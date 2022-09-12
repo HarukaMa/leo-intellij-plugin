@@ -47,22 +47,6 @@ For more info on Leo language: <a href="https://leo-lang.org/">leo-lang.org</a> 
 For more info on Aleo: <a href="https://www.aleo.org/">aleo.org</a> <br/>
   ]]></description>
 
-    <change-notes><![CDATA[
-Preview version 0.1.0: <br/>
-<ul>
-<li>Added basic Aleo instruction support</li>
-<li>Fixed some highlighting and formatting issues for Leo</li>
-</ul>
-<br/>
-Version 0.0.2: <br/>
-<ul>
-<li>Added basic code completion</li>
-<li>Added basic formatting rules</li>
-<li>Implemented structure view</li>
-<li>Implemented go to symbol</li>
-</ul>
-]]></change-notes>
-
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>

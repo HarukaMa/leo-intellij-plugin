@@ -16,12 +16,13 @@
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.6.20"
-    id("org.jetbrains.intellij") version "1.8.1"
+    id("org.jetbrains.kotlin.jvm") version "1.7.10"
+    id("org.jetbrains.intellij") version "1.9.0"
+    id("org.jetbrains.changelog") version "1.3.1"
 }
 
 group = "im.mrx"
-version = "0.1.0"
+version = "0.1.1"
 
 sourceSets["main"].java.srcDirs("src/main/gen")
 
@@ -38,6 +39,10 @@ intellij {
     plugins.set(listOf(/* Plugin Dependencies */))
 }
 
+changelog {
+    groups.set(emptyList())
+}
+
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
@@ -49,8 +54,16 @@ tasks {
     }
 
     patchPluginXml {
+        dependsOn("patchChangelog")
         sinceBuild.set("212")
         untilBuild.set("222.*")
+        changeNotes.set(
+            changelog.getAll().filter {
+                it.key != "[Unreleased]"
+            }.map {
+                it.key + it.value.toHTML()
+            }.joinToString("<br>")
+        )
     }
 
     signPlugin {
