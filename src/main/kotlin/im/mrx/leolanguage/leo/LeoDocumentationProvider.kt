@@ -61,7 +61,8 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
         val parameters =
             element.functionParameters?.functionParameterList?.joinToString(", ") { "${it.name}: ${it.namedType?.text ?: it.tupleType?.text ?: "?"}" }
                 ?: ""
-        return generateMarkedUpDoc("${element.name}($parameters): ${element.namedType?.text ?: element.tupleType?.text ?: "?"}")
+        val isProgram = element.annotationList.any { it.identifier.text == "program" }
+        return generateMarkedUpDoc((if (isProgram) "@program<br>" else "") + "function ${element.name}($parameters) -> ${element.namedType?.text ?: element.tupleType?.text ?: "?"}")
     }
 
     private fun generateMarkedUpDoc(definition: String): String {
