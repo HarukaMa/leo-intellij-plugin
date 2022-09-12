@@ -20,6 +20,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -60,7 +61,6 @@ class LeoHighlightingAnnotator : Annotator {
             RECORD_DECLARATION -> RECORD_DECLARATION_KEY
             CIRCUIT_DECLARATION -> RECORD_DECLARATION_KEY
             VARIABLE_DECLARATION -> VARIABLE_DECLARATION_KEY
-            FREE_FUNCTION_CALL -> FREE_FUNCTION_CALL_KEY
             STATIC_FUNCTION_CALL -> STATIC_FUNCTION_CALL_KEY
             CIRCUIT_COMPONENT_DECLARATION -> CIRCUIT_COMPONENT_KEY
             CIRCUIT_COMPONENT_INITIALIZER -> CIRCUIT_COMPONENT_KEY
@@ -69,6 +69,7 @@ class LeoHighlightingAnnotator : Annotator {
             VARIABLE_OR_FREE_CONSTANT -> highlightVariable(element, holder)
             NAMED_TYPE -> highlightRecordName(element, holder)
             CIRCUIT_EXPRESSION_IDENTIFIER -> highlightRecordName(element, holder)
+            FUNCTION_IDENTIFIER -> highlightFunctionCall(element, holder)
             else -> null
         }
     }
@@ -86,7 +87,7 @@ class LeoHighlightingAnnotator : Annotator {
                 return VARIABLE_DECLARATION_KEY
             }
         }
-        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference: ${element.text}").create()
+        annotateError(holder, "Unresolved variable reference: ${element.text}")
         return null
     }
 
@@ -108,11 +109,11 @@ class LeoHighlightingAnnotator : Annotator {
         }
         if (element.parent.elementType == CIRCUIT_EXPRESSION_IDENTIFIER) {
             holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved circuit / record reference: ${element.text}")
+                .textAttributes(REFERENCE_ERROR_KEY)
                 .create()
         }
         // TODO: named_type -> identifier but not user-defined type?
-        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference: ${element.text}")
-            .create()
+        annotateError(holder, "Unresolved reference: ${element.text}")
         return null
     }
 
@@ -126,9 +127,25 @@ class LeoHighlightingAnnotator : Annotator {
             return CIRCUIT_COMPONENT_KEY
         }
 
-        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved circuit component reference: ${element.text}")
-            .create()
+        annotateError(holder, "Unresolved circuit component reference: ${element.text}")
         return null
+    }
+
+    private fun highlightFunctionCall(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
+        val functionCall = element.parent as LeoFunctionIdentifier
+        val reference = functionCall.reference ?: return null
+        reference.resolve()?.let {
+            return FREE_FUNCTION_CALL_KEY
+        }
+
+        annotateError(holder, "Unresolved function reference: ${element.text}")
+        return null
+    }
+
+    private fun annotateError(holder: AnnotationHolder, message: String) {
+        holder.newAnnotation(HighlightSeverity.ERROR, message)
+            .textAttributes(REFERENCE_ERROR_KEY)
+            .create()
     }
 
     companion object {
@@ -155,6 +172,9 @@ class LeoHighlightingAnnotator : Annotator {
         )
         val CIRCUIT_COMPONENT_KEY = TextAttributesKey.createTextAttributesKey(
             "LEO_CIRCUIT_COMPONENT_DECLARATION", DefaultLanguageHighlighterColors.STATIC_FIELD
+        )
+        val REFERENCE_ERROR_KEY = TextAttributesKey.createTextAttributesKey(
+            "LEO_WRONG_REFERENCE", CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES
         )
     }
 }
