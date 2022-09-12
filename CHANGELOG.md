@@ -6,6 +6,8 @@
 
 - Fixed function call highlighting
 - Changed error highlighting color
+- Added more completion patterns
+- Improved existing completion content
 
 ## [0.1.1]
 

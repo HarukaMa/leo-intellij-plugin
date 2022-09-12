@@ -22,34 +22,23 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
-import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
-import im.mrx.leolanguage.leo.psi.LeoStatement
-import im.mrx.leolanguage.leo.psi.LeoVariableDeclaration
-import im.mrx.leolanguage.leo.psi.LeoVariableOrFreeConstant
+import im.mrx.leolanguage.leo.psi.LeoBlock
 
-object LeoVariableCompletionProvider : LeoCompletionProvider() {
-
-    override val elementPattern: ElementPattern<PsiElement>
-        get() = psiElement().withParent(psiElement(LeoVariableOrFreeConstant::class.java))
+object LeoStatementBeginProvider : LeoCompletionProvider() {
 
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        var statement: PsiElement? =
-            PsiTreeUtil.getParentOfType(parameters.position, LeoStatement::class.java) ?: return
-        while (statement != null) {
-            (statement as? LeoVariableDeclaration)?.let {
-                result.addElement(LookupElementBuilder.create(it))
-            }
-            statement = statement.prevSibling
-        }
-        val functionDeclaration = PsiTreeUtil.getParentOfType(parameters.position, LeoFunctionDeclaration::class.java)
-        functionDeclaration?.functionParameters?.functionParameterList?.forEach {
+        listOf("if", "let", "console", "const", "for", "return").forEach {
             result.addElement(LookupElementBuilder.create(it))
         }
     }
+
+
+    override val elementPattern: ElementPattern<PsiElement>
+        get() = psiElement().withParent(LeoBlock::class.java)
+
 }

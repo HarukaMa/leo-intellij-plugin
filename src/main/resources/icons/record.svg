@@ -15,7 +15,7 @@
   -->
 
 <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 2048 2048">
-    <rect fill-opacity="0.6" x="0" y="0" width="2048" height="2048" rx="512" ry="512" fill="#be9aff"></rect>
+    <rect fill-opacity="0.6" x="0" y="0" width="2048" height="2048" rx="512" ry="512" fill="#B99BF8"></rect>
     <g transform="scale(0.75)">
         <path fill-opacity="0.7" transform="translate(778.24, 2088.48) rotate(180) scale(-1, 1)" fill="#231f20"
               d="M760 705q78 -20 133 -75.5t137 -221.5l203 -408h-217l-178 377q-77 161 -138.5 207.5t-160.5 46.5h-193v-631h-203v1493h416q246 0 377 -111t131 -321q0 -148 -80.5 -241.5t-226.5 -114.5zM346 1327v-530h221q145 0 216 65t71 199q0 129 -75.5 197.5t-219.5 68.5h-213z "></path>

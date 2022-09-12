@@ -24,6 +24,7 @@ import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
+import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.psi.*
 
 object LeoTypeCompletionProvider : LeoCompletionProvider() {
@@ -36,9 +37,9 @@ object LeoTypeCompletionProvider : LeoCompletionProvider() {
         PsiTreeUtil.getChildrenOfType(parameters.originalFile, LeoDeclaration::class.java)?.forEach {
             if (it.firstChild is LeoRecordDeclaration || it.firstChild is LeoCircuitDeclaration) {
                 result.addElement(
-                    LookupElementBuilder.create(
-                        (it.firstChild as? LeoCircuitDeclaration) ?: it.firstChild as LeoRecordDeclaration
-                    )
+                    LookupElementBuilder.create(it.firstChild)
+                        .withPsiElement(it.firstChild)
+                        .withIcon(if (it.firstChild is LeoCircuitDeclaration) AleoIcons.CIRCUIT else AleoIcons.RECORD)
                 )
             }
         }
