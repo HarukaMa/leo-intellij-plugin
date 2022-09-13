@@ -46,6 +46,10 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
                     }
                     return "${element.name}(${parameters?.joinToString(", ")}) -> $returns"
                 }
+                if (element is LeoCircuitComponentDeclaration) {
+                    val type = element.namedType?.text ?: element.tupleType?.text ?: "?"
+                    return "${element.name}: $type"
+                }
                 return element.name
             }
 
@@ -60,6 +64,7 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
                         return AleoIcons.CLOSURE
                     }
 
+                    is LeoCircuitComponentDeclaration -> AleoIcons.CIRCUIT_COMPONENT
                     else -> null
                 }
             }
@@ -72,6 +77,13 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
             PsiTreeUtil.getChildrenOfType(element, LeoDeclaration::class.java)?.forEach {
                 if (it.firstChild is NavigatablePsiElement) {
                     elements.add(LeoStructureViewElement(it.firstChild as NavigatablePsiElement))
+                }
+            }
+        }
+        if (element is LeoCircuitDeclaration || element is LeoRecordDeclaration) {
+            PsiTreeUtil.getChildOfType(element, LeoCircuitComponentDeclarations::class.java)?.let {
+                it.circuitComponentDeclarationList.forEach { declaration ->
+                    elements.add(LeoStructureViewElement(declaration as NavigatablePsiElement))
                 }
             }
         }
