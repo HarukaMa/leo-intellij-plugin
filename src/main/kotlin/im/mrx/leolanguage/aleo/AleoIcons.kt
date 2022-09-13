@@ -16,13 +16,14 @@
 
 package im.mrx.leolanguage.aleo
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.IconLoader
 
 class AleoIcons {
     companion object {
         val FILE = IconLoader.getIcon("/icons/aleo.svg", AleoIcons::class.java)
         val RECORD = IconLoader.getIcon("/icons/record.svg", AleoIcons::class.java)
-        val FUNCTION = IconLoader.getIcon("/icons/function.svg", AleoIcons::class.java)
+        val FUNCTION = AllIcons.Nodes.Function
         val CIRCUIT = IconLoader.getIcon("/icons/circuit.svg", AleoIcons::class.java)
         val CLOSURE = IconLoader.getIcon("/icons/closure.svg", AleoIcons::class.java)
         val INTERFACE = IconLoader.getIcon("/icons/interface.svg", AleoIcons::class.java)

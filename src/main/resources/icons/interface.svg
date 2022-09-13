@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   - Copyright (c) 2022 Haruka Ma
   - This file is part of Leo / Aleo IntelliJ plugin.
@@ -13,11 +14,8 @@
   - You should have received a copy of the GNU General Public License along with
   - Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
   -->
-
-<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 2048 2048">
-    <rect fill-opacity="0.6" x="0" y="0" width="2048" height="2048" rx="512" ry="512" fill="#B99BF8"></rect>
-    <g transform="scale(0.75)">
-        <path fill-opacity="0.7" transform="translate(778.24, 2129.44) rotate(180) scale(-1, 1)" fill="#231f20"
-              d="M201 1493h829v-170h-313v-1153h313v-170h-829v170h313v1153h-313v170z"></path>
-    </g>
+<svg width="16px" height="16px" version="1.1" viewBox="0 0 2048 2048" xmlns="http://www.w3.org/2000/svg">
+ <rect x="128" y="128" width="1792" height="1792" rx="384" fill="#b99bf8" fill-opacity=".6" stroke-width="128"/>
+ <polygon transform="scale(128)" points="8.6 10 8.6 6 10 6 10 5 6 5 6 6 7.4 6 7.4 10 6 10.007 6 11 10 11 10 10"
+          fill="#231f20" opacity=".7"/>
 </svg>

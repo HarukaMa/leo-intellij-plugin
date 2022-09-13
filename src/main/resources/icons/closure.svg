@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   - Copyright (c) 2022 Haruka Ma
   - This file is part of Leo / Aleo IntelliJ plugin.
@@ -13,11 +14,9 @@
   - You should have received a copy of the GNU General Public License along with
   - Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
   -->
-
-<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 2048 2048">
-    <rect fill-opacity="0.6" x="0" y="0" width="2048" height="2048" rx="512" ry="512" fill="#F98B9E"></rect>
-    <g transform="scale(0.75)">
-        <path fill-opacity="0.7" transform="translate(675.84, 1965.6) rotate(180) scale(-1, 1)" fill="#231f20"
-              d="M1061 57q-74 -43 -152.5 -64.5t-160.5 -21.5q-260 0 -406.5 156t-146.5 432t146.5 432t406.5 156q81 0 158 -21t155 -65v-193q-73 65 -146.5 94t-166.5 29q-173 0 -266 -112t-93 -320q0 -207 93.5 -319.5t265.5 -112.5q96 0 172 29.5t141 91.5v-191z"></path>
-    </g>
+<svg width="16px" height="16px" version="1.1" viewBox="0 0 2048 2048" xmlns="http://www.w3.org/2000/svg">
+ <path d="m1920 1024c0 494.85-401.15 896-896 896s-896-401.15-896-896 401.15-896 896-896 896 401.15 896 896"
+       fill="#f98b9e" fill-opacity=".6" stroke-width="128"/>
+ <path d="m1280 1188.2c-60.16 58.752-124.42 89.02-243.2 91.836-132.99 2.816-268.8-92.237-268.8-255.95 0-164.86 124.29-256.05 268.8-256.05 108.59 0 185.39 23.648 230.4 70.945l78.874-91.844c-87.91-72.519-157.18-107.05-309.5-107.05-225.02 0-396.54 173.82-396.54 384 0 215.3 174.59 384 384.26 384 165.2 0 258.69-52.096 334.59-130.43-52.582-59.637-78.874-89.455-78.874-89.455z"
+       fill="#231f20" fill-opacity=".7" stroke-width="128"/>
 </svg>
