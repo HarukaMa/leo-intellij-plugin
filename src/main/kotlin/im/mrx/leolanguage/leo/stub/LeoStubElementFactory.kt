@@ -16,9 +16,11 @@
 
 package im.mrx.leolanguage.leo.stub
 
+import im.mrx.leolanguage.leo.psi.LeoCircuitComponentDeclaration
 import im.mrx.leolanguage.leo.psi.LeoCircuitDeclaration
 import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
 import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
+import im.mrx.leolanguage.leo.psi.impl.LeoCircuitComponentDeclarationImpl
 import im.mrx.leolanguage.leo.psi.impl.LeoCircuitDeclarationImpl
 import im.mrx.leolanguage.leo.psi.impl.LeoFunctionDeclarationImpl
 import im.mrx.leolanguage.leo.psi.impl.LeoRecordDeclarationImpl
@@ -39,6 +41,11 @@ fun factory(name: String): LeoSymbolStubType<*> {
         "FUNCTION_DECLARATION" -> LeoSymbolStubType<LeoFunctionDeclaration>(
             "FUNCTION_DECLARATION",
             ::LeoFunctionDeclarationImpl
+        )
+
+        "CIRCUIT_COMPONENT_DECLARATION" -> LeoSymbolStubType<LeoCircuitComponentDeclaration>(
+            "CIRCUIT_COMPONENT_DECLARATION",
+            ::LeoCircuitComponentDeclarationImpl
         )
 
         else -> error("Unknown symbol $name")

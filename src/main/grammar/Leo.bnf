@@ -399,9 +399,14 @@ circuit_component_declarations ::= "{" circuit_component_declaration
                                  ( "," circuit_component_declaration )*
                                  [ "," ] "}"
 
-circuit_component_declaration ::= identifier ":" type {
-    implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
-    mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+circuit_component_declaration ::= identifier ":" type  {
+    pin = 1
+    implements = [
+        "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+        "com.intellij.psi.StubBasedPsiElement"
+    ]
+    mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"
+    elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
 }
 
 record_declaration ::= "record" identifier
