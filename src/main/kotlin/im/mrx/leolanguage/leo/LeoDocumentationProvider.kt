@@ -43,7 +43,7 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     private fun generateDoc(element: LeoFunctionParameter): String {
-        val doc = "${element.name}: ${element.namedType?.text ?: element.tupleType?.text ?: "?"}"
+        val doc = "${element.name}: ${LeoUtils.typeToString(element)}"
         val declaration = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
         if (declaration?.annotationList?.any { it.identifier.text == "program" } == true) {
             var visibility = element.identifier.prevSibling
@@ -63,32 +63,15 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     private fun generateDoc(element: LeoCircuitComponentDeclaration): String {
-        return generateMarkedUpDoc("${element.name}: ${element.namedType?.text ?: element.tupleType?.text ?: "?"}")
+        return generateMarkedUpDoc("${element.name}: ${LeoUtils.typeToString(element)}")
     }
 
     private fun generateDoc(element: LeoVariableDeclaration): String {
-        return generateMarkedUpDoc("${element.name}: ${element.namedType?.text ?: element.tupleType?.text ?: "?"}")
+        return generateMarkedUpDoc("${element.name}: ${LeoUtils.typeToString(element)}")
     }
 
     private fun generateDoc(element: LeoFunctionDeclaration): String {
-        val isProgram = element.annotationList.any { it.identifier.text == "program" }
-        val parameters =
-            element.functionParameters?.functionParameterList?.joinToString(", ") {
-                val doc = "${it.name}: ${it.namedType?.text ?: it.tupleType?.text ?: "?"}"
-                if (isProgram) {
-                    var visibility = it.identifier.prevSibling
-                    while (visibility != null) {
-                        if (visibility.elementType == LeoTypes.KEYWORD) {
-                            break
-                        }
-                        visibility = visibility.prevSibling
-                    }
-                    return@joinToString "${visibility?.text ?: "private"} $doc"
-                }
-                return@joinToString doc
-            }
-                ?: ""
-        return generateMarkedUpDoc((if (isProgram) "@program<br>" else "") + "function ${element.name}($parameters) -> ${element.namedType?.text ?: element.tupleType?.text ?: "?"}")
+        return generateMarkedUpDoc(LeoUtils.functionToDocString(element))
     }
 
     private fun generateMarkedUpDoc(definition: String): String {

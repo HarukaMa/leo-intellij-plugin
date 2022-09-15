@@ -253,11 +253,11 @@ function_identifier ::= identifier {
  mixin = "im.mrx.leolanguage.leo.psi.LeoFunctionIdentifierImplMixin"
 }
 
-free_function_call ::= function_identifier function_arguments
+free_function_call ::= function_identifier function_arguments { pin = 2 }
 
-static_function_call ::= named_type "::" identifier function_arguments
+static_function_call ::= named_type "::" identifier function_arguments { pin = 4 }
 
-function_arguments ::= "(" [ expression ( "," expression )* [ "," ] ] ")"
+function_arguments ::= "(" [ expression ( "," expression )* [ "," ] ] ")" { pin = 1 }
 
 tuple_expression ::= "(" [ expression { "," expression }+ [ "," ] ] ")" {
  extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
@@ -299,6 +299,7 @@ variable_declaration ::= "let" identifier ":" type "=" expression ";" {
     pin = 1
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+        "im.mrx.leolanguage.leo.psi.LeoTypedElement"
         "im.mrx.leolanguage.leo.psi.LeoStatement"
     ]
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
@@ -370,6 +371,7 @@ function_declaration ::= annotation* "function" identifier
                         pin = 2
                         implements = [
                           "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                          "im.mrx.leolanguage.leo.psi.LeoTypedElement"
                           "com.intellij.psi.StubBasedPsiElement"
                         ]
                         mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"
@@ -380,7 +382,10 @@ function_parameters ::= function_parameter ( "," function_parameter )* [ "," ] {
 
 function_parameter ::= [ "public" | "constant" | "const" ]
                      identifier ":" type {
-                        implements = "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                        implements = [
+                            "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                            "im.mrx.leolanguage.leo.psi.LeoTypedElement"
+                        ]
                         mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
                      }
 
@@ -403,6 +408,7 @@ circuit_component_declaration ::= identifier ":" type  {
     pin = 1
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+        "im.mrx.leolanguage.leo.psi.LeoTypedElement"
         "com.intellij.psi.StubBasedPsiElement"
     ]
     mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"

@@ -26,48 +26,44 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.LeoUtils
-import im.mrx.leolanguage.leo.psi.*
+import im.mrx.leolanguage.leo.psi.LeoDeclaration
+import im.mrx.leolanguage.leo.psi.LeoFunctionIdentifier
 
-object LeoVariableCompletionProvider : LeoCompletionProvider() {
-
+object LeoFunctionCompletionProvider : LeoCompletionProvider() {
     override val elementPattern: ElementPattern<PsiElement>
-        get() = psiElement().withParent(LeoVariableOrFreeConstant::class.java)
+        get() = psiElement().withParent(LeoFunctionIdentifier::class.java)
 
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        addVariablesInScope(parameters, result)
-        LeoFunctionCompletionProvider.addFunctions(parameters, result)
+        addFunctions(parameters, result)
     }
 
-    fun addVariablesInScope(parameters: CompletionParameters, result: CompletionResultSet) {
+    fun addFunctions(parameters: CompletionParameters, result: CompletionResultSet) {
         val element = parameters.position
-        var statement: PsiElement? = if (element.parent is LeoBlock) {
-            element
-        } else {
-            PsiTreeUtil.getParentOfType(element, LeoStatement::class.java)
-        } ?: return
-        while (statement != null) {
-            (statement as? LeoVariableDeclaration)?.let {
-                result.addElement(
-                    LookupElementBuilder
-                        .create(it)
-                        .withIcon(AleoIcons.VARIABLE)
-                        .withTypeText(LeoUtils.typeToString(it))
-                )
-            }
-            statement = statement.prevSibling
-        }
-        val functionDeclaration = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
-        functionDeclaration?.functionParameters?.functionParameterList?.forEach {
+        PsiTreeUtil.getChildrenOfType(element.containingFile, LeoDeclaration::class.java)?.forEach {
+            val function = it.functionDeclaration ?: return@forEach
             result.addElement(
                 LookupElementBuilder
-                    .create(it)
-                    .withIcon(AleoIcons.FUNCTION_PARAMETER)
-                    .withTypeText(LeoUtils.typeToString(it))
+                    .create(function)
+                    .withIcon(if (LeoUtils.functionIsProgram(function)) AleoIcons.FUNCTION else AleoIcons.CLOSURE)
+                    .withTypeText(LeoUtils.typeToString(function))
+                    .withTailText("(${LeoUtils.functionParameterListToString(function)})")
+                    .withInsertHandler { context, _ ->
+                        val seq = context.document.charsSequence
+                        var offset = context.tailOffset
+                        while (seq[offset] == ' ' || seq[offset] == '\t') {
+                            offset += 1
+                        }
+                        if (seq[offset] != '(') {
+                            context.document.insertString(offset, "();")
+                            context.editor.caretModel.moveToOffset(offset + 1)
+                        }
+                    }
             )
         }
     }
+
 }

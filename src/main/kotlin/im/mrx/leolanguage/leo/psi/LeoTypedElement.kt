@@ -14,24 +14,10 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.leo.completion
+package im.mrx.leolanguage.leo.psi
 
-import com.intellij.codeInsight.completion.CompletionContributor
-import com.intellij.codeInsight.completion.CompletionType
+interface LeoTypedElement {
+    val namedType: LeoNamedType?
 
-class LeoCompletionContributor : CompletionContributor() {
-
-    init {
-        extend(LeoTypeCompletionProvider)
-        extend(LeoCircuitExpressionIdentifierCompletionProvider)
-        extend(LeoCircuitComponentCompletionProvider)
-        extend(LeoVariableCompletionProvider)
-        extend(LeoStatementBeginProvider)
-        extend(LeoFunctionCompletionProvider)
-    }
-
-    private fun extend(p: LeoCompletionProvider) {
-        extend(CompletionType.BASIC, p.elementPattern, p)
-    }
-
+    val tupleType: LeoTupleType?
 }

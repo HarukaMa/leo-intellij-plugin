@@ -22,6 +22,7 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.aleo.AleoIcons
+import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.psi.*
 import javax.swing.Icon
 
@@ -47,7 +48,7 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
                     return "${element.name}(${parameters?.joinToString(", ")}) -> $returns"
                 }
                 if (element is LeoCircuitComponentDeclaration) {
-                    val type = element.namedType?.text ?: element.tupleType?.text ?: "?"
+                    val type = LeoUtils.typeToString(element)
                     return "${element.name}: $type"
                 }
                 return element.name

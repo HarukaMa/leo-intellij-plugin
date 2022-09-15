@@ -28,5 +28,7 @@ class AleoIcons {
         val CLOSURE = IconLoader.getIcon("/icons/closure.svg", AleoIcons::class.java)
         val INTERFACE = IconLoader.getIcon("/icons/interface.svg", AleoIcons::class.java)
         val CIRCUIT_COMPONENT = AllIcons.Nodes.Field
+        val VARIABLE = AllIcons.Nodes.Variable
+        val FUNCTION_PARAMETER = AllIcons.Nodes.Parameter
     }
 }

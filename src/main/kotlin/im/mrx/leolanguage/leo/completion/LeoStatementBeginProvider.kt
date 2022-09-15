@@ -35,6 +35,7 @@ object LeoStatementBeginProvider : LeoCompletionProvider() {
         listOf("if", "let", "console", "const", "for", "return").forEach {
             result.addElement(LookupElementBuilder.create(it))
         }
+        LeoVariableCompletionProvider.addVariablesInScope(parameters, result)
     }
 
 
