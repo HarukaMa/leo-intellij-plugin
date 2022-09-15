@@ -20,6 +20,7 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.documentation.DocumentationMarkup.DEFINITION_END
 import com.intellij.lang.documentation.DocumentationMarkup.DEFINITION_START
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import im.mrx.leolanguage.leo.psi.*
 
@@ -42,7 +43,19 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     private fun generateDoc(element: LeoFunctionParameter): String {
-        return generateMarkedUpDoc("${element.name}: ${element.namedType?.text ?: element.tupleType?.text ?: "?"}")
+        val doc = "${element.name}: ${element.namedType?.text ?: element.tupleType?.text ?: "?"}"
+        val declaration = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
+        if (declaration?.annotationList?.any { it.identifier.text == "program" } == true) {
+            var visibility = element.identifier.prevSibling
+            while (visibility != null) {
+                if (visibility.elementType == LeoTypes.KEYWORD) {
+                    break
+                }
+                visibility = visibility.prevSibling
+            }
+            return generateMarkedUpDoc("${visibility?.text ?: "private"} $doc")
+        }
+        return generateMarkedUpDoc(doc)
     }
 
     private fun generateDoc(element: LeoCircuitDeclaration): String {
