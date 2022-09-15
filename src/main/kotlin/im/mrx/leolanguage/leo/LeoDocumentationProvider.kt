@@ -71,10 +71,23 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     private fun generateDoc(element: LeoFunctionDeclaration): String {
-        val parameters =
-            element.functionParameters?.functionParameterList?.joinToString(", ") { "${it.name}: ${it.namedType?.text ?: it.tupleType?.text ?: "?"}" }
-                ?: ""
         val isProgram = element.annotationList.any { it.identifier.text == "program" }
+        val parameters =
+            element.functionParameters?.functionParameterList?.joinToString(", ") {
+                val doc = "${it.name}: ${it.namedType?.text ?: it.tupleType?.text ?: "?"}"
+                if (isProgram) {
+                    var visibility = it.identifier.prevSibling
+                    while (visibility != null) {
+                        if (visibility.elementType == LeoTypes.KEYWORD) {
+                            break
+                        }
+                        visibility = visibility.prevSibling
+                    }
+                    return@joinToString "${visibility?.text ?: "private"} $doc"
+                }
+                return@joinToString doc
+            }
+                ?: ""
         return generateMarkedUpDoc((if (isProgram) "@program<br>" else "") + "function ${element.name}($parameters) -> ${element.namedType?.text ?: element.tupleType?.text ?: "?"}")
     }
 
