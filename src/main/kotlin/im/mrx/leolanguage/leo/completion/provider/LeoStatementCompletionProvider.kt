@@ -39,8 +39,10 @@ object LeoStatementCompletionProvider : LeoCompletionProvider() {
                 LookupElementBuilder
                     .create(it)
                     .withInsertHandler { ctx, _ ->
-                        ctx.document.insertString(ctx.selectionEndOffset, " ")
-                        EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
+                        if (it in listOf("if", "let", "const", "for", "return")) {
+                            ctx.document.insertString(ctx.selectionEndOffset, " ")
+                            EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
+                        }
                     }
             )
         }

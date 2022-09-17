@@ -20,7 +20,6 @@ import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.psi.util.elementType
 import im.mrx.leolanguage.leo.completion.provider.*
 
 class LeoCompletionContributor : CompletionContributor() {
@@ -41,10 +40,11 @@ class LeoCompletionContributor : CompletionContributor() {
     }
 
     // for completion pattern debugging
+    @Suppress("RedundantOverride")
     override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
-        println(parameters.position.elementType)
-        println(parameters.position.text)
-        println(parameters.position.parent.elementType)
+//        println(parameters.position.elementType)
+//        println(parameters.position.text)
+//        println(parameters.position.parent.elementType)
         super.fillCompletionVariants(parameters, result)
     }
 
