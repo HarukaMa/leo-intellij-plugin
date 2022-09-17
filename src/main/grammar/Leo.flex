@@ -30,7 +30,7 @@ WHITESPACE=(\ |\t|\n|\r|\r\n)+
 //NOT_DOUBLE_QUOTE_OR_BACKSLASH_OR_LINE_FEED_OR_CARRIAGE_RETURN=[\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]
 END_OF_LINE_COMMENT=\/\/[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*
 BLOCK_COMMENT=\/[*]([^*]|[*][^/])*([*]\/)?
-KEYWORD=address|bool|circuit|console|const|constant|else|field|for|function|group|i8|i16|i32|i64|i128|if|in|let|public|record|return|scalar|string|u8|u16|u32|u64|u128
+KEYWORD=address|bool|circuit|console|const|constant|else|field|for|function|group|i8|i16|i32|i64|i128|if|in|let|public|record|return|scalar|string|u8|u16|u32|u64|u128|increment|decrement|finalize|mapping
 //UPPERCASE_LETTER=[A_Z]
 //LOWERCASE_LETTER=[a_z]
 //LETTER=[a_zA_Z]
@@ -61,7 +61,7 @@ STRING_LITERAL=\"([\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u
 NUMERIC_LITERAL=[0-9]+([ui](8|16|32|64|128)|field|group|scalar)
 //ATOMIC_LITERAL=[0-9]+([ui](8|16|32|64|128)|field|group|scalar)|true|false|aleo1[a_z0-9]{58}|\"([\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]|\'|\\\"|\\|\\n|\\r|\\t|\\0|\\x[0-7][0-9a_f]|\\u\{[0-9a_f]{1,6}})*\"
 //ANNOTATION=\@[a-zA-Z][a-zA-Z0-9_]*
-SYMBOL=\!|&&|\|\||==|\!=|<|<=|>|>=|&|\||\^|<<|>>|\+|-|\*|"/"|%|\*\*|=|\+=|-=|\*=|"/"=|%=|\*\*=|<<=|>>=|&=|\|=|\^=|&&=|\|\|=|\(|\)|\[|]|\{|}|,|\.|\.\.|;|:|::|\?|->|_|\)group
+SYMBOL=\!|&&|\|\||==|\!=|<|<=|>|>=|&|\||\^|<<|>>|\+|-|\*|"/"|%|\*\*|=|\+=|-=|\*=|"/"=|%=|\*\*=|<<=|>>=|&=|\|=|\^=|&&=|\|\|=|\(|\)|\[|]|\{|}|,|\.|\.\.|;|:|::|\?|->|_|=>|\)group
 BRACKETS=[\[\]]
 
 %state NUMERIC

@@ -24,7 +24,5 @@ class LeoFileStubType : IStubFileElementType<LeoFileStub>(LeoLanguage.INSTANCE) 
         val INSTANCE = LeoFileStubType()
     }
 
-    override fun getStubVersion(): Int {
-        return 1
-    }
+    override fun getStubVersion(): Int = 2
 }

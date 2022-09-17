@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "im.mrx"
-version = "0.1.2"
+version = "0.1.3"
 
 sourceSets["main"].java.srcDirs("src/main/gen")
 
@@ -54,9 +54,8 @@ tasks {
     }
 
     patchPluginXml {
-        dependsOn("patchChangelog")
         sinceBuild.set("212")
-        untilBuild.set("222.*")
+        untilBuild.set("223.*")
         changeNotes.set(
             changelog.getAll().filter {
                 it.key != "[Unreleased]"
@@ -73,6 +72,7 @@ tasks {
     }
 
     publishPlugin {
+        dependsOn("patchChangelog")
         token.set(System.getenv("PUBLISH_TOKEN"))
         channels.set(listOf("Stable"))
     }
