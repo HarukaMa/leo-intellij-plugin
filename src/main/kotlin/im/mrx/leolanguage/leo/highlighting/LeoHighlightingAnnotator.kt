@@ -75,11 +75,20 @@ class LeoHighlightingAnnotator : Annotator {
     }
 
     private fun highlightVariable(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
-        val function = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java) ?: return null
-        val parameters = function.functionParameters ?: return null
-        for (parameter in parameters.functionParameterList) {
-            if (parameter.name == element.text) {
-                return FUNCTION_PARAMETER_KEY
+        val finalizer = PsiTreeUtil.getParentOfType(element, LeoFinalizer::class.java)
+        if (finalizer != null) {
+            finalizer.functionParameters?.functionParameterList?.forEach {
+                if (it.name == element.text) {
+                    return FUNCTION_PARAMETER_KEY
+                }
+            }
+        } else {
+            val function = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java) ?: return null
+            val parameters = function.functionParameters ?: return null
+            for (parameter in parameters.functionParameterList) {
+                if (parameter.name == element.text) {
+                    return FUNCTION_PARAMETER_KEY
+                }
             }
         }
         (element.parent as LeoVariableOrFreeConstant).reference?.resolve()?.let {
