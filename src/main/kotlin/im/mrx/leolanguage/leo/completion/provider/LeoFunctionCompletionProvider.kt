@@ -14,11 +14,12 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.leo.completion
+package im.mrx.leolanguage.leo.completion.provider
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
@@ -26,6 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.LeoUtils
+import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.LeoDeclaration
 import im.mrx.leolanguage.leo.psi.LeoFunctionIdentifier
 
@@ -59,7 +61,7 @@ object LeoFunctionCompletionProvider : LeoCompletionProvider() {
                         }
                         if (seq[offset] != '(') {
                             context.document.insertString(offset, "();")
-                            context.editor.caretModel.moveToOffset(offset + 1)
+                            EditorModificationUtil.moveCaretRelatively(context.editor, -2)
                         }
                     }
             )

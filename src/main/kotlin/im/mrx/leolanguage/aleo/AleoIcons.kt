@@ -30,5 +30,6 @@ class AleoIcons {
         val CIRCUIT_COMPONENT = AllIcons.Nodes.Field
         val VARIABLE = AllIcons.Nodes.Variable
         val FUNCTION_PARAMETER = AllIcons.Nodes.Parameter
+        val ANNOTATION = AllIcons.Nodes.Annotationtype
     }
 }

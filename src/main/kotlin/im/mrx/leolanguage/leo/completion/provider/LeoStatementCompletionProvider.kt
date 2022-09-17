@@ -14,39 +14,41 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.leo.completion
+package im.mrx.leolanguage.leo.completion.provider
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
-import im.mrx.leolanguage.aleo.AleoIcons
-import im.mrx.leolanguage.leo.psi.*
+import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
+import im.mrx.leolanguage.leo.psi.LeoBlock
 
-object LeoTypeCompletionProvider : LeoCompletionProvider() {
+object LeoStatementCompletionProvider : LeoCompletionProvider() {
+
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-
-        PsiTreeUtil.getChildrenOfType(parameters.originalFile, LeoDeclaration::class.java)?.forEach {
-            if (it.firstChild is LeoRecordDeclaration || it.firstChild is LeoCircuitDeclaration) {
-                result.addElement(
-                    LookupElementBuilder.create(it.firstChild)
-                        .withPsiElement(it.firstChild)
-                        .withIcon(if (it.firstChild is LeoCircuitDeclaration) AleoIcons.CIRCUIT else AleoIcons.RECORD)
-                )
-            }
+        listOf("if", "let", "console", "const", "for", "return", "increment", "decrement", "finalize").forEach {
+            result.addElement(
+                LookupElementBuilder
+                    .create(it)
+                    .withInsertHandler { ctx, _ ->
+                        ctx.document.insertString(ctx.selectionEndOffset, " ")
+                        EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
+                    }
+            )
         }
+        LeoVariableCompletionProvider.addVariablesInScope(parameters, result)
     }
 
+
     override val elementPattern: ElementPattern<PsiElement>
-        get() = psiElement(LeoTypes.IDENTIFIER).and(
-            psiElement().withParent(LeoNamedType::class.java)
-        )
+        get() = psiElement().withParent(LeoBlock::class.java)
+
 }

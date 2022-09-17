@@ -17,7 +17,11 @@
 package im.mrx.leolanguage.leo.completion
 
 import com.intellij.codeInsight.completion.CompletionContributor
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.psi.util.elementType
+import im.mrx.leolanguage.leo.completion.provider.*
 
 class LeoCompletionContributor : CompletionContributor() {
 
@@ -26,12 +30,22 @@ class LeoCompletionContributor : CompletionContributor() {
         extend(LeoCircuitExpressionIdentifierCompletionProvider)
         extend(LeoCircuitComponentCompletionProvider)
         extend(LeoVariableCompletionProvider)
-        extend(LeoStatementBeginProvider)
+        extend(LeoStatementCompletionProvider)
         extend(LeoFunctionCompletionProvider)
+        extend(LeoDeclarationCompletionProvider)
+        extend(LeoAnnotationCompletionProvider)
     }
 
     private fun extend(p: LeoCompletionProvider) {
         extend(CompletionType.BASIC, p.elementPattern, p)
+    }
+
+    // for completion pattern debugging
+    override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
+        println(parameters.position.elementType)
+        println(parameters.position.text)
+        println(parameters.position.parent.elementType)
+        super.fillCompletionVariants(parameters, result)
     }
 
 }

@@ -14,7 +14,7 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.leo.completion
+package im.mrx.leolanguage.leo.completion.provider
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
@@ -22,24 +22,32 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
-import im.mrx.leolanguage.leo.psi.LeoBlock
+import im.mrx.leolanguage.aleo.AleoIcons
+import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
+import im.mrx.leolanguage.leo.psi.*
 
-object LeoStatementBeginProvider : LeoCompletionProvider() {
-
+object LeoTypeCompletionProvider : LeoCompletionProvider() {
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        listOf("if", "let", "console", "const", "for", "return").forEach {
-            result.addElement(LookupElementBuilder.create(it))
+
+        PsiTreeUtil.getChildrenOfType(parameters.originalFile, LeoDeclaration::class.java)?.forEach {
+            if (it.firstChild is LeoRecordDeclaration || it.firstChild is LeoCircuitDeclaration) {
+                result.addElement(
+                    LookupElementBuilder.create(it.firstChild)
+                        .withPsiElement(it.firstChild)
+                        .withIcon(if (it.firstChild is LeoCircuitDeclaration) AleoIcons.CIRCUIT else AleoIcons.RECORD)
+                )
+            }
         }
-        LeoVariableCompletionProvider.addVariablesInScope(parameters, result)
     }
 
-
     override val elementPattern: ElementPattern<PsiElement>
-        get() = psiElement().withParent(LeoBlock::class.java)
-
+        get() = psiElement(LeoTypes.IDENTIFIER).and(
+            psiElement().withParent(LeoNamedType::class.java)
+        )
 }
