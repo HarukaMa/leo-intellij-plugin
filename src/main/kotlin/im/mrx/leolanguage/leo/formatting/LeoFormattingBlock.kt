@@ -84,7 +84,10 @@ class LeoFormattingBlock(
     }
 
     private fun getChildIndent(child: ASTNode): Indent {
-        if (node.psi is LeoBlock || node.psi is LeoCircuitExpression || node.psi is LeoCircuitComponentDeclarations) {
+        if (node.psi is LeoBlock
+            || node.psi is LeoCircuitExpression
+            || node.psi is LeoCircuitComponentDeclarations
+        ) {
             if (child.elementType != LeoTypes.LBRACE && child.elementType != LeoTypes.RBRACE) {
                 return Indent.getNormalIndent()
             }

@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 - Support new mapping syntax for Leo
+- Add completion for declarations
+- Fix auto indent of circuit and record types
 
 ## [0.1.2]
 

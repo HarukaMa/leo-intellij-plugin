@@ -431,7 +431,7 @@ circuit_declaration ::= "circuit" identifier
 
 circuit_component_declarations ::= "{" circuit_component_declaration
                                  ( "," circuit_component_declaration )*
-                                 [ "," ] "}"
+                                 [ "," ] "}" { pin = 1 }
 
 circuit_component_declaration ::= identifier ":" type  {
     pin = 1
