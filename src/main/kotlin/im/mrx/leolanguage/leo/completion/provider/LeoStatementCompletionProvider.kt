@@ -43,6 +43,10 @@ object LeoStatementCompletionProvider : LeoCompletionProvider() {
                             ctx.document.insertString(ctx.selectionEndOffset, " ")
                             EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
                         }
+                        if (it in listOf("increment", "decrement", "finalize")) {
+                            ctx.document.insertString(ctx.selectionEndOffset, "();")
+                            EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
+                        }
                     }
             )
         }

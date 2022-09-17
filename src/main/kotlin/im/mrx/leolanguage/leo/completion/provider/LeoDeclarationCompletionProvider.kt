@@ -25,6 +25,7 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.LeoDeclaration
@@ -44,6 +45,17 @@ object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
                     .withInsertHandler { ctx, _ ->
                         ctx.document.insertString(ctx.selectionEndOffset, " ")
                         EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
+                    }
+            )
+        }
+        PsiTreeUtil.getTopmostParentOfType(parameters.position, LeoDeclaration::class.java)?.let {
+            val functionName = it.functionDeclaration?.name ?: return
+            result.addElement(
+                LookupElementBuilder
+                    .create("finalize")
+                    .withInsertHandler { ctx, _ ->
+                        ctx.document.insertString(ctx.selectionEndOffset, " ${functionName}()")
+                        EditorModificationUtil.moveCaretRelatively(ctx.editor, functionName.length + 2)
                     }
             )
         }

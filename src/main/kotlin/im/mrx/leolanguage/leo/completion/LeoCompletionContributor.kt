@@ -45,6 +45,7 @@ class LeoCompletionContributor : CompletionContributor() {
 //        println(parameters.position.elementType)
 //        println(parameters.position.text)
 //        println(parameters.position.parent.elementType)
+//        println(parameters.position.parent.text)
         super.fillCompletionVariants(parameters, result)
     }
 
