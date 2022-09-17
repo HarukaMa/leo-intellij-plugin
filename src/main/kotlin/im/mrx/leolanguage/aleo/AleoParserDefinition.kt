@@ -36,7 +36,7 @@ class AleoParserDefinition : ParserDefinition {
         //        val FILE = AleoFileStubType.INSTANCE
         val WHITESPACE = TokenSet.create(TokenType.WHITE_SPACE)
         val COMMENT = TokenSet.create(AleoTypes.COMMENT)
-        val STRING = TokenSet.create(AleoTypes.STRING)
+        val STRING = TokenSet.create(AleoTypes.STRING_LITERAL)
     }
 
     override fun createLexer(project: Project?): Lexer {

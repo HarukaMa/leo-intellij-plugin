@@ -30,19 +30,20 @@
   tokenTypeClass="im.mrx.leolanguage.aleo.psi.AleoTokenType"
 
   tokens = [
-    keyword = "regexp:import|program|interface|record|function|closure|into|as|field|group|scalar|u8|u16|u32|u64|u128|i8|i16|i32|i64|i128|address|boolean|string"
-    instruction_name = "regexp:input|output|cast|call|abs|abs.w|double|inv|neg|not|square|sqrt|hash.bhp256|hash.bhp512|hash.bhp768|hash.bhp1024|hash.ped64|hash.ped128|hash.psd2|hash.psd4|hash.psd8|add|add.w|sub|sub.w|mul|mul.w|div|div.w|rem|rem.w|pow|pow.w|shl|shl.w|shr|shr.w|and|or|xor|nand|nor|gt|gte|lt|lte|is.eq|is.neq|commit.bhp256|commit.bhp512|commit.bhp768|commit.bhp1024|commit.ped64|commit.ped128|ternary|assert.eq|assert.neq"
+    keyword = "regexp:import|program|interface|record|function|closure|into|as|field|group|scalar|u8|u16|u32|u64|u128|i8|i16|i32|i64|i128|address|boolean|string|increment|decrement|finalize"
+    instruction_name = "regexp:input|output|cast|call|abs|abs.w|double|inv|neg|not|square|sqrt|hash.bhp256|hash.bhp512|hash.bhp768|hash.bhp1024|hash.ped64|hash.ped128|hash.psd2|hash.psd4|hash.psd8|add|add.w|sub|sub.w|mul|mul.w|div|div.w|rem|rem.w|mod|pow|pow.w|shl|shl.w|shr|shr.w|and|or|xor|nand|nor|gt|gte|lt|lte|is.eq|is.neq|commit.bhp256|commit.bhp512|commit.bhp768|commit.bhp1024|commit.ped64|commit.ped128|ternary|assert.eq|assert.neq"
     entry_visibility = "regexp:public|private|constant"
-    address = "regexp:aleo1[ac-hj-np-z02-9]{58}"
-    boolean = "regexp:true|false"
-    base_register = "regexp:r[0-9]+"
+    address_literal = "regexp:aleo1[ac-hj-np-z02-9]{58}"
+    boolean_literal = "regexp:true|false"
+    register = "regexp:r[0-9]+"
     identifier = "regexp:[A-Za-z_][A-Za-z0-9_]*"
-    string = "regexp:\"([\x00-\x21\x23-\x5b\u005d-\uffff]|\\\"|\\\\)*\""
-    arithmetic_literal = "regexp:[0-9]+([ui](8|16|32|64|128)|field|group|scalar)"
+    string_literal = "regexp:\"([\x00-\x21\x23-\x5b\u005d-\uffff]|\\\"|\\\\)*\""
+    arithmetic_literal = "regexp:-?[0-9_]+([ui](8|16|32|64|128)|field|group|scalar)"
     numeral = "regexp:[0-9]+"
-    comment = "regexp://.*"
+    line_comment = "regexp://.*"
+    block_comment = "regexp:(/[*](?:[^*]|[*][^/])*[*]/)"
 
-
+    brackets = "regexp:[\[\]]"
     semicolon = ";"
     colon = ":"
     dot = "."
@@ -50,136 +51,173 @@
   ]
 }
 
-root ::= import* title definition*
+program ::= import* "program" program_id ";" definition+ { pin = 2 }
+
+program_id ::= identifier "." identifier
 
 import ::= "import" program_id ";" { pin = 1 }
 
-title ::= "program" program_id ";" { pin = 1 }
 
-definition ::= interface | record | function | closure { recoverWhile = definition_recover }
+definition ::= mapping | interface | record | closure | function { recoverWhile = definition_recover }
 
-private definition_recover ::= !( 'closure' | 'function' | 'interface' | 'record' )
+private definition_recover ::= !( "mapping" | "interface" | "record" | "closure" | "function" )
 
-interface ::= "interface" identifier ":" interface_component* {
+
+mapping ::= "mapping" identifier ":" mapping_key mapping_value {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-interface_component ::= identifier "as" plain_type ";"
+mapping_key ::= "key" identifier "as" finalize_type ";" { pin = 1 }
 
-record ::= "record" identifier ":" record_entry* {
+mapping_value ::= "value" identifier "as" finalize_type ";" { pin = 1 }
+
+
+interface ::= "interface" identifier ":" tuple+ {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-record_entry ::= identifier "as" entry_type ";"
+tuple ::= identifier "as" plaintext_type ";"
 
-function ::= "function" identifier ":" input input* instruction instruction* output* {
+
+record ::= "record" identifier ":" entry* {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-closure ::= "closure" identifier ":" closure_input closure_input* instruction instruction* closure_output* {
+entry ::= identifier "as" entry_type ";"
+
+
+closure ::= "closure" identifier ":" closure_input* instruction+ closure_output* {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-input ::= "input" base_register "as" in_out_type ";" {
+closure_input ::= "input" register "as" register_type ";" { pin = 1 }
+
+closure_output ::= "output" register_access "as" register_type ";" { pin = 1 }
+
+
+function ::= "function" identifier ":" function_input* instruction* function_output* [ finalize_command finalize ] {
  pin = 1
- recoverWhile = input_recover
+ implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
+ mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-closure_input ::= "input" base_register "as" closure_in_out_type ";" {
- pin = 1
- recoverWhile = input_recover
-}
+function_input ::= "input" register "as" value_type ";" { pin = 1 }
 
-private input_recover ::= !( "input" | instruction_name )
+function_output ::= "output" register_access "as" value_type ";" { pin = 1 }
 
-private instruction ::= unary | binary | ternary | assert | cast | call { recoverWhile = instruction_recover }
+finalize_command ::= "finalize" operand* ";" { pin = 1 }
 
-private instruction_recover ::= !( instruction_name | "output" | 'closure' | 'function' | 'interface' | 'record' )
+finalize ::= "finalize" identifier ":" finalize_input* command+ finalize_output* { pin = 1 }
 
-output ::= "output" register "as" in_out_type ";" {
- pin = 1
- recoverWhile = output_recover
-}
+finalize_input ::= "input" register "as" finalize_type ";" { pin = 1 }
 
-closure_output ::= "output" register "as" closure_in_out_type ";" {
- pin = 1
- recoverWhile = output_recover
-}
-
-private output_recover ::= !( "output" | 'closure' | 'function' | 'interface' | 'record' )
-
-unary ::= unary_op operand "into" register ";" { pin = 1 }
-
-binary ::= binary_op operand operand "into" register ";" { pin = 1 }
-
-ternary ::= ternary_op operand operand operand "into" register ";" { pin = 1 }
-
-assert ::= assert_op operand operand ";" { pin = 1 }
-
-unary_op ::= "abs" | "abs.w" | "double" | "inv"
-            | "neg" | "not" | "square" | "sqrt"
-            | "hash.bhp256" | "hash.bhp512" | "hash.bhp768" | "hash.bhp1024"
-            | "hash.ped64" | "hash.ped128"
-            | "hash.psd2" | "hash.psd4" | "hash.psd8"
-
-binary_op ::= "add" | "add.w" | "sub" | "sub.w" | "mul" | "mul.w"
-            | "div" | "div.w" | "rem" | "rem.w" | "pow" | "pow.w"
-            | "shl" | "shl.w" | "shr" | "shr.w"
-            | "and" | "or" | "xor" | "nand" | "nor"
-            | "gt" | "gte" | "lt" | "lte" | "is.eq" | "is.neq"
-            | "commit.bhp256" | "commit.bhp512" | "commit.bhp768" | "commit.bhp1024"
-            | "commit.ped64" | "commit.ped128"
-
-ternary_op ::= "ternary"
-
-assert_op ::= "assert.eq" | "assert.neq"
-
-cast ::= "cast" operand (operand)* "into" register "as" register_type ";" { pin = 1 }
-
-call ::= "call" callee operand* "into" register* ";" { pin = 1 }
-
-callee ::= identifier | external_id
-
-operand ::= literal | register
-
-literal ::= address | boolean | string | arithmetic
-
-arithmetic ::= [ "-" ] arithmetic_literal
+finalize_output ::= "output" register_access "as" finalize_type ";" { pin = 1 }
 
 
-program_id ::= identifier ( "." identifier )*
+literal ::= arithmetic_literal | address_literal | boolean_literal | string_literal
 
 
-register ::= base_register ( "." identifier )*
+operand ::= literal | register_access | "self.caller" | program_id
 
 
-plain_type ::= primitive_type | identifier {
+unsigned_type ::= "u8" | "u16" | "u32" | "u64" | "u128"
+
+signed_type ::= "i8" | "i16" | "i32" | "i64" | "i128"
+
+integer_type ::= unsigned_type | signed_type
+
+field_type ::= "field"
+
+group_type ::= "group"
+
+scalar_type ::= "scalar"
+
+arithmetic_type ::= integer_type | field_type | group_type | scalar_type
+
+address_type ::= "address"
+
+boolean_type ::= "boolean"
+
+string_type ::= "string"
+
+literal_type ::= arithmetic_type | address_type | boolean_type | string_type
+
+plaintext_type ::= literal_type | identifier {
  implements = "im.mrx.leolanguage.aleo.psi.AleoReferenceElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedTypeImplMixin"
 }
 
-primitive_type ::= arithmetic_type | "address" | "boolean" | "string"
+value_type ::= plaintext_type "." entry_visibility | identifier ".record" | locator ".record"
 
-arithmetic_type ::= "field" | "group" | "scalar"
-                    | "u8" | "u16" | "u32" | "u64" | "u128"
-                    | "i8" | "i16" | "i32" | "i64" | "i128"
+finalize_type ::= plaintext_type ".public" | identifier ".record" | locator ".record"
 
-entry_type ::= plain_type "." entry_visibility
+entry_type ::= plaintext_type "." entry_visibility
 
-record_type ::= ( identifier | external_id ) ".record"
+register_type ::= locator ".record" | identifier ".record" | plaintext_type
 
-register_type ::= record_type | plain_type
+locator ::= program_id "/" identifier
 
-in_out_type ::= record_type | entry_type
 
-closure_in_out_type ::= record_type | plain_type
+register_access ::= register ( "." identifier )*
 
-external_id ::= program_id | identifier
+
+unary_op ::= "abs" | "abs.w" | "double" | "inv"
+            | "neg" | "not" | "square" | "sqrt"
+
+binary_op ::= "add" | "add.w" | "sub" | "sub.w" | "mul" | "mul.w"
+            | "div" | "div.w" | "rem" | "rem.w" | "mod" | "pow" | "pow.w"
+            | "shl" | "shl.w" | "shr" | "shr.w"
+            | "and" | "or" | "xor" | "nand" | "nor"
+            | "gt" | "gte" | "lt" | "lte"
+
+ternary_op ::= "ternary"
+
+is_op ::= "is.eq" | "is.neq"
+
+assert_op ::= "assert.eq" | "assert.neq"
+
+commit_op ::= "commit.bhp256" | "commit.bhp512" | "commit.bhp768" | "commit.bhp1024"
+            | "commit.ped64" | "commit.ped128"
+
+hash_op ::= "hash.bhp256" | "hash.bhp512" | "hash.bhp768" | "hash.bhp1024"
+          | "hash.ped64" | "hash.ped128"
+          | "hash.psd2" | "hash.psd4" | "hash.psd8"
+
+unary ::= unary_op operand "into" register { pin = 1 }
+
+binary ::= binary_op operand operand "into" register { pin = 1 }
+
+ternary ::= ternary_op operand operand operand "into" register { pin = 1 }
+
+is ::= is_op operand operand "into" register { pin = 1 }
+
+assert ::= assert_op operand operand { pin = 1 }
+
+commit ::= commit_op operand operand "into" register { pin = 1 }
+
+hash ::= hash_op operand "into" register { pin = 1 }
+
+cast ::= "cast" operand+ "into" register "as" register_type { pin = 1 }
+
+call ::= "call" ( locator | identifier ) operand+ "into" register+ { pin = 1 }
+
+instruction ::= ( unary | binary | ternary | is | assert | commit | hash | cast | call ) ";" { recoverWhile = instruction_recover }
+
+private instruction_recover ::= !( instruction_name | "call" | "cast" | "finalize")
+
+increment ::= "increment" identifier "[" operand "]" "by" operand ";" { pin = 1 }
+
+decrement ::= "decrement" identifier "[" operand "]" "by" operand ";" { pin = 1 }
+
+command ::= increment | decrement | instruction
+
+
+comment ::= line_comment | block_comment

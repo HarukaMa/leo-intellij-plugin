@@ -34,14 +34,14 @@ class AleoSyntaxHighlighter : SyntaxHighlighterBase() {
     override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
         val key = when (tokenType) {
             AleoTypes.INSTRUCTION_NAME -> INSTRUCTION_NAME
-            AleoTypes.ADDRESS -> ADDRESS
-            AleoTypes.BOOLEAN -> KEYWORD
+            AleoTypes.ADDRESS_LITERAL -> ADDRESS
+            AleoTypes.BOOLEAN_LITERAL -> KEYWORD
             AleoTypes.IDENTIFIER -> IDENTIFIER
             AleoTypes.SEMICOLON -> SEMICOLON
             AleoTypes.DOT -> DOT
             AleoTypes.AS -> KEYWORD
-            AleoTypes.BASE_REGISTER -> REGISTER
-            AleoTypes.STRING -> STRING
+            AleoTypes.REGISTER -> REGISTER
+            AleoTypes.STRING_LITERAL -> STRING
             AleoTypes.COMMENT -> COMMENT
             AleoTypes.ARITHMETIC_LITERAL -> NUMBER
             AleoTypes.ENTRY_VISIBILITY -> ENTRY_VISIBILITY

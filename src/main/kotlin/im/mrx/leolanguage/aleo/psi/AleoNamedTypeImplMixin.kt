@@ -23,7 +23,7 @@ import com.intellij.psi.PsiReference
 import im.mrx.leolanguage.aleo.reference.AleoTypeReference
 
 abstract class AleoNamedTypeImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
-    AleoPlainType {
+    AleoPlaintextType {
 
     override fun getReference(): PsiReference? {
         return AleoTypeReference(this)

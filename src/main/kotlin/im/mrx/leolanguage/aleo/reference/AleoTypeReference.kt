@@ -21,9 +21,9 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.aleo.psi.AleoDefinition
-import im.mrx.leolanguage.aleo.psi.AleoPlainType
+import im.mrx.leolanguage.aleo.psi.AleoPlaintextType
 
-class AleoTypeReference(element: AleoPlainType) : AleoReferenceBase<AleoPlainType>(element) {
+class AleoTypeReference(element: AleoPlaintextType) : AleoReferenceBase<AleoPlaintextType>(element) {
 
     override fun resolve(): PsiElement? {
         return ResolveCache.getInstance(element.project).resolveWithCaching(this, Resolver, false, false)

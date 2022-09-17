@@ -55,7 +55,7 @@ class AleoHighlightingAnnotator : Annotator {
 
         return when (parent.elementType) {
             INTERFACE -> INTERFACE_KEY
-            PLAIN_TYPE -> highlightInterfaceName(element, holder)
+            PLAINTEXT_TYPE -> highlightInterfaceName(element, holder)
             else -> null
         }
     }
