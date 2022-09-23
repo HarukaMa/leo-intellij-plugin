@@ -17,6 +17,7 @@
 //noinspection BnfSuspiciousTokenForFile
 {
   parserClass="im.mrx.leolanguage.leo.LeoParser"
+  parserUtilClass="im.mrx.leolanguage.leo.LeoParserUtil"
 
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
@@ -177,6 +178,11 @@ expression ::= conditional_ternary_expression
              | postfix_expression_group
              | primary_expression
 
+no_circuit_literal_expression ::= <<setAllowCircuitExpression 0 expression>> {
+ elementType = expression
+ name = "expression"
+}
+
 private equality_expression_group ::= equality_expression | inequality_expression
 private ordering_expression_group ::= ordering_less_expression | ordering_greater_expression | ordering_less_or_equal_expression | ordering_greater_or_equal_expression
 private shift_expression_group ::= shift_left_expression | shift_right_expression
@@ -272,10 +278,10 @@ circuit_expression_identifier ::= identifier {
  mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitExpressionIdentifierImplMixin"
 }
 
-circuit_expression ::= circuit_expression_identifier "{" circuit_component_initializer
+circuit_expression ::= <<checkCircuitExpressionAllowed>> circuit_expression_identifier "{" circuit_component_initializer
                                     ( "," circuit_component_initializer )*
                                     [ "," ] "}" {
- pin = ","
+ pin = 3
  extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
 }
 
@@ -322,7 +328,7 @@ constant_declaration ::= "const" identifier ":" type "=" expression ";" {
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
 }
 
-branch ::= "if" expression block { pin = 1 }
+branch ::= "if" no_circuit_literal_expression block { pin = 1 }
 
 conditional_statement ::= branch "else" block
                       | branch "else" conditional_statement
