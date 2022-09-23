@@ -27,7 +27,7 @@ object LeoUtils {
 
     fun functionParameterListToString(function: LeoFunctionDeclaration): String {
         return function.functionParameters?.functionParameterList?.joinToString(", ") {
-            val doc = "${it.name}: ${typeToString(it)}"
+            val doc = "${it.name}${typeToStringWithColon(it)}"
             if (functionIsProgram(function)) {
                 var visibility = it.identifier.prevSibling
                 while (visibility != null) {
@@ -47,10 +47,18 @@ object LeoUtils {
             functionParameterListToString(
                 function
             )
-        }) -> ${typeToString(function)}"
+        })${typeToStringWithArrow(function)}"
 
 
-    fun <T : LeoTypedElement> typeToString(function: T): String {
-        return function.namedType?.text ?: function.tupleType?.text ?: "?"
+    fun <T : LeoTypedElement> typeToString(function: T): String? {
+        return function.namedType?.text ?: function.tupleType?.text
+    }
+
+    fun <T : LeoTypedElement> typeToStringWithArrow(function: T): String {
+        return (function.namedType?.text ?: function.tupleType?.text)?.let { " -> $it" } ?: ""
+    }
+
+    fun <T : LeoTypedElement> typeToStringWithColon(function: T): String {
+        return (function.namedType?.text ?: function.tupleType?.text)?.let { ": $it" } ?: ""
     }
 }

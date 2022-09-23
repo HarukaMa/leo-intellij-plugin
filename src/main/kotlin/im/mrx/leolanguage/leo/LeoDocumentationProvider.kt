@@ -43,7 +43,7 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     private fun generateDoc(element: LeoFunctionParameter): String {
-        val doc = "${element.name}: ${LeoUtils.typeToString(element)}"
+        val doc = "${element.name}${LeoUtils.typeToStringWithColon(element)}"
         val declaration = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
         if (declaration?.annotationList?.any { it.identifier.text == "program" } == true) {
             var visibility = element.identifier.prevSibling
@@ -63,11 +63,11 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     private fun generateDoc(element: LeoCircuitComponentDeclaration): String {
-        return generateMarkedUpDoc("${element.name}: ${LeoUtils.typeToString(element)}")
+        return generateMarkedUpDoc("${element.name}${LeoUtils.typeToStringWithColon(element)}")
     }
 
     private fun generateDoc(element: LeoVariableDeclaration): String {
-        return generateMarkedUpDoc("${element.name}: ${LeoUtils.typeToString(element)}")
+        return generateMarkedUpDoc("${element.name}${LeoUtils.typeToStringWithColon(element)}")
     }
 
     private fun generateDoc(element: LeoFunctionDeclaration): String {

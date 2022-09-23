@@ -384,7 +384,7 @@ assert_equal_call ::= "assert_eq" "(" expression "," expression [ "," ] ")"
 assert_not_equal_call ::= "assert_neq" "(" expression "," expression [ "," ] ")"
 
 function_declaration ::= annotation* "function" identifier
-                       "(" [ function_parameters ] ")" "->" type
+                       "(" [ function_parameters ] ")" [ "->" type ]
                        block [ finalizer ] {
                         pin = 2
                         implements = [
@@ -397,7 +397,7 @@ function_declaration ::= annotation* "function" identifier
                         }
 
 finalizer ::= "finalize" identifier
-            "(" [ function_parameters ] ")" "->" type
+            "(" [ function_parameters ] ")" [ "->" type ]
             block {
                 pin = 1
                 implements = [

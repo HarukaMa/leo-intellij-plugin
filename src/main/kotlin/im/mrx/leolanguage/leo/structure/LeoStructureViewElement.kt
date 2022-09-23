@@ -33,23 +33,10 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
                 if (element is LeoFunctionDeclaration) {
                     val parameters =
                         element.functionParameters?.functionParameterList?.map { it.namedType?.text ?: "?" }
-                    var returnsElement = element.block?.prevSibling
-                    while (returnsElement !is LeoNamedType && returnsElement !is LeoTupleType) {
-                        returnsElement = returnsElement?.prevSibling
-                        if (returnsElement == null) {
-                            break
-                        }
-                    }
-                    val returns = when (returnsElement) {
-                        is LeoNamedType -> returnsElement.text
-                        is LeoTupleType -> returnsElement.text
-                        else -> "?"
-                    }
-                    return "${element.name}(${parameters?.joinToString(", ")}) -> $returns"
+                    return "${element.name}(${parameters?.joinToString(", ")})${LeoUtils.typeToStringWithArrow(element)}"
                 }
                 if (element is LeoCircuitComponentDeclaration) {
-                    val type = LeoUtils.typeToString(element)
-                    return "${element.name}: $type"
+                    return "${element.name}${LeoUtils.typeToStringWithColon(element)}"
                 }
                 return element.name
             }
