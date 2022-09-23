@@ -49,7 +49,8 @@
     not-double-quote-or-backslash-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
     end-of-line-comment = "regexp:(//[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*)"
     block-comment = "regexp:(/[*](?:[^*]|[*][^/])*[*]/)"
-    keyword = "regexp:address|bool|circuit|console|const|constant|else|field|for|function|group|i8|i16|i32|i64|i128|if|in|let|public|record|return|scalar|string|u8|u16|u32|u64|u128|increment|decrement|finalize|mapping|async"
+    keyword = "regexp:address|bool|circuit|console|const|constant|else|field|for|function|group|i8|i16|i32|i64|i128|if|in|let|public|record|return|scalar|string|u8|u16|u32|u64|u128|increment|decrement|finalize|mapping|async|self"
+    core_circuit = "regexp:BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8"
     uppercase-letter = "regexp:[A-Z]"
     lowercase-letter = "regexp:[a-z]"
     letter = "regexp:[a-zA-Z]"
@@ -137,7 +138,7 @@ string_type ::= "string"
 
 primitive_type ::=  boolean_type | arithmetic_type | address_type | string_type
 
-named_type ::= primitive_type | identifier {
+named_type ::= primitive_type | core_circuit | identifier {
     implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedTypeImplMixin"
 }
@@ -235,11 +236,14 @@ binary_operator_call ::= expression "." identifier "(" expression [ "," ] ")"
 primary_expression ::= literal
                    | static_function_call
                    | associated_constant
+                   | self_expression
                    | "(" expression ")"
                    | free_function_call
                    | tuple_expression
                    | circuit_expression
                    | variable_or_free_constant
+
+self_expression ::= "self" "." identifier
 
 variable_or_free_constant ::= identifier {
     implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
