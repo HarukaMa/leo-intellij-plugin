@@ -316,6 +316,7 @@ constant_declaration ::= "const" identifier ":" type "=" expression ";" {
     pin = 1
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+        "im.mrx.leolanguage.leo.psi.LeoTypedElement"
         "im.mrx.leolanguage.leo.psi.LeoStatement"
     ]
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"

@@ -33,6 +33,8 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
             is LeoCircuitComponentDeclaration -> generateDoc(element)
             is LeoVariableDeclaration -> generateDoc(element)
             is LeoCircuitDeclaration -> generateDoc(element)
+            is LeoRecordDeclaration -> generateDoc(element)
+            is LeoMappingDeclaration -> generateDoc(element)
             is LeoFunctionDeclaration -> generateDoc(element)
             else -> null
         }
@@ -60,6 +62,14 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
 
     private fun generateDoc(element: LeoCircuitDeclaration): String {
         return generateMarkedUpDoc("circuit ${element.name}")
+    }
+
+    private fun generateDoc(element: LeoRecordDeclaration): String {
+        return generateMarkedUpDoc("record ${element.name}")
+    }
+
+    private fun generateDoc(element: LeoMappingDeclaration): String {
+        return generateMarkedUpDoc(element.text)
     }
 
     private fun generateDoc(element: LeoCircuitComponentDeclaration): String {

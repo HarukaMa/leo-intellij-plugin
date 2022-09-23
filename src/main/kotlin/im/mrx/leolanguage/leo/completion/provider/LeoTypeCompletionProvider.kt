@@ -38,7 +38,8 @@ object LeoTypeCompletionProvider : LeoCompletionProvider() {
         PsiTreeUtil.getChildrenOfType(parameters.originalFile, LeoDeclaration::class.java)?.forEach {
             if (it.firstChild is LeoRecordDeclaration || it.firstChild is LeoCircuitDeclaration) {
                 result.addElement(
-                    LookupElementBuilder.create(it.firstChild)
+                    LookupElementBuilder
+                        .create((it.firstChild as? LeoNamedElement)?.name ?: "<BUG IN PLUGIN>")
                         .withPsiElement(it.firstChild)
                         .withIcon(if (it.firstChild is LeoCircuitDeclaration) AleoIcons.CIRCUIT else AleoIcons.RECORD)
                 )
