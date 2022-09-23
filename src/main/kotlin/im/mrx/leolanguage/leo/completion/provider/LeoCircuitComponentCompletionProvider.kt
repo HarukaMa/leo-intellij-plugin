@@ -19,11 +19,14 @@ package im.mrx.leolanguage.leo.completion.provider
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
+import im.mrx.leolanguage.aleo.AleoIcons
+import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.*
 
@@ -47,9 +50,7 @@ object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
                 (type as? LeoRecordDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
                     ?: (type as? LeoCircuitDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
                     ?: return@let
-            componentList.forEach { component ->
-                result.addElement(LookupElementBuilder.create(component))
-            }
+            addElement(result, componentList)
         }
         // Token { owner }
         PsiTreeUtil.getParentOfType(element, LeoCircuitExpression::class.java)?.let {
@@ -58,11 +59,26 @@ object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
                 (type as? LeoRecordDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
                     ?: (type as? LeoCircuitDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
                     ?: return@let
-            componentList.forEach { component ->
-                result.addElement(LookupElementBuilder.create(component))
-            }
+            addElement(result, componentList)
         }
 
+    }
+
+    private fun addElement(result: CompletionResultSet, list: List<LeoCircuitComponentDeclaration>) {
+        list.forEach { component ->
+            val type = LeoUtils.typeToString(component)
+            result.addElement(
+                LookupElementBuilder
+                    .create(component)
+                    .withIcon(AleoIcons.CIRCUIT_COMPONENT)
+                    .withTypeText(type)
+                    .withInsertHandler { context, _ ->
+                        val content = ": "
+                        context.document.insertString(context.selectionEndOffset, content)
+                        EditorModificationUtil.moveCaretRelatively(context.editor, content.length)
+                    }
+            )
+        }
     }
 
     override val elementPattern: ElementPattern<PsiElement>
