@@ -49,7 +49,7 @@
     not-double-quote-or-backslash-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
     end-of-line-comment = "regexp:(//[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*)"
     block-comment = "regexp:(/[*](?:[^*]|[*][^/])*[*]/)"
-    keyword = "regexp:address|bool|circuit|console|const|constant|else|field|for|function|group|i8|i16|i32|i64|i128|if|in|let|public|record|return|scalar|string|u8|u16|u32|u64|u128|increment|decrement|finalize|mapping"
+    keyword = "regexp:address|bool|circuit|console|const|constant|else|field|for|function|group|i8|i16|i32|i64|i128|if|in|let|public|record|return|scalar|string|u8|u16|u32|u64|u128|increment|decrement|finalize|mapping|async"
     uppercase-letter = "regexp:[A-Z]"
     lowercase-letter = "regexp:[a-z]"
     letter = "regexp:[a-zA-Z]"
@@ -358,7 +358,7 @@ console_statement ::= "console" "." console_call ";" {
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
 
-finalize_statement ::= "finalize" function_arguments ";" {
+finalize_statement ::= "async" "finalize" function_arguments ";" {
     pin = 1
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
