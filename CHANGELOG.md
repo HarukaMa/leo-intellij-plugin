@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Added reference for mapping type
+
 ## [0.2.0]
 
 - Support new mapping syntax

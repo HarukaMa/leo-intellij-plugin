@@ -374,12 +374,17 @@ finalize_statement ::= "async" "finalize" function_arguments ";" {
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
 
-increment_statement ::= "increment" "(" identifier "," expression "," expression [ "," ] ")" ";" {
+mapping_identifier ::= identifier {
+    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoMappingIdentifierImplMixin"
+}
+
+increment_statement ::= "increment" "(" mapping_identifier "," expression "," expression [ "," ] ")" ";" {
     pin = 1
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
 
-decrement_statement ::= "decrement" "(" identifier "," expression "," expression [ "," ] ")" ";" {
+decrement_statement ::= "decrement" "(" mapping_identifier "," expression "," expression [ "," ] ")" ";" {
     pin = 1
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
