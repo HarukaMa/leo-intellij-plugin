@@ -33,6 +33,7 @@ class LeoCompletionContributor : CompletionContributor() {
         extend(LeoFunctionCompletionProvider)
         extend(LeoDeclarationCompletionProvider)
         extend(LeoAnnotationCompletionProvider)
+        extend(LeoMappingCompletionProvider)
     }
 
     private fun extend(p: LeoCompletionProvider) {

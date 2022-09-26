@@ -61,14 +61,25 @@ object LeoVariableCompletionProvider : LeoCompletionProvider() {
             }
             statement = statement.prevSibling
         }
-        val functionDeclaration = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
-        functionDeclaration?.functionParameters?.functionParameterList?.forEach {
-            result.addElement(
-                LookupElementBuilder
-                    .create(it)
-                    .withIcon(AleoIcons.FUNCTION_PARAMETER)
-                    .withTypeText(LeoUtils.typeToString(it))
-            )
+        val finalizer = PsiTreeUtil.getParentOfType(element, LeoFinalizer::class.java)
+        if (finalizer != null) {
+            finalizer.functionParameters?.functionParameterList?.forEach {
+                addElement(result, it)
+            }
+        } else {
+            val functionDeclaration = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
+            functionDeclaration?.functionParameters?.functionParameterList?.forEach {
+                addElement(result, it)
+            }
         }
+    }
+
+    private fun addElement(result: CompletionResultSet, element: LeoFunctionParameter) {
+        result.addElement(
+            LookupElementBuilder
+                .create(element)
+                .withIcon(AleoIcons.FUNCTION_PARAMETER)
+                .withTypeText(LeoUtils.typeToString(element))
+        )
     }
 }

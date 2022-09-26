@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Added reference and icon for mapping type
+- Added completion for increment / decrement statements
 
 ## [0.2.0]
 

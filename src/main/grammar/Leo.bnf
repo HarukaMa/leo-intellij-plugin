@@ -471,7 +471,9 @@ record_declaration ::= "record" identifier
                         elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
                     }
 
-mapping_declaration ::= "mapping" identifier ":" type "=>" type ";" {
+mapping_type ::= type "=>" type
+
+mapping_declaration ::= "mapping" identifier ":" mapping_type ";" {
     pin = 1
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoNamedElement"
