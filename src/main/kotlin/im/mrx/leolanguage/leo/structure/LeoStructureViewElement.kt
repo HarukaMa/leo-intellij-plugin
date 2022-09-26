@@ -38,6 +38,9 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
                 if (element is LeoCircuitComponentDeclaration) {
                     return "${element.name}${LeoUtils.typeToStringWithColon(element)}"
                 }
+                if (element is LeoMappingDeclaration) {
+                    return "${element.name}: ${element.mappingType?.text}"
+                }
                 return element.name
             }
 

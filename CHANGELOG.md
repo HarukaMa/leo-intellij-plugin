@@ -4,6 +4,7 @@
 
 - Added reference and icon for mapping type
 - Added completion for increment / decrement statements
+- Added mapping type text to structure view
 
 ## [0.2.0]
 
