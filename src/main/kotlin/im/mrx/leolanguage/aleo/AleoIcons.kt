@@ -31,5 +31,6 @@ class AleoIcons {
         val VARIABLE = AllIcons.Nodes.Variable
         val FUNCTION_PARAMETER = AllIcons.Nodes.Parameter
         val ANNOTATION = AllIcons.Nodes.Annotationtype
+        val MAPPING = IconLoader.getIcon("/icons/mapping.svg", AleoIcons::class.java)
     }
 }

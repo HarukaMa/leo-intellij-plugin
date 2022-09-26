@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Added reference for mapping type
+- Added reference and icon for mapping type
 
 ## [0.2.0]
 

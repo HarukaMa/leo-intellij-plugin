@@ -53,6 +53,7 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
                     }
 
                     is LeoCircuitComponentDeclaration -> AleoIcons.CIRCUIT_COMPONENT
+                    is LeoMappingDeclaration -> AleoIcons.MAPPING
                     else -> null
                 }
             }
