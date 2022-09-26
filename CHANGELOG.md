@@ -2,13 +2,14 @@
 
 ## [Unreleased]
 
+## [0.2.1]
 - Added reference and icon for mapping type
 - Added completion for increment / decrement statements
 - Added mapping type text to structure view
 - Added keywords for Aleo instructions
+- Fixed structure view expanders
 
 ## [0.2.0]
-
 - Support new mapping syntax
 - Added completion for declarations
 - Fixed auto indent of circuit and record types
@@ -17,14 +18,12 @@
 - Fixed some missing docs
 
 ## [0.1.2]
-
 - Fixed function call highlighting
 - Changed error highlighting color
 - Added more completion patterns
 - Improved existing completion content
 
 ## [0.1.1]
-
 - Prettified structure view
 - Added simple code document
 - Added function call reference
