@@ -5,6 +5,7 @@
 - Added reference and icon for mapping type
 - Added completion for increment / decrement statements
 - Added mapping type text to structure view
+- Added keywords for Aleo instructions
 
 ## [0.2.0]
 
