@@ -17,9 +17,11 @@
 package im.mrx.leolanguage.leo
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider
-import com.intellij.lang.documentation.DocumentationMarkup.DEFINITION_END
-import com.intellij.lang.documentation.DocumentationMarkup.DEFINITION_START
+import com.intellij.lang.documentation.DocumentationMarkup.*
+import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import im.mrx.leolanguage.leo.psi.*
@@ -56,46 +58,82 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
                 }
                 visibility = visibility.prevSibling
             }
-            return generateMarkedUpDoc("${visibility?.text ?: "private"} $doc")
+            return generateMarkedUpDoc("${visibility?.text ?: "private"} $doc", element)
         }
-        return generateMarkedUpDoc(doc)
+        return generateMarkedUpDoc(doc, element)
     }
 
     private fun generateDoc(element: LeoCircuitDeclaration): String {
-        return generateMarkedUpDoc("circuit ${element.name}")
+        return generateMarkedUpDoc("circuit ${element.name}", element)
     }
 
     private fun generateDoc(element: LeoRecordDeclaration): String {
-        return generateMarkedUpDoc("record ${element.name}")
+        return generateMarkedUpDoc("record ${element.name}", element)
     }
 
     private fun generateDoc(element: LeoMappingDeclaration): String {
-        return generateMarkedUpDoc(element.text)
+        return generateMarkedUpDoc(element.text, element)
     }
 
     private fun generateDoc(element: LeoCircuitComponentDeclaration): String {
-        return generateMarkedUpDoc("${element.name}${LeoUtils.typeToStringWithColon(element)}")
+        return generateMarkedUpDoc("${element.name}${LeoUtils.typeToStringWithColon(element)}", element)
     }
 
     private fun generateDoc(element: LeoVariableDeclaration): String {
-        return generateMarkedUpDoc("${element.name}${LeoUtils.typeToStringWithColon(element)}")
+        return generateMarkedUpDoc("${element.name}${LeoUtils.typeToStringWithColon(element)}", element)
     }
 
     private fun generateDoc(element: LeoFunctionDeclaration): String {
-        return generateMarkedUpDoc(LeoUtils.functionToDocString(element))
+        return generateMarkedUpDoc(LeoUtils.functionToDocString(element), element)
     }
 
     private fun generateDoc(element: LeoFinalizer): String {
-        return generateMarkedUpDoc("finalizer ${element.name}(${
-            element.functionParameters?.functionParameterList?.joinToString(", ") {
-                val doc = "${it.name}${LeoUtils.typeToStringWithColon(it)}"
-                return@joinToString "${LeoUtils.getParameterVisibility(it)} $doc"
-            } ?: ""
-        })${LeoUtils.typeToStringWithArrow(element)}")
+        return generateMarkedUpDoc(
+            "finalize ${element.name}(${
+                element.functionParameters?.functionParameterList?.joinToString(", ") {
+                    val doc = "${it.name}${LeoUtils.typeToStringWithColon(it)}"
+                    return@joinToString "${LeoUtils.getParameterVisibility(it)} $doc"
+                } ?: ""
+            })${LeoUtils.typeToStringWithArrow(element)}",
+            element
+        )
     }
 
-    private fun generateMarkedUpDoc(definition: String): String {
-        return DEFINITION_START + definition + DEFINITION_END
+    private fun generateMarkedUpDoc(definition: String, element: PsiElement): String {
+        val highlightedDefinition = HtmlSyntaxInfoUtil.getHtmlContent(
+            element.containingFile,
+            definition,
+            null,
+            EditorColorsManager.getInstance().schemeForCurrentUITheme,
+            0,
+            definition.length,
+        )?.replace(Regex.fromLiteral("&lt;"), "<")?.replace(Regex.fromLiteral("&gt;"), ">")
+        val comments = ArrayList<String>()
+        var el = element
+        while (el.prevSibling != null) {
+            el = el.prevSibling
+            if (el is PsiWhiteSpace) {
+                continue
+            }
+            if (el.elementType == LeoTypes.BLOCK_COMMENT) {
+                comments.add(
+                    0,
+                    el.text
+                        .replace(Regex("""^\s*/\*\s*"""), "")
+                        .replace(Regex("""^\s*\*\s*"""), "")
+                        .replace(Regex("""\s*$"""), "")
+                        .replace(Regex("""\s*\*/$"""), "")
+                )
+                break
+            } else if (el.elementType == LeoTypes.END_OF_LINE_COMMENT) {
+                comments.add(0, el.text.replace(Regex("""^\s*//\s*"""), ""))
+                continue
+            } else {
+                break
+            }
+        }
+        return DEFINITION_START + highlightedDefinition + DEFINITION_END +
+                CONTENT_START + comments.joinToString("<br>") + CONTENT_END
     }
 
 

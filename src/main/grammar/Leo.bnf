@@ -404,7 +404,7 @@ assert_equal_call ::= "assert_eq" "(" expression "," expression [ "," ] ")"
 
 assert_not_equal_call ::= "assert_neq" "(" expression "," expression [ "," ] ")"
 
-function_declaration ::= annotation* "function" identifier
+upper function_declaration ::= annotation* "function" identifier
                        "(" [ function_parameters ] ")" [ "->" type ]
                        block [ finalizer ] {
                         pin = 2
@@ -439,7 +439,7 @@ function_parameter ::= [ "public" | "constant" | "const" ]
                         mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
                      }
 
-circuit_declaration ::= "circuit" identifier
+upper circuit_declaration ::= "circuit" identifier
                       circuit_component_declarations {
                         pin = 1
                         implements = [
@@ -465,7 +465,7 @@ circuit_component_declaration ::= identifier ":" type  {
     elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
 }
 
-record_declaration ::= "record" identifier
+upper record_declaration ::= "record" identifier
                      circuit_component_declarations {
                         pin = 1
                         implements = [
@@ -478,7 +478,7 @@ record_declaration ::= "record" identifier
 
 mapping_type ::= type "=>" type
 
-mapping_declaration ::= "mapping" identifier ":" mapping_type ";" {
+upper mapping_declaration ::= "mapping" identifier ":" mapping_type ";" {
     pin = 1
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoNamedElement"

@@ -30,6 +30,7 @@ import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.LeoDeclaration
 import im.mrx.leolanguage.leo.psi.LeoFile
+import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
 
 object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
 
@@ -48,8 +49,8 @@ object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
                     }
             )
         }
-        PsiTreeUtil.getTopmostParentOfType(parameters.position, LeoDeclaration::class.java)?.let {
-            val functionName = it.functionDeclaration?.name ?: return
+        PsiTreeUtil.getTopmostParentOfType(parameters.position, LeoFunctionDeclaration::class.java)?.let {
+            val functionName = it.name ?: return
             result.addElement(
                 LookupElementBuilder
                     .create("finalize")

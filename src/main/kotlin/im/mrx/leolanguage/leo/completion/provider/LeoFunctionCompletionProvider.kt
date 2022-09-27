@@ -28,7 +28,7 @@ import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
-import im.mrx.leolanguage.leo.psi.LeoDeclaration
+import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
 import im.mrx.leolanguage.leo.psi.LeoFunctionIdentifier
 
 object LeoFunctionCompletionProvider : LeoCompletionProvider() {
@@ -45,8 +45,8 @@ object LeoFunctionCompletionProvider : LeoCompletionProvider() {
 
     fun addFunctions(parameters: CompletionParameters, result: CompletionResultSet) {
         val element = parameters.position
-        PsiTreeUtil.getChildrenOfType(element.containingFile, LeoDeclaration::class.java)?.forEach {
-            val function = it.functionDeclaration ?: return@forEach
+        PsiTreeUtil.getChildrenOfType(element.containingFile, LeoFunctionDeclaration::class.java)?.forEach {
+            val function = it ?: return@forEach
             result.addElement(
                 LookupElementBuilder
                     .create(function)

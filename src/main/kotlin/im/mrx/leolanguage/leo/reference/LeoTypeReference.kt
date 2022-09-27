@@ -20,8 +20,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.PsiTreeUtil
-import im.mrx.leolanguage.leo.psi.LeoDeclaration
+import im.mrx.leolanguage.leo.psi.LeoCircuitDeclaration
 import im.mrx.leolanguage.leo.psi.LeoNamedType
+import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
 
 class LeoTypeReference(element: LeoNamedType) : LeoReferenceBase<LeoNamedType>(element) {
 
@@ -33,11 +34,14 @@ class LeoTypeReference(element: LeoNamedType) : LeoReferenceBase<LeoNamedType>(e
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             val element = ref.element
-            PsiTreeUtil.getChildrenOfType(element.containingFile, LeoDeclaration::class.java)?.forEach {
-                if (it.recordDeclaration?.name == element.text) {
-                    return it.recordDeclaration
-                } else if (it.circuitDeclaration?.name == element.text) {
-                    return it.circuitDeclaration
+            PsiTreeUtil.getChildrenOfType(element.containingFile, LeoRecordDeclaration::class.java)?.forEach {
+                if (it.name == element.text) {
+                    return it
+                }
+            }
+            PsiTreeUtil.getChildrenOfType(element.containingFile, LeoCircuitDeclaration::class.java)?.forEach {
+                if (it.name == element.text) {
+                    return it
                 }
             }
 
