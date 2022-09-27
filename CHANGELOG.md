@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 - Added reference and document for finalize statement
+- Added comments to hover document
 
 ## [0.2.1]
 - Added reference and icon for mapping type
