@@ -132,9 +132,11 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
                 break
             }
         }
-        return DEFINITION_START + highlightedDefinition + DEFINITION_END +
-                CONTENT_START + comments.joinToString("<br>") + CONTENT_END
+        var doc = DEFINITION_START + highlightedDefinition + DEFINITION_END
+        if (comments.isNotEmpty()) {
+            doc += CONTENT_START + comments.joinToString("<br>") + CONTENT_END
+        }
+        return doc
     }
-
 
 }
