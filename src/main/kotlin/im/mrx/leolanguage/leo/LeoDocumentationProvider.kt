@@ -36,6 +36,7 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
             is LeoRecordDeclaration -> generateDoc(element)
             is LeoMappingDeclaration -> generateDoc(element)
             is LeoFunctionDeclaration -> generateDoc(element)
+            is LeoFinalizer -> generateDoc(element)
             else -> null
         }
     }
@@ -82,6 +83,15 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
 
     private fun generateDoc(element: LeoFunctionDeclaration): String {
         return generateMarkedUpDoc(LeoUtils.functionToDocString(element))
+    }
+
+    private fun generateDoc(element: LeoFinalizer): String {
+        return generateMarkedUpDoc("finalizer ${element.name}(${
+            element.functionParameters?.functionParameterList?.joinToString(", ") {
+                val doc = "${it.name}${LeoUtils.typeToStringWithColon(it)}"
+                return@joinToString "${LeoUtils.getParameterVisibility(it)} $doc"
+            } ?: ""
+        })${LeoUtils.typeToStringWithArrow(element)}")
     }
 
     private fun generateMarkedUpDoc(definition: String): String {

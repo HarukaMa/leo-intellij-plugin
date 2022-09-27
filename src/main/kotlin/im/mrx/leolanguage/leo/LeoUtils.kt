@@ -18,6 +18,7 @@ package im.mrx.leolanguage.leo
 
 import com.intellij.psi.util.elementType
 import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
+import im.mrx.leolanguage.leo.psi.LeoFunctionParameter
 import im.mrx.leolanguage.leo.psi.LeoTypedElement
 import im.mrx.leolanguage.leo.psi.LeoTypes
 
@@ -29,17 +30,21 @@ object LeoUtils {
         return function.functionParameters?.functionParameterList?.joinToString(", ") {
             val doc = "${it.name}${typeToStringWithColon(it)}"
             if (functionIsProgram(function)) {
-                var visibility = it.identifier.prevSibling
-                while (visibility != null) {
-                    if (visibility.elementType == LeoTypes.KEYWORD) {
-                        break
-                    }
-                    visibility = visibility.prevSibling
-                }
-                return@joinToString "${visibility?.text ?: "private"} $doc"
+                return@joinToString "${getParameterVisibility(it)} $doc"
             }
             return@joinToString doc
         } ?: ""
+    }
+
+    fun getParameterVisibility(parameter: LeoFunctionParameter): String {
+        var visibility = parameter.identifier.prevSibling
+        while (visibility != null) {
+            if (visibility.elementType == LeoTypes.KEYWORD) {
+                break
+            }
+            visibility = visibility.prevSibling
+        }
+        return visibility?.text ?: "private"
     }
 
     fun functionToDocString(function: LeoFunctionDeclaration): String =

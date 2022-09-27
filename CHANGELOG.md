@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- Added reference and document for finalize statement
 
 ## [0.2.1]
 - Added reference and icon for mapping type

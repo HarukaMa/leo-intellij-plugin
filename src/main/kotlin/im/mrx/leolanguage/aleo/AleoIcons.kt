@@ -19,6 +19,7 @@ package im.mrx.leolanguage.aleo
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.IconLoader
 
+@Suppress("unused")
 class AleoIcons {
     companion object {
         val FILE = IconLoader.getIcon("/icons/aleo.svg", AleoIcons::class.java)

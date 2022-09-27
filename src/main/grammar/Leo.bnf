@@ -369,7 +369,12 @@ console_statement ::= "console" "." console_call ";" {
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
 
-finalize_statement ::= "async" "finalize" function_arguments ";" {
+finalize_literal ::= "finalize" {
+    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoFinalizeLiteralImplMixin"
+}
+
+finalize_statement ::= "async" finalize_literal function_arguments ";" {
     pin = 1
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
