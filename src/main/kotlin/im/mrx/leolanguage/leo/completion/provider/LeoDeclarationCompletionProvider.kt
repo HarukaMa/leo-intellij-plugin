@@ -28,7 +28,6 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
-import im.mrx.leolanguage.leo.psi.LeoDeclaration
 import im.mrx.leolanguage.leo.psi.LeoFile
 import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
 
@@ -72,7 +71,7 @@ object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
             // end of function declaration, possible `finalize`
             psiElement().withParent(
                 psiElement(PsiErrorElement::class.java).withParent(
-                    LeoDeclaration::class.java
+                    LeoFunctionDeclaration::class.java
                 )
             )
         )

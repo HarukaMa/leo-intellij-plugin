@@ -34,16 +34,26 @@ object LeoTypeCompletionProvider : LeoCompletionProvider() {
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-
-        PsiTreeUtil.getChildrenOfType(parameters.originalFile, LeoDeclaration::class.java)?.forEach {
-            if (it.firstChild is LeoRecordDeclaration || it.firstChild is LeoCircuitDeclaration) {
-                result.addElement(
-                    LookupElementBuilder
-                        .create((it.firstChild as? LeoNamedElement)?.name ?: "<BUG IN PLUGIN>")
-                        .withPsiElement(it.firstChild)
-                        .withIcon(if (it.firstChild is LeoCircuitDeclaration) AleoIcons.CIRCUIT else AleoIcons.RECORD)
-                )
-            }
+        val arrayList = arrayListOf<Any>()
+        arrayList.addAll(
+            PsiTreeUtil.getChildrenOfType(
+                parameters.position.containingFile,
+                LeoRecordDeclaration::class.java
+            ) ?: emptyArray()
+        )
+        arrayList.addAll(
+            PsiTreeUtil.getChildrenOfType(
+                parameters.position.containingFile,
+                LeoCircuitDeclaration::class.java
+            ) ?: emptyArray()
+        )
+        arrayList.forEach {
+            result.addElement(
+                LookupElementBuilder
+                    .create((it as? LeoNamedElement)?.name ?: "<BUG IN PLUGIN>")
+                    .withPsiElement(it as PsiElement)
+                    .withIcon(if (it is LeoCircuitDeclaration) AleoIcons.CIRCUIT else AleoIcons.RECORD)
+            )
         }
     }
 

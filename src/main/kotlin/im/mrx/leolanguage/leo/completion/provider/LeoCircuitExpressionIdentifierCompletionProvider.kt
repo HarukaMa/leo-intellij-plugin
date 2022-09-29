@@ -19,12 +19,14 @@ package im.mrx.leolanguage.leo.completion.provider
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
+import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.*
 
@@ -37,18 +39,26 @@ object LeoCircuitExpressionIdentifierCompletionProvider : LeoCompletionProvider(
         // we should have known the exact type of the expression
         val declaration = PsiTreeUtil.getParentOfType(parameters.position, LeoVariableDeclaration::class.java) ?: return
         val type = declaration.namedType ?: return
-        PsiTreeUtil.getChildrenOfType(parameters.originalFile, LeoDeclaration::class.java)?.forEach {
-            if (it.firstChild is LeoRecordDeclaration || it.firstChild is LeoCircuitDeclaration) {
-                val typeName =
-                    (it.firstChild as? LeoRecordDeclaration)?.name ?: (it.firstChild as? LeoCircuitDeclaration)?.name
-                    ?: return@forEach
-                if (typeName == type.text) {
-                    result.addElement(
-                        LookupElementBuilder.create(
-                            (it.firstChild as? LeoCircuitDeclaration) ?: it.firstChild as LeoRecordDeclaration
-                        )
-                    )
-                }
+        val arrayList = arrayListOf<Any>()
+        arrayList.addAll(
+            PsiTreeUtil.getChildrenOfType(parameters.originalFile, LeoRecordDeclaration::class.java) ?: emptyArray()
+        )
+        arrayList.addAll(
+            PsiTreeUtil.getChildrenOfType(parameters.originalFile, LeoCircuitDeclaration::class.java) ?: emptyArray()
+        )
+        arrayList.forEach {
+            val typeName = ((it as? LeoRecordDeclaration) ?: (it as? LeoCircuitDeclaration))?.name ?: return@forEach
+            if (typeName == type.text) {
+                result.addElement(
+                    LookupElementBuilder
+                        .create(typeName)
+                        .withPsiElement(it as PsiElement)
+                        .withIcon(if (it is LeoRecordDeclaration) AleoIcons.RECORD else AleoIcons.CIRCUIT)
+                        .withInsertHandler { context, _ ->
+                            context.document.insertString(context.selectionEndOffset, " {}")
+                            EditorModificationUtil.moveCaretRelatively(context.editor, 2)
+                        }
+                )
             }
         }
     }

@@ -66,10 +66,8 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
     override fun getChildren(): Array<TreeElement> {
         val elements = ArrayList<TreeElement>()
         if (element is LeoFile) {
-            PsiTreeUtil.getChildrenOfType(element, LeoDeclaration::class.java)?.forEach {
-                if (it.firstChild is NavigatablePsiElement) {
-                    elements.add(LeoStructureViewElement(it.firstChild as NavigatablePsiElement))
-                }
+            PsiTreeUtil.getChildrenOfType(element, NavigatablePsiElement::class.java)?.forEach {
+                elements.add(LeoStructureViewElement(it as NavigatablePsiElement))
             }
         }
         if (element is LeoCircuitDeclaration || element is LeoRecordDeclaration) {
