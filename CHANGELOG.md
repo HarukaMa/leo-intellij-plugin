@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 - Fixed extra colon in circuit component completion
+- Fixed wrong candidate of function completion
 
 ## [0.2.2]
 

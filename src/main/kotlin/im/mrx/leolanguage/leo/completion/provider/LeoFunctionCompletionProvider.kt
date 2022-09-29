@@ -49,7 +49,8 @@ object LeoFunctionCompletionProvider : LeoCompletionProvider() {
             val function = it ?: return@forEach
             result.addElement(
                 LookupElementBuilder
-                    .create(function)
+                    .create(function.name ?: "<BUG IN PLUGIN>")
+                    .withPsiElement(function)
                     .withIcon(if (LeoUtils.functionIsProgram(function)) AleoIcons.FUNCTION else AleoIcons.CLOSURE)
                     .withTypeText(LeoUtils.typeToString(function))
                     .withTailText("(${LeoUtils.functionParameterListToString(function)})")
