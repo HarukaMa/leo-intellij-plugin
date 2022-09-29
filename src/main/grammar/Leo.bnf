@@ -488,9 +488,12 @@ mapping_declaration ::= "mapping" identifier ":" mapping_type ";" {
     elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
 }
 
+import_declaration ::= "import" identifier ".leo" ";" { pin = 1 }
+
 private declaration ::= function_declaration
                     | circuit_declaration
                     | record_declaration
-                    | mapping_declaration {recoverWhile=declaration_recover}
+                    | mapping_declaration
+                    | import_declaration {recoverWhile=declaration_recover}
 
 private declaration_recover ::= !( "@" | "function" | "circuit" | "record" | "mapping" | "import" )
