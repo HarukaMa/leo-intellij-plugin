@@ -42,7 +42,8 @@ class AleoSyntaxHighlighter : SyntaxHighlighterBase() {
             AleoTypes.AS -> KEYWORD
             AleoTypes.REGISTER -> REGISTER
             AleoTypes.STRING_LITERAL -> STRING
-            AleoTypes.COMMENT -> COMMENT
+            AleoTypes.BLOCK_COMMENT -> COMMENT
+            AleoTypes.LINE_COMMENT -> COMMENT
             AleoTypes.ARITHMETIC_LITERAL -> NUMBER
             AleoTypes.ENTRY_VISIBILITY -> ENTRY_VISIBILITY
             AleoTypes.KEYWORD -> KEYWORD
