@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- Fixed extra colon in circuit component completion
 
 ## [0.2.2]
 

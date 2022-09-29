@@ -50,7 +50,7 @@ object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
                 (type as? LeoRecordDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
                     ?: (type as? LeoCircuitDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
                     ?: return@let
-            addElement(result, componentList)
+            addElement(result, componentList, false)
         }
         // Token { owner }
         PsiTreeUtil.getParentOfType(element, LeoCircuitExpression::class.java)?.let {
@@ -59,12 +59,16 @@ object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
                 (type as? LeoRecordDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
                     ?: (type as? LeoCircuitDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
                     ?: return@let
-            addElement(result, componentList)
+            addElement(result, componentList, true)
         }
 
     }
 
-    private fun addElement(result: CompletionResultSet, list: List<LeoCircuitComponentDeclaration>) {
+    private fun addElement(
+        result: CompletionResultSet,
+        list: List<LeoCircuitComponentDeclaration>,
+        insertColon: Boolean
+    ) {
         list.forEach { component ->
             val type = LeoUtils.typeToString(component)
             result.addElement(
@@ -73,9 +77,11 @@ object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
                     .withIcon(AleoIcons.CIRCUIT_COMPONENT)
                     .withTypeText(type)
                     .withInsertHandler { context, _ ->
-                        val content = ": "
-                        context.document.insertString(context.selectionEndOffset, content)
-                        EditorModificationUtil.moveCaretRelatively(context.editor, content.length)
+                        if (insertColon) {
+                            val content = ": "
+                            context.document.insertString(context.selectionEndOffset, content)
+                            EditorModificationUtil.moveCaretRelatively(context.editor, content.length)
+                        }
                     }
             )
         }
