@@ -18,22 +18,68 @@ package im.mrx.leolanguage.leo
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.parser.GeneratedParserUtilBase
 import com.intellij.openapi.util.Key
+import com.intellij.util.containers.Stack
 
+@Suppress("UNUSED_PARAMETER")
 object LeoParserUtil : GeneratedParserUtilBase() {
     private var ALLOW_CIRCUIT_EXPRESSION: Key<Boolean> = Key("LeoParserUtil.ALLOW_CIRCUIT_EXPRESSION")
+    private var ALLOW_EXTERNAL_RECORD: Key<Boolean> = Key("LeoParserUtil.ALLOW_EXTERNAL_RECORD")
 
-    @Suppress("UNUSED_PARAMETER")
+    private var DATA_STACK: Key<MutableMap<Key<*>, Stack<Boolean>>> = Key("LeoParserUtil.DATA_STACK")
+
     @JvmStatic
     fun checkCircuitExpressionAllowed(builder: PsiBuilder, level: Int): Boolean {
         return builder.getUserData(ALLOW_CIRCUIT_EXPRESSION) ?: true
     }
 
     @JvmStatic
-    fun setAllowCircuitExpression(builder: PsiBuilder, level: Int, allow: Int, parser: Parser): Boolean {
-        val old = builder.getUserData(ALLOW_CIRCUIT_EXPRESSION)
-        builder.putUserData(ALLOW_CIRCUIT_EXPRESSION, allow == 1)
-        val result = parser.parse(builder, level)
-        builder.putUserData(ALLOW_CIRCUIT_EXPRESSION, old)
-        return result
+    fun setAllowCircuitExpression(builder: PsiBuilder, level: Int, allow: Int): Boolean {
+        builder.pushValue(ALLOW_CIRCUIT_EXPRESSION, allow == 1)
+        return true
     }
+
+    @JvmStatic
+    fun resetAllowCircuitExpression(builder: PsiBuilder, level: Int): Boolean {
+        builder.popValue(ALLOW_CIRCUIT_EXPRESSION)
+        return true
+    }
+
+    @JvmStatic
+    fun checkExternalRecordAllowed(builder: PsiBuilder, level: Int): Boolean {
+        return builder.getUserData(ALLOW_EXTERNAL_RECORD) ?: false
+    }
+
+    @JvmStatic
+    fun setAllowExternalRecord(builder: PsiBuilder, level: Int, allow: Int): Boolean {
+        builder.pushValue(ALLOW_EXTERNAL_RECORD, allow == 1)
+        return true
+    }
+
+    @JvmStatic
+    fun resetAllowExternalRecord(builder: PsiBuilder, level: Int): Boolean {
+        builder.popValue(ALLOW_EXTERNAL_RECORD)
+        return true
+    }
+
+    private var PsiBuilder.userDataStacks: MutableMap<Key<*>, Stack<Boolean>>
+        get() = getUserData(DATA_STACK) ?: mutableMapOf()
+        set(value) = putUserData(DATA_STACK, value)
+
+    private fun PsiBuilder.pushValue(key: Key<Boolean>, value: Boolean) {
+        val stacks = userDataStacks
+        val stack = stacks[key] ?: Stack<Boolean>()
+        stack.push(value)
+        stacks[key] = stack
+        userDataStacks = stacks
+        putUserData(key, value)
+    }
+
+    private fun PsiBuilder.popValue(key: Key<Boolean>) {
+        val stacks = userDataStacks
+        val stack = stacks[key] ?: return
+        putUserData(key, stack.pop())
+        userDataStacks = stacks
+    }
+
+
 }

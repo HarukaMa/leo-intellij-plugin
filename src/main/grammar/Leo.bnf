@@ -137,9 +137,13 @@ address_type ::= "address"
 
 string_type ::= "string"
 
-primitive_type ::=  boolean_type | arithmetic_type | address_type | string_type
+primitive_type ::= boolean_type | arithmetic_type | address_type | string_type
 
-named_type ::= primitive_type | core_circuit | identifier {
+program_id ::= identifier ".leo"
+
+external_record ::= <<checkExternalRecordAllowed>> program_id "/" identifier ".record" { pin = 3 }
+
+named_type ::= primitive_type | core_circuit | external_record | identifier {
     implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedTypeImplMixin"
 }
@@ -178,7 +182,7 @@ expression ::= conditional_ternary_expression
              | postfix_expression_group
              | primary_expression
 
-no_circuit_literal_expression ::= <<setAllowCircuitExpression 0 expression>> {
+no_circuit_literal_expression ::= <<setAllowCircuitExpression 0>> expression <<resetAllowCircuitExpression>> {
  elementType = expression
  name = "expression"
 }
@@ -228,11 +232,11 @@ unary_minus_expression ::= "-" expression
 
 tuple_component_expression ::= expression "." numeral
 circuit_component_identifier ::= identifier {
- implements = [
-   "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
-   "im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifierExt"
- ]
- mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifierImplMixin"
+    implements = [
+        "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+        "im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifierExt"
+    ]
+    mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifierImplMixin"
 }
 circuit_component_expression ::= expression "." circuit_component_identifier
 private operator_call ::= unary_operator_call | binary_operator_call
@@ -240,6 +244,7 @@ unary_operator_call ::= expression "." identifier "(" ")"
 binary_operator_call ::= expression "." identifier "(" expression [ "," ] ")"
 
 primary_expression ::= literal
+                   | external_function_call
                    | static_function_call
                    | associated_constant
                    | self_expression
@@ -259,30 +264,38 @@ variable_or_free_constant ::= identifier {
 associated_constant ::= named_type "::" identifier
 
 function_identifier ::= identifier {
- implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
- mixin = "im.mrx.leolanguage.leo.psi.LeoFunctionIdentifierImplMixin"
+    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoFunctionIdentifierImplMixin"
 }
 
 free_function_call ::= function_identifier function_arguments { pin = 2 }
 
 static_function_call ::= named_type "::" identifier function_arguments { pin = 4 }
 
+external_function_identifier ::= program_id "/" identifier {
+    pin = 2
+    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoExternalFunctionIdentifierImplMixin"
+}
+
+external_function_call ::= external_function_identifier function_arguments { pin = 1 }
+
 function_arguments ::= "(" [ expression ( "," expression )* [ "," ] ] ")" { pin = 1 }
 
 tuple_expression ::= "(" [ expression { "," expression }+ [ "," ] ] ")" {
- extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
+    extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
 }
 
 circuit_expression_identifier ::= identifier {
- implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
- mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitExpressionIdentifierImplMixin"
+    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitExpressionIdentifierImplMixin"
 }
 
 circuit_expression ::= <<checkCircuitExpressionAllowed>> circuit_expression_identifier "{" circuit_component_initializer
                                     ( "," circuit_component_initializer )*
                                     [ "," ] "}" {
- pin = 3
- extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
+    pin = 3
+    extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
 }
 
 circuit_component_initializer ::= circuit_component_identifier ":" expression | circuit_component_identifier { pin(".*") = 2 }
@@ -404,8 +417,13 @@ assert_equal_call ::= "assert_eq" "(" expression "," expression [ "," ] ")"
 
 assert_not_equal_call ::= "assert_neq" "(" expression "," expression [ "," ] ")"
 
+private function_type ::= <<setAllowExternalRecord 1>> type <<resetAllowExternalRecord>> {
+    elementType = type
+    name = "type"
+}
+
 function_declaration ::= annotation* "function" identifier
-                       "(" [ function_parameters ] ")" [ "->" type ]
+                       "(" [ function_parameters ] ")" [ "->" function_type ]
                        block [ finalizer ] {
                         pin = 2
                         implements = [
@@ -418,7 +436,7 @@ function_declaration ::= annotation* "function" identifier
                         }
 
 finalizer ::= "finalize" identifier
-            "(" [ function_parameters ] ")" [ "->" type ]
+            "(" [ function_parameters ] ")" [ "->" function_type ]
             block {
                 pin = 1
                 implements = [
@@ -431,7 +449,7 @@ finalizer ::= "finalize" identifier
 function_parameters ::= function_parameter ( "," function_parameter )* [ "," ] { pin = 1 }
 
 function_parameter ::= [ "public" | "constant" | "const" ]
-                     identifier ":" type {
+                     identifier ":" function_type {
                         implements = [
                             "im.mrx.leolanguage.leo.psi.LeoNamedElement"
                             "im.mrx.leolanguage.leo.psi.LeoTypedElement"
@@ -488,7 +506,7 @@ mapping_declaration ::= "mapping" identifier ":" mapping_type ";" {
     elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
 }
 
-import_declaration ::= "import" identifier ".leo" ";" { pin = 1 }
+import_declaration ::= "import" program_id ";" { pin = 1 }
 
 private declaration ::= function_declaration
                     | circuit_declaration

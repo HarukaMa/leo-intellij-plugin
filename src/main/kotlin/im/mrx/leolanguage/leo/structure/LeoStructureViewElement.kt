@@ -67,6 +67,7 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
         val elements = ArrayList<TreeElement>()
         if (element is LeoFile) {
             PsiTreeUtil.getChildrenOfType(element, NavigatablePsiElement::class.java)?.forEach {
+                if (it is LeoImportDeclaration) return@forEach
                 elements.add(LeoStructureViewElement(it as NavigatablePsiElement))
             }
         }
