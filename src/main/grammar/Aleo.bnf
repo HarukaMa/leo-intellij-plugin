@@ -47,6 +47,7 @@
     semicolon = ";"
     colon = ":"
     dot = "."
+    slash = "/"
     as = "as"
   ]
 }

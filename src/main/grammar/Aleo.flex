@@ -43,6 +43,7 @@ BRACKETS=[\[\]]
   ";"                { return SEMICOLON; }
   ":"                { return COLON; }
   "."                { return DOT; }
+  "/"                { return SLASH; }
   "as"               { return AS; }
 
   "\""               { yybegin(STRING_STATE); }
