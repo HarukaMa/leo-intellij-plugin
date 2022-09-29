@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "im.mrx"
-version = "0.2.2"
+version = "0.2.3"
 
 sourceSets["main"].java.srcDirs("src/main/gen")
 
@@ -61,7 +61,7 @@ tasks {
                 it.key != "[Unreleased]"
             }.map {
                 "<h2>${it.key}</h2>${it.value.toHTML()}"
-            }.joinToString("")
+            }.take(5).joinToString("")
         )
     }
 

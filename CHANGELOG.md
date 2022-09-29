@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+
+## [0.2.3]
+
 - Fixed extra colon in circuit component completion
 - Fixed wrong candidate of function completion
 - Fixed exception when completing circuit expression identifier
@@ -13,7 +16,6 @@
 - Added comments to hover document
 
 ## [0.2.1]
-
 - Added reference and icon for mapping type
 - Added completion for increment / decrement statements
 - Added mapping type text to structure view
