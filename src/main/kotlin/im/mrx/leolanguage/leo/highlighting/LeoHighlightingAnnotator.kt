@@ -65,6 +65,9 @@ class LeoHighlightingAnnotator : Annotator {
             STATIC_FUNCTION_CALL -> STATIC_FUNCTION_CALL_KEY
             CIRCUIT_COMPONENT_DECLARATION -> CIRCUIT_COMPONENT_KEY
             CIRCUIT_COMPONENT_INITIALIZER -> CIRCUIT_COMPONENT_KEY
+            ASSERT_CALL -> STATIC_FUNCTION_CALL_KEY
+            ASSERT_EQUAL_CALL -> STATIC_FUNCTION_CALL_KEY
+            ASSERT_NOT_EQUAL_CALL -> STATIC_FUNCTION_CALL_KEY
 
             CIRCUIT_COMPONENT_IDENTIFIER -> highlightCircuitComponentWithReference(element, holder)
             VARIABLE_OR_FREE_CONSTANT -> highlightVariable(element, holder)
