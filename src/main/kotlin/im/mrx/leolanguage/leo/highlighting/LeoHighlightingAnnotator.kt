@@ -103,18 +103,14 @@ class LeoHighlightingAnnotator : Annotator {
 
     private fun highlightRecordName(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
         val file = element.containingFile
-        val declarations =
-            PsiTreeUtil.getChildrenOfType(file.originalElement, LeoDeclaration::class.java) ?: return null
-        for (declaration in declarations) {
-            declaration.recordDeclaration?.let {
-                if (it.name == element.text) {
-                    return RECORD_DECLARATION_KEY
-                }
+        PsiTreeUtil.getChildrenOfType(file.originalElement, LeoRecordDeclaration::class.java)?.forEach {
+            if (it.name == element.text) {
+                return RECORD_DECLARATION_KEY
             }
-            declaration.circuitDeclaration?.let {
-                if (it.name == element.text) {
-                    return RECORD_DECLARATION_KEY
-                }
+        }
+        PsiTreeUtil.getChildrenOfType(file.originalElement, LeoCircuitDeclaration::class.java)?.forEach {
+            if (it.name == element.text) {
+                return RECORD_DECLARATION_KEY
             }
         }
         if (element.parent.elementType == CIRCUIT_EXPRESSION_IDENTIFIER) {

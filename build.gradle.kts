@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "im.mrx"
-version = "0.2.1"
+version = "0.2.2"
 
 sourceSets["main"].java.srcDirs("src/main/gen")
 

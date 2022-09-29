@@ -26,7 +26,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
-import im.mrx.leolanguage.leo.psi.LeoDeclaration
+import im.mrx.leolanguage.leo.psi.LeoMappingDeclaration
 import im.mrx.leolanguage.leo.psi.LeoMappingIdentifier
 
 object LeoMappingCompletionProvider : LeoCompletionProvider() {
@@ -43,13 +43,12 @@ object LeoMappingCompletionProvider : LeoCompletionProvider() {
 
     fun addFunctions(parameters: CompletionParameters, result: CompletionResultSet) {
         val element = parameters.position
-        PsiTreeUtil.getChildrenOfType(element.containingFile, LeoDeclaration::class.java)?.forEach {
-            val mapping = it.mappingDeclaration ?: return@forEach
+        PsiTreeUtil.getChildrenOfType(element.containingFile, LeoMappingDeclaration::class.java)?.forEach {
             result.addElement(
                 LookupElementBuilder
-                    .create(mapping)
+                    .create(it)
                     .withIcon(AleoIcons.MAPPING)
-                    .withTypeText(mapping.mappingType?.text ?: "?")
+                    .withTypeText(it.mappingType?.text ?: "?")
             )
         }
     }
