@@ -36,7 +36,8 @@ abstract class LeoCircuitComponentIdentifierImplMixin(node: ASTNode) : ASTWrappe
     override fun getTypeElement(): PsiElement? {
         when (parent) {
             is LeoCircuitComponentExpression -> {
-                val expression = (parent as? LeoCircuitComponentExpression)?.expression as LeoPrimaryExpression
+                val expression =
+                    (parent as? LeoCircuitComponentExpression)?.expression as? LeoPrimaryExpression ?: return null
                 val reference = expression.variableOrFreeConstant?.reference?.resolve() ?: return null
                 for (child in reference.children) {
                     if (child is LeoNamedType) {

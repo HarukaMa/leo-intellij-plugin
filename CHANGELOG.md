@@ -3,6 +3,7 @@
 ## [Unreleased]
 - Fixed extra colon in circuit component completion
 - Fixed wrong candidate of function completion
+- Fixed exception when completing circuit expression identifier
 
 ## [0.2.2]
 
