@@ -35,7 +35,7 @@ class AleoParserDefinition : ParserDefinition {
     companion object {
         //        val FILE = AleoFileStubType.INSTANCE
         val WHITESPACE = TokenSet.create(TokenType.WHITE_SPACE)
-        val COMMENT = TokenSet.create(AleoTypes.COMMENT)
+        val COMMENT = TokenSet.create(AleoTypes.LINE_COMMENT, AleoTypes.BLOCK_COMMENT)
         val STRING = TokenSet.create(AleoTypes.STRING_LITERAL)
     }
 

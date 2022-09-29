@@ -218,6 +218,3 @@ increment ::= "increment" identifier "[" operand "]" "by" operand ";" { pin = 1 
 decrement ::= "decrement" identifier "[" operand "]" "by" operand ";" { pin = 1 }
 
 command ::= increment | decrement | instruction
-
-
-comment ::= line_comment | block_comment
