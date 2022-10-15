@@ -51,7 +51,9 @@ class LeoSymbolStubType<T : LeoNamedElement>(
     }
 
     override fun indexStub(stub: LeoSymbolStub<LeoNamedElement>, sink: IndexSink) {
-        sink.occurrence(LeoNamedElementIndex.KEY, stub.name ?: "")
+        stub.name?.let {
+            sink.occurrence(LeoNamedElementIndex.KEY, it)
+        }
     }
 
     override fun serialize(stub: LeoSymbolStub<LeoNamedElement>, dataStream: StubOutputStream) {

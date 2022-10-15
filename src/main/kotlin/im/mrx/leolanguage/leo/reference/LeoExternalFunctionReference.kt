@@ -16,10 +16,15 @@
 
 package im.mrx.leolanguage.leo.reference
 
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
+import com.intellij.psi.search.GlobalSearchScopes
+import com.intellij.psi.stubs.StubIndex
 import im.mrx.leolanguage.leo.psi.LeoExternalFunctionIdentifier
+import im.mrx.leolanguage.leo.psi.LeoNamedElement
+import im.mrx.leolanguage.leo.stub.LeoNamedElementIndex
 
 class LeoExternalFunctionReference(element: LeoExternalFunctionIdentifier) :
     LeoReferenceBase<LeoExternalFunctionIdentifier>(element) {
@@ -32,8 +37,19 @@ class LeoExternalFunctionReference(element: LeoExternalFunctionIdentifier) :
     object Resolver : ResolveCache.Resolver {
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
-            // TODO: external function resolve
-            return null
+            if (DumbService.isDumb(ref.element.project)) return null
+            val element = ref.element as LeoExternalFunctionIdentifier
+            val (filename, function_name) = element.text.split('/')
+            val importDir =
+                element.containingFile.containingDirectory.parentDirectory?.findSubdirectory("imports") ?: return null
+            val elements = StubIndex.getElements(
+                LeoNamedElementIndex.KEY,
+                function_name,
+                element.project,
+                GlobalSearchScopes.directoryScope(importDir, false),
+                LeoNamedElement::class.java
+            )
+            return elements.firstOrNull { it.containingFile.name == filename }
         }
 
     }
