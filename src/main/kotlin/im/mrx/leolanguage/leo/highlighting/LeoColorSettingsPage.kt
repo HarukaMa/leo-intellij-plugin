@@ -47,6 +47,7 @@ class LeoColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor("Functions//Function declaration", LeoHighlightingAnnotator.FUNCTION_DECLARATION_KEY),
             AttributesDescriptor("Functions//Function call", LeoHighlightingAnnotator.FREE_FUNCTION_CALL_KEY),
             AttributesDescriptor("Functions//Static function call", LeoHighlightingAnnotator.STATIC_FUNCTION_CALL_KEY),
+            AttributesDescriptor("Mappings//Mapping declaration", LeoHighlightingAnnotator.MAPPING_DECLARATION_KEY),
             AttributesDescriptor("Parameters//Function parameter", LeoHighlightingAnnotator.FUNCTION_PARAMETER_KEY),
 
             )

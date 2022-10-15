@@ -68,6 +68,7 @@ class LeoHighlightingAnnotator : Annotator {
             ASSERT_CALL -> STATIC_FUNCTION_CALL_KEY
             ASSERT_EQUAL_CALL -> STATIC_FUNCTION_CALL_KEY
             ASSERT_NOT_EQUAL_CALL -> STATIC_FUNCTION_CALL_KEY
+            MAPPING_DECLARATION -> MAPPING_DECLARATION_KEY
 
             CIRCUIT_COMPONENT_IDENTIFIER -> highlightCircuitComponentWithReference(element, holder)
             VARIABLE_OR_FREE_CONSTANT -> highlightVariable(element, holder)
@@ -184,6 +185,9 @@ class LeoHighlightingAnnotator : Annotator {
         )
         val REFERENCE_ERROR_KEY = TextAttributesKey.createTextAttributesKey(
             "LEO_WRONG_REFERENCE", CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES
+        )
+        val MAPPING_DECLARATION_KEY = TextAttributesKey.createTextAttributesKey(
+            "LEO_MAPPING_DECLARATION", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE
         )
     }
 }

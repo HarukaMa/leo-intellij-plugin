@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fixed mapping type name not highlighted
+
 ## [0.2.3]
 
 - Fixed extra colon in circuit component completion
