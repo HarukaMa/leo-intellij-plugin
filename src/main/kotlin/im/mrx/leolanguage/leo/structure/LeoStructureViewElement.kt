@@ -30,16 +30,21 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
     override fun getPresentation(): ItemPresentation {
         return element.presentation ?: object : ItemPresentation {
             override fun getPresentableText(): String? {
-                if (element is LeoFunctionDeclaration) {
-                    val parameters =
-                        element.functionParameters?.functionParameterList?.map { it.namedType?.text ?: "?" }
-                    return "${element.name}(${parameters?.joinToString(", ")})${LeoUtils.typeToStringWithArrow(element)}"
+                if (element is LeoFunctionLikeDeclaration) {
+                    return "${element.name}(${LeoUtils.functionParameterListToTypeString(element)})${
+                        LeoUtils.typeToStringWithArrow(
+                            element
+                        )
+                    }"
                 }
-                if (element is LeoCircuitComponentDeclaration) {
+                if (element is LeoStructComponentDeclaration) {
                     return "${element.name}${LeoUtils.typeToStringWithColon(element)}"
                 }
                 if (element is LeoMappingDeclaration) {
                     return "${element.name}: ${element.mappingType?.text}"
+                }
+                if (element is LeoProgramDeclaration) {
+                    return element.programId?.text ?: "Program"
                 }
                 return element.name
             }
@@ -47,33 +52,39 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
             override fun getIcon(unused: Boolean): Icon? {
                 return when (element) {
                     is LeoRecordDeclaration -> AleoIcons.RECORD
-                    is LeoCircuitDeclaration -> AleoIcons.CIRCUIT
-                    is LeoFunctionDeclaration -> {
-                        if (element.annotationList.any { it.text == "@program" }) {
-                            return AleoIcons.FUNCTION
+                    is LeoStructDeclaration -> AleoIcons.STRUCT
+                    is LeoFunctionLikeDeclaration -> {
+                        if (LeoUtils.functionIsTransition(element)) {
+                            return AleoIcons.TRANSITION
                         }
-                        return AleoIcons.CLOSURE
+                        return AleoIcons.FUNCTION
                     }
 
-                    is LeoCircuitComponentDeclaration -> AleoIcons.CIRCUIT_COMPONENT
+                    is LeoStructComponentDeclaration -> AleoIcons.STRUCT_COMPONENT
                     is LeoMappingDeclaration -> AleoIcons.MAPPING
                     else -> null
                 }
+            }
+
+            override fun getLocationString(): String? {
+                if (element is LeoProgramDeclaration) {
+                    return element.containingFile.presentation?.locationString
+                }
+                return null
             }
         }
     }
 
     override fun getChildren(): Array<TreeElement> {
         val elements = ArrayList<TreeElement>()
-        if (element is LeoFile) {
-            PsiTreeUtil.getChildrenOfType(element, NavigatablePsiElement::class.java)?.forEach {
-                if (it is LeoImportDeclaration) return@forEach
+        if (element is LeoProgramDeclaration) {
+            PsiTreeUtil.getChildrenOfType(element.programBlock, NavigatablePsiElement::class.java)?.forEach {
                 elements.add(LeoStructureViewElement(it as NavigatablePsiElement))
             }
         }
-        if (element is LeoCircuitDeclaration || element is LeoRecordDeclaration) {
-            PsiTreeUtil.getChildOfType(element, LeoCircuitComponentDeclarations::class.java)?.let {
-                it.circuitComponentDeclarationList.forEach { declaration ->
+        if (element is LeoStructDeclaration || element is LeoRecordDeclaration) {
+            PsiTreeUtil.getChildOfType(element, LeoStructComponentDeclarations::class.java)?.let {
+                it.structComponentDeclarationList.forEach { declaration ->
                     elements.add(LeoStructureViewElement(declaration as NavigatablePsiElement))
                 }
             }

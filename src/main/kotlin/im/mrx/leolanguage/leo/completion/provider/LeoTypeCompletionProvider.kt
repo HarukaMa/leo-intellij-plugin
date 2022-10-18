@@ -22,9 +22,9 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
+import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.*
 
@@ -36,23 +36,23 @@ object LeoTypeCompletionProvider : LeoCompletionProvider() {
     ) {
         val arrayList = arrayListOf<Any>()
         arrayList.addAll(
-            PsiTreeUtil.getChildrenOfType(
+            LeoUtils.getProgramChildrenOfTypeInFile(
                 parameters.position.containingFile,
                 LeoRecordDeclaration::class.java
-            ) ?: emptyArray()
+            )
         )
         arrayList.addAll(
-            PsiTreeUtil.getChildrenOfType(
+            LeoUtils.getProgramChildrenOfTypeInFile(
                 parameters.position.containingFile,
-                LeoCircuitDeclaration::class.java
-            ) ?: emptyArray()
+                LeoStructDeclaration::class.java
+            )
         )
         arrayList.forEach {
             result.addElement(
                 LookupElementBuilder
                     .create((it as? LeoNamedElement)?.name ?: "<BUG IN PLUGIN>")
                     .withPsiElement(it as PsiElement)
-                    .withIcon(if (it is LeoCircuitDeclaration) AleoIcons.CIRCUIT else AleoIcons.RECORD)
+                    .withIcon(if (it is LeoStructDeclaration) AleoIcons.STRUCT else AleoIcons.RECORD)
             )
         }
     }

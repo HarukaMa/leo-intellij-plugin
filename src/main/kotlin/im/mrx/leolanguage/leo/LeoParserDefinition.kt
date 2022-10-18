@@ -36,7 +36,7 @@ class LeoParserDefinition : ParserDefinition {
     companion object {
         val FILE = LeoFileStubType.INSTANCE
         val WHITESPACE = TokenSet.create(TokenType.WHITE_SPACE)
-        val COMMENT = TokenSet.create(LeoTypes.END_OF_LINE_COMMENT, LeoTypes.BLOCK_COMMENT)
+        val COMMENT = TokenSet.create(LeoTypes.LINE_COMMENT, LeoTypes.BLOCK_COMMENT)
         val STRING = TokenSet.create(LeoTypes.STRING_LITERAL)
     }
 

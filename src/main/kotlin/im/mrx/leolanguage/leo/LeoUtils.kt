@@ -16,24 +16,30 @@
 
 package im.mrx.leolanguage.leo
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
-import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
-import im.mrx.leolanguage.leo.psi.LeoFunctionParameter
-import im.mrx.leolanguage.leo.psi.LeoTypedElement
-import im.mrx.leolanguage.leo.psi.LeoTypes
+import im.mrx.leolanguage.leo.psi.*
 
 object LeoUtils {
-    fun functionIsProgram(function: LeoFunctionDeclaration): Boolean =
-        function.annotationList.any { it.identifier.text == "program" }
+    fun functionIsTransition(function: LeoFunctionLikeDeclaration): Boolean =
+        function is LeoTransitionDeclaration
 
-    fun functionParameterListToString(function: LeoFunctionDeclaration): String {
-        return function.functionParameters?.functionParameterList?.joinToString(", ") {
+    fun functionParameterListToTypeString(function: LeoFunctionLikeDeclaration): String {
+        return function.functionParameterList.functionParameterList.joinToString(", ") {
+            typeToString(it) ?: "?"
+        }
+    }
+
+    fun functionParameterListToString(function: LeoFunctionLikeDeclaration): String {
+        return function.functionParameterList.functionParameterList.joinToString(", ") {
             val doc = "${it.name}${typeToStringWithColon(it)}"
-            if (functionIsProgram(function)) {
+            if (functionIsTransition(function)) {
                 return@joinToString "${getParameterVisibility(it)} $doc"
             }
             return@joinToString doc
-        } ?: ""
+        }
     }
 
     fun getParameterVisibility(parameter: LeoFunctionParameter): String {
@@ -47,23 +53,51 @@ object LeoUtils {
         return visibility?.text ?: "private"
     }
 
-    fun functionToDocString(function: LeoFunctionDeclaration): String =
-        (if (functionIsProgram(function)) "@program<br>" else "") + "function ${function.name}(${
+    fun functionToDocString(function: LeoFunctionLikeDeclaration): String =
+        "${(if (functionIsTransition(function)) "transition" else "function")} ${function.name}(${
             functionParameterListToString(
                 function
             )
         })${typeToStringWithArrow(function)}"
 
-
-    fun <T : LeoTypedElement> typeToString(function: T): String? {
-        return function.namedType?.text ?: function.tupleType?.text
+    private fun namedTypeToString(type: LeoNamedType): String {
+        type.locator?.let {
+            return it.identifier?.text ?: "?"
+        }
+        return type.text
     }
 
-    fun <T : LeoTypedElement> typeToStringWithArrow(function: T): String {
-        return (function.namedType?.text ?: function.tupleType?.text)?.let { " -> $it" } ?: ""
+    private fun tupleTypeToString(type: LeoTupleType): String {
+        return "(" + type.children.joinToString(", ") {
+            when (it) {
+                is LeoTupleType -> tupleTypeToString(it)
+                is LeoNamedType -> namedTypeToString(it)
+                else -> ""
+            }
+        } + ")"
     }
 
-    fun <T : LeoTypedElement> typeToStringWithColon(function: T): String {
-        return (function.namedType?.text ?: function.tupleType?.text)?.let { ": $it" } ?: ""
+    fun <T : LeoTypedElement> typeToString(element: T): String? {
+        element.namedType?.let {
+            return namedTypeToString(it)
+        }
+        element.tupleType?.let {
+            return tupleTypeToString(it)
+        }
+        return null
+    }
+
+    fun <T : LeoTypedElement> typeToStringWithArrow(element: T): String {
+        return typeToString(element)?.let { " -> $it" } ?: ""
+    }
+
+    fun <T : LeoTypedElement> typeToStringWithColon(element: T): String {
+        return typeToString(element)?.let { ": $it" } ?: ""
+    }
+
+    fun <P : PsiElement, T : Class<P>> getProgramChildrenOfTypeInFile(file: PsiFile, type: T): List<P> {
+        PsiTreeUtil.getChildOfType(file, LeoProgramDeclaration::class.java)?.let {
+            return PsiTreeUtil.getChildrenOfTypeAsList(it.programBlock, type)
+        } ?: return emptyList()
     }
 }

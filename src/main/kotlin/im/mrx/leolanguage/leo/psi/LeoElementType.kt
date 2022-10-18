@@ -19,7 +19,7 @@ package im.mrx.leolanguage.leo.psi
 import com.intellij.psi.tree.IElementType
 import im.mrx.leolanguage.leo.LeoLanguage
 
-class LeoElementType(name: String) : IElementType(name, LeoLanguage.INSTANCE) {
+class LeoElementType(name: String) : IElementType(name, LeoLanguage) {
     override fun toString(): String {
         return "LeoElementType." + super.toString()
     }

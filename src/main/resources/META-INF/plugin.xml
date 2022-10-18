@@ -98,6 +98,8 @@ For more info on Aleo: <a href="https://www.aleo.org/">aleo.org</a> <br/>
         <lang.documentationProvider
                 language="Leo"
                 implementationClass="im.mrx.leolanguage.leo.LeoDocumentationProvider"/>
+        <langCodeStyleSettingsProvider
+                implementation="im.mrx.leolanguage.leo.formatting.LeoCodeStyleSettingsProvider"/>
 
         <fileType
                 name="Aleo"

@@ -32,12 +32,12 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
         println(element.elementType)
         return when (element) {
             is LeoFunctionParameter -> generateDoc(element)
-            is LeoCircuitComponentDeclaration -> generateDoc(element)
+            is LeoStructComponentDeclaration -> generateDoc(element)
             is LeoVariableDeclaration -> generateDoc(element)
-            is LeoCircuitDeclaration -> generateDoc(element)
+            is LeoStructDeclaration -> generateDoc(element)
             is LeoRecordDeclaration -> generateDoc(element)
             is LeoMappingDeclaration -> generateDoc(element)
-            is LeoFunctionDeclaration -> generateDoc(element)
+            is LeoFunctionLikeDeclaration -> generateDoc(element)
             is LeoFinalizer -> generateDoc(element)
             else -> null
         }
@@ -49,7 +49,7 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
 
     private fun generateDoc(element: LeoFunctionParameter): String {
         val doc = "${element.name}${LeoUtils.typeToStringWithColon(element)}"
-        val declaration = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
+        val declaration = PsiTreeUtil.getParentOfType(element, LeoFunctionLikeDeclaration::class.java)
         if (declaration?.annotationList?.any { it.identifier.text == "program" } == true) {
             var visibility = element.identifier.prevSibling
             while (visibility != null) {
@@ -63,8 +63,8 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
         return generateMarkedUpDoc(doc, element)
     }
 
-    private fun generateDoc(element: LeoCircuitDeclaration): String {
-        return generateMarkedUpDoc("circuit ${element.name}", element)
+    private fun generateDoc(element: LeoStructDeclaration): String {
+        return generateMarkedUpDoc("struct ${element.name}", element)
     }
 
     private fun generateDoc(element: LeoRecordDeclaration): String {
@@ -75,7 +75,7 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
         return generateMarkedUpDoc(element.text, element)
     }
 
-    private fun generateDoc(element: LeoCircuitComponentDeclaration): String {
+    private fun generateDoc(element: LeoStructComponentDeclaration): String {
         return generateMarkedUpDoc("${element.name}${LeoUtils.typeToStringWithColon(element)}", element)
     }
 
@@ -83,14 +83,14 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
         return generateMarkedUpDoc("${element.name}${LeoUtils.typeToStringWithColon(element)}", element)
     }
 
-    private fun generateDoc(element: LeoFunctionDeclaration): String {
+    private fun generateDoc(element: LeoFunctionLikeDeclaration): String {
         return generateMarkedUpDoc(LeoUtils.functionToDocString(element), element)
     }
 
     private fun generateDoc(element: LeoFinalizer): String {
         return generateMarkedUpDoc(
             "finalize ${element.name}(${
-                element.functionParameters?.functionParameterList?.joinToString(", ") {
+                element.functionParameterList?.functionParameterList?.joinToString(", ") {
                     val doc = "${it.name}${LeoUtils.typeToStringWithColon(it)}"
                     return@joinToString "${LeoUtils.getParameterVisibility(it)} $doc"
                 } ?: ""
@@ -113,6 +113,9 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
         while (el.prevSibling != null) {
             el = el.prevSibling
             if (el is PsiWhiteSpace) {
+                if (el.text.count { it == '\n' } > 1) {
+                    break
+                }
                 continue
             }
             if (el.elementType == LeoTypes.BLOCK_COMMENT) {
@@ -125,7 +128,7 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
                         .replace(Regex("""\s*\*/$"""), "")
                 )
                 break
-            } else if (el.elementType == LeoTypes.END_OF_LINE_COMMENT) {
+            } else if (el.elementType == LeoTypes.LINE_COMMENT) {
                 comments.add(0, el.text.replace(Regex("""^\s*//\s*"""), ""))
                 continue
             } else {

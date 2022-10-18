@@ -48,10 +48,10 @@
     not-star-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0029\u002B-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
     not-star-or-slash-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0029\u002B-\u002E\u0030-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
     not-double-quote-or-backslash-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
-    end-of-line-comment = "regexp:(//[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*)"
+    line-comment = "regexp:(//[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*)"
     block-comment = "regexp:(/[*](?:[^*]|[*][^/])*[*]/)"
-    keyword = "regexp:address|bool|circuit|console|const|constant|else|field|for|function|group|i8|i16|i32|i64|i128|if|in|let|public|record|return|scalar|string|u8|u16|u32|u64|u128|increment|decrement|finalize|mapping|async|self|import"
-    core_circuit = "regexp:BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8"
+    keyword = "regexp:address|async|bool|console|const|constant|decrement|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|increment|let|mapping|program|public|record|return|scalar|string|struct|transition|u8|u16|u32|u64|u128"
+    core_struct = "regexp:BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8"
     uppercase-letter = "regexp:[A-Z]"
     lowercase-letter = "regexp:[a-z]"
     letter = "regexp:[a-zA-Z]"
@@ -82,7 +82,7 @@
     numeric-literal = "regexp:[0-9]+([ui](8|16|32|64|128)|field|group|scalar)"
 //    atomic-literal = "regexp:[0-9]+([ui](8|16|32|64|128)|field|group|scalar)|true|false|aleo1[a-z0-9]{58}|\"([\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]|\\'|\\\"|\\|\\n|\\r|\\t|\\0|\\x[0-7][0-9a-f]|\\u\{[0-9a-f]{1,6}})*\""
 //    annotation = "regexp:@[a-zA-Z][a-zA-Z0-9_]*"
-    symbol = "regexp:!|&&|\|\||==|!=|<|<=|>|>=|&|\||\^|<<|>>|\+|-|\*|/|%|\*\*|=|\+=|-=|\*=|/=|%=|\*\*=|<<=|>>=|&=|\|=|\^=|&&=|\|\|=|\.\.|\?|->|_|=>"
+    symbol = "regexp:!|&&|\|\||==|!=|<|<=|>|>=|&|\||\^|<<|>>|\+|-|\*|%|\*\*|=|\+=|-=|\*=|/=|%=|\*\*=|<<=|>>=|&=|\|=|\^=|&&=|\|\|=|\.\.|\?|->|_|=>"
     at = "@"
     group-end = "\)group"
 
@@ -96,6 +96,7 @@
     dot = "."
     comma = ","
     semicolon = ";"
+    slash = "/"
 
     // TODO highlighting?
     colon = ":"
@@ -113,9 +114,27 @@
 
 //lexeme ::= token | comment | whitespace
 
-file ::= declaration*
+// root
+file ::= import_declaration* program_declaration
+
+// from lexical
 
 annotation ::= "@" identifier
+
+private atomic_literal ::= numeric-literal
+               | boolean-literal
+               | address-literal
+               | string-literal
+
+// from syntactic
+
+program_id ::= identifier "." identifier { pin = 2 }
+
+locator ::= program_id "/" identifier {
+    pin = 2
+    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoLocatorImplMixin"
+}
 
 unsigned_type ::= "u8" | "u16" | "u32" | "u64" | "u128"
 
@@ -139,16 +158,7 @@ string_type ::= "string"
 
 primitive_type ::= boolean_type | arithmetic_type | address_type | string_type
 
-program_id ::= identifier ".leo"
-
-external_record ::= <<checkExternalRecordAllowed>> program_id "/" identifier ".record" {
-    pin = 3
-    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
-    mixin = "im.mrx.leolanguage.leo.psi.LeoExternalRecordImplMixin"
-
-}
-
-named_type ::= primitive_type | core_circuit | external_record | identifier {
+named_type ::= primitive_type | core_struct | ( locator [ ".record" ] ) | ( identifier [ ".record" ] ) {
     implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedTypeImplMixin"
 }
@@ -160,11 +170,6 @@ private type ::= named_type | tuple_type
 group_coordinate ::= ( [ "-" ] numeral ) | "+" | "-" | "_"
 
 affine_group_literal ::= "(" group_coordinate "," group_coordinate ")group"
-
-private atomic_literal ::= numeric-literal
-               | boolean-literal
-               | address-literal
-               | string-literal
 
 private literal ::= atomic_literal | affine_group_literal
 
@@ -187,7 +192,7 @@ expression ::= conditional_ternary_expression
              | postfix_expression_group
              | primary_expression
 
-no_circuit_literal_expression ::= <<setAllowCircuitExpression 0>> expression <<resetAllowCircuitExpression>> {
+no_struct_literal_expression ::= <<setAllowStructExpression 0>> expression <<resetAllowStructExpression>> {
  elementType = expression
  name = "expression"
 }
@@ -198,7 +203,7 @@ private shift_expression_group ::= shift_left_expression | shift_right_expressio
 private additive_expression_group ::= additive_add_expression | additive_sub_expression
 private multiplicative_expression_group ::= multiplicative_mul_expression | multiplicative_div_expression | multiplicative_mod_expression
 private unary_expression_group ::= unary_not_expression | unary_minus_expression { rightAssociative = true }
-private postfix_expression_group ::= tuple_component_expression | circuit_component_expression | operator_call
+private postfix_expression_group ::= tuple_component_expression | struct_component_expression | operator_call
 
 conditional_ternary_expression ::= expression "?" expression ":" expression { rightAssociative = true }
 
@@ -236,27 +241,26 @@ unary_not_expression ::= "!" expression
 unary_minus_expression ::= "-" expression
 
 tuple_component_expression ::= expression "." numeral
-circuit_component_identifier ::= identifier {
+struct_component_identifier ::= identifier {
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
-        "im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifierExt"
+        "im.mrx.leolanguage.leo.psi.LeoStructComponentIdentifierExt"
     ]
-    mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitComponentIdentifierImplMixin"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoStructComponentIdentifierImplMixin"
 }
-circuit_component_expression ::= expression "." circuit_component_identifier
+struct_component_expression ::= expression "." struct_component_identifier
 private operator_call ::= unary_operator_call | binary_operator_call
 unary_operator_call ::= expression "." identifier "(" ")"
 binary_operator_call ::= expression "." identifier "(" expression [ "," ] ")"
 
 primary_expression ::= literal
-                   | external_function_call
                    | static_function_call
                    | associated_constant
                    | self_expression
                    | "(" expression ")"
                    | free_function_call
                    | tuple_expression
-                   | circuit_expression
+                   | struct_expression
                    | variable_or_free_constant
 
 self_expression ::= "self" "." identifier
@@ -273,17 +277,9 @@ function_identifier ::= identifier {
     mixin = "im.mrx.leolanguage.leo.psi.LeoFunctionIdentifierImplMixin"
 }
 
-free_function_call ::= function_identifier function_arguments { pin = 2 }
+free_function_call ::= ( locator | function_identifier ) function_arguments { pin = 2 }
 
 static_function_call ::= named_type "::" identifier function_arguments { pin = 4 }
-
-external_function_identifier ::= program_id "/" identifier {
-    pin = 2
-    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
-    mixin = "im.mrx.leolanguage.leo.psi.LeoExternalFunctionIdentifierImplMixin"
-}
-
-external_function_call ::= external_function_identifier function_arguments { pin = 1 }
 
 function_arguments ::= "(" [ expression ( "," expression )* [ "," ] ] ")" { pin = 1 }
 
@@ -291,19 +287,20 @@ tuple_expression ::= "(" [ expression { "," expression }+ [ "," ] ] ")" {
     extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
 }
 
-circuit_expression_identifier ::= identifier {
+struct_expression_identifier ::= identifier {
     implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
-    mixin = "im.mrx.leolanguage.leo.psi.LeoCircuitExpressionIdentifierImplMixin"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoStructExpressionIdentifierImplMixin"
 }
 
-circuit_expression ::= <<checkCircuitExpressionAllowed>> circuit_expression_identifier "{" circuit_component_initializer
-                                    ( "," circuit_component_initializer )*
-                                    [ "," ] "}" {
+struct_expression ::= <<checkStructExpressionAllowed>> struct_expression_identifier "{"
+                    struct_component_initializer
+                        ( "," struct_component_initializer )*
+                        [ "," ] "}" {
     pin = 3
     extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
 }
 
-circuit_component_initializer ::= circuit_component_identifier ":" expression | circuit_component_identifier { pin(".*") = 2 }
+struct_component_initializer ::= struct_component_identifier ":" expression | struct_component_identifier { pin(".*") = 2 }
 
 private statement ::= return_statement
           | variable_declaration
@@ -346,7 +343,7 @@ constant_declaration ::= "const" identifier ":" type "=" expression ";" {
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
 }
 
-branch ::= "if" no_circuit_literal_expression block { pin = 1 }
+branch ::= "if" no_struct_literal_expression block { pin = 1 }
 
 conditional_statement ::= branch "else" block
                       | branch "else" conditional_statement
@@ -422,18 +419,35 @@ assert_equal_call ::= "assert_eq" "(" expression "," expression [ "," ] ")"
 
 assert_not_equal_call ::= "assert_neq" "(" expression "," expression [ "," ] ")"
 
-private function_type ::= <<setAllowExternalRecord 1>> type <<resetAllowExternalRecord>> {
-    elementType = type
-    name = "type"
-}
-
 function_declaration ::= annotation* "function" identifier
-                       "(" [ function_parameters ] ")" [ "->" function_type ]
+                       function_parameter_list [ "->" type ]
+                       block {
+                        pin = 2
+                        implements = [
+                          "im.mrx.leolanguage.leo.psi.LeoFunctionLikeDeclaration"
+                          "com.intellij.psi.StubBasedPsiElement"
+                        ]
+                        mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"
+                        elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
+                        }
+
+function_parameter_list ::= "(" [ function_parameter ( "," function_parameter )* [ "," ] ] ")" { pin = 1 }
+
+function_parameter ::= [ "public" | "constant" | "const" ]
+                     identifier ":" type {
+                        implements = [
+                            "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                            "im.mrx.leolanguage.leo.psi.LeoTypedElement"
+                        ]
+                        mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+                     }
+
+transition_declaration ::= annotation* "transition" identifier
+                       function_parameter_list [ "->" type ]
                        block [ finalizer ] {
                         pin = 2
                         implements = [
-                          "im.mrx.leolanguage.leo.psi.LeoNamedElement"
-                          "im.mrx.leolanguage.leo.psi.LeoTypedElement"
+                          "im.mrx.leolanguage.leo.psi.LeoFunctionLikeDeclaration"
                           "com.intellij.psi.StubBasedPsiElement"
                         ]
                         mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"
@@ -441,7 +455,7 @@ function_declaration ::= annotation* "function" identifier
                         }
 
 finalizer ::= "finalize" identifier
-            "(" [ function_parameters ] ")" [ "->" function_type ]
+            function_parameter_list [ "->" type ]
             block {
                 pin = 1
                 implements = [
@@ -451,19 +465,8 @@ finalizer ::= "finalize" identifier
                 mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
             }
 
-function_parameters ::= function_parameter ( "," function_parameter )* [ "," ] { pin = 1 }
-
-function_parameter ::= [ "public" | "constant" | "const" ]
-                     identifier ":" function_type {
-                        implements = [
-                            "im.mrx.leolanguage.leo.psi.LeoNamedElement"
-                            "im.mrx.leolanguage.leo.psi.LeoTypedElement"
-                        ]
-                        mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
-                     }
-
-circuit_declaration ::= "circuit" identifier
-                      circuit_component_declarations {
+struct_declaration ::= "struct" identifier
+                      struct_component_declarations {
                         pin = 1
                         implements = [
                           "im.mrx.leolanguage.leo.psi.LeoNamedElement"
@@ -473,11 +476,11 @@ circuit_declaration ::= "circuit" identifier
                         elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
                       }
 
-circuit_component_declarations ::= "{" circuit_component_declaration
-                                 ( "," circuit_component_declaration )*
+struct_component_declarations ::= "{" struct_component_declaration
+                                 ( "," struct_component_declaration )*
                                  [ "," ] "}" { pin = 1 }
 
-circuit_component_declaration ::= identifier ":" type  {
+struct_component_declaration ::= identifier ":" type  {
     pin = 1
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoNamedElement"
@@ -489,7 +492,7 @@ circuit_component_declaration ::= identifier ":" type  {
 }
 
 record_declaration ::= "record" identifier
-                     circuit_component_declarations {
+                     struct_component_declarations {
                         pin = 1
                         implements = [
                           "im.mrx.leolanguage.leo.psi.LeoNamedElement"
@@ -513,10 +516,20 @@ mapping_declaration ::= "mapping" identifier ":" mapping_type ";" {
 
 import_declaration ::= "import" program_id ";" { pin = 1 }
 
-private declaration ::= function_declaration
-                    | circuit_declaration
-                    | record_declaration
-                    | mapping_declaration
-                    | import_declaration {recoverWhile=declaration_recover}
+program_declaration ::= "program" program_id program_block {
+    pin = 1
+    implements = [
+        "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+    ]
+    mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+}
 
-private declaration_recover ::= !( "@" | "function" | "circuit" | "record" | "mapping" | "import" )
+program_block ::= "{" program_item * "}" { pin = 1 }
+
+private program_item ::= function_declaration
+                    | transition_declaration
+                    | struct_declaration
+                    | record_declaration
+                    | mapping_declaration {recoverWhile=program_item_recover}
+
+private program_item_recover ::= !( "@" | "function" | "struct" | "record" | "mapping" | "transition" | "}" )

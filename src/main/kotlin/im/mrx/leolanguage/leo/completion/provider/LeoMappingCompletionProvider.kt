@@ -22,9 +22,9 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
+import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.LeoMappingDeclaration
 import im.mrx.leolanguage.leo.psi.LeoMappingIdentifier
@@ -43,7 +43,7 @@ object LeoMappingCompletionProvider : LeoCompletionProvider() {
 
     fun addFunctions(parameters: CompletionParameters, result: CompletionResultSet) {
         val element = parameters.position
-        PsiTreeUtil.getChildrenOfType(element.containingFile, LeoMappingDeclaration::class.java)?.forEach {
+        LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoMappingDeclaration::class.java).forEach {
             result.addElement(
                 LookupElementBuilder
                     .create(it)

@@ -43,7 +43,7 @@ class LeoColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor("Annotation", LeoHighlightingAnnotator.ANNOTATION_KEY),
             AttributesDescriptor("Local variable", LeoHighlightingAnnotator.VARIABLE_DECLARATION_KEY),
             AttributesDescriptor("Records//Record declaration", LeoHighlightingAnnotator.RECORD_DECLARATION_KEY),
-            AttributesDescriptor("Records//Record component", LeoHighlightingAnnotator.CIRCUIT_COMPONENT_KEY),
+            AttributesDescriptor("Records//Record component", LeoHighlightingAnnotator.STRUCT_COMPONENT_KEY),
             AttributesDescriptor("Functions//Function declaration", LeoHighlightingAnnotator.FUNCTION_DECLARATION_KEY),
             AttributesDescriptor("Functions//Function call", LeoHighlightingAnnotator.FREE_FUNCTION_CALL_KEY),
             AttributesDescriptor("Functions//Static function call", LeoHighlightingAnnotator.STATIC_FUNCTION_CALL_KEY),

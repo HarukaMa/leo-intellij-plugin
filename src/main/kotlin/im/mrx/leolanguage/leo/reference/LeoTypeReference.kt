@@ -16,14 +16,16 @@
 
 package im.mrx.leolanguage.leo.reference
 
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.PsiTreeUtil
-import im.mrx.leolanguage.leo.psi.LeoCircuitDeclaration
+import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.psi.LeoImportDeclaration
 import im.mrx.leolanguage.leo.psi.LeoNamedType
 import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
+import im.mrx.leolanguage.leo.psi.LeoStructDeclaration
 import im.mrx.leolanguage.leo.stub.IndexUtils
 
 class LeoTypeReference(element: LeoNamedType) : LeoReferenceBase<LeoNamedType>(element) {
@@ -35,19 +37,27 @@ class LeoTypeReference(element: LeoNamedType) : LeoReferenceBase<LeoNamedType>(e
     object Resolver : ResolveCache.Resolver {
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
-            val element = ref.element
-            PsiTreeUtil.getChildrenOfType(element.containingFile, LeoRecordDeclaration::class.java)?.forEach {
+            val element = ref.element as LeoNamedType
+            LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoRecordDeclaration::class.java).forEach {
                 if (it.name == element.text) {
                     return it
                 }
             }
-            PsiTreeUtil.getChildrenOfType(element.containingFile, LeoCircuitDeclaration::class.java)?.forEach {
+            LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoStructDeclaration::class.java).forEach {
                 if (it.name == element.text) {
                     return it
                 }
             }
 
             // try imported files
+
+            if (DumbService.isDumb(ref.element.project)) return null
+
+            element.locator?.let {
+                val file = element.containingFile.containingDirectory.parentDirectory?.findSubdirectory("imports")
+                    ?.findFile(it.programId.text) ?: return null
+                IndexUtils.getNamedElementFromFile(it.identifier?.text ?: "", file)?.let { res -> return res }
+            }
 
             PsiTreeUtil.getChildrenOfType(element.containingFile, LeoImportDeclaration::class.java)?.forEach {
                 val file = element.containingFile.containingDirectory.parentDirectory?.findSubdirectory("imports")

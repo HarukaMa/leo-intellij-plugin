@@ -19,9 +19,9 @@ package im.mrx.leolanguage.leo.reference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import com.intellij.psi.util.PsiTreeUtil
-import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
+import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.psi.LeoFunctionIdentifier
+import im.mrx.leolanguage.leo.psi.LeoFunctionLikeDeclaration
 
 class LeoFunctionReference(element: LeoFunctionIdentifier) : LeoReferenceBase<LeoFunctionIdentifier>(element) {
 
@@ -36,11 +36,12 @@ class LeoFunctionReference(element: LeoFunctionIdentifier) : LeoReferenceBase<Le
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             val element = ref.element as LeoFunctionIdentifier
-            PsiTreeUtil.getChildrenOfType(element.containingFile, LeoFunctionDeclaration::class.java)?.forEach {
-                if (it.name == element.text) {
-                    return it
+            LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoFunctionLikeDeclaration::class.java)
+                .forEach {
+                    if (it.name == element.text) {
+                        return it
+                    }
                 }
-            }
             return null
         }
 

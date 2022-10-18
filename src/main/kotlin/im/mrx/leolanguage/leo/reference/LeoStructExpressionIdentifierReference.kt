@@ -19,13 +19,13 @@ package im.mrx.leolanguage.leo.reference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import com.intellij.psi.util.PsiTreeUtil
-import im.mrx.leolanguage.leo.psi.LeoCircuitDeclaration
-import im.mrx.leolanguage.leo.psi.LeoCircuitExpressionIdentifier
+import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
+import im.mrx.leolanguage.leo.psi.LeoStructDeclaration
+import im.mrx.leolanguage.leo.psi.LeoStructExpressionIdentifier
 
-class LeoCircuitExpressionIdentifierReference(element: LeoCircuitExpressionIdentifier) :
-    LeoReferenceBase<LeoCircuitExpressionIdentifier>(element) {
+class LeoStructExpressionIdentifierReference(element: LeoStructExpressionIdentifier) :
+    LeoReferenceBase<LeoStructExpressionIdentifier>(element) {
 
     override fun resolve(): PsiElement? {
         return ResolveCache.getInstance(element.project).resolveWithCaching(this, Resolver, false, false)
@@ -34,13 +34,13 @@ class LeoCircuitExpressionIdentifierReference(element: LeoCircuitExpressionIdent
     object Resolver : ResolveCache.Resolver {
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
-            val element = ref.element as LeoCircuitExpressionIdentifier
-            PsiTreeUtil.getChildrenOfType(element.containingFile, LeoRecordDeclaration::class.java)?.forEach {
+            val element = ref.element as LeoStructExpressionIdentifier
+            LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoRecordDeclaration::class.java).forEach {
                 if (it.name == element.text) {
                     return it
                 }
             }
-            PsiTreeUtil.getChildrenOfType(element.containingFile, LeoCircuitDeclaration::class.java)?.forEach {
+            LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoStructDeclaration::class.java).forEach {
                 if (it.name == element.text) {
                     return it
                 }

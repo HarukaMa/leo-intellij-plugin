@@ -22,7 +22,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.psi.LeoBlock
 import im.mrx.leolanguage.leo.psi.LeoFinalizer
-import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
+import im.mrx.leolanguage.leo.psi.LeoFunctionLikeDeclaration
 import im.mrx.leolanguage.leo.psi.LeoVariableOrFreeConstant
 
 class LeoVariableReference(element: LeoVariableOrFreeConstant) : LeoReferenceBase<LeoVariableOrFreeConstant>(element) {
@@ -49,15 +49,15 @@ class LeoVariableReference(element: LeoVariableOrFreeConstant) : LeoReferenceBas
             }
             val finalizer = PsiTreeUtil.getParentOfType(element, LeoFinalizer::class.java)
             if (finalizer != null) {
-                finalizer.functionParameters?.functionParameterList?.forEach {
+                finalizer.functionParameterList?.functionParameterList?.forEach {
                     if (it.name == element.text) {
                         return it
                     }
                 }
             } else {
-                val function = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
+                val function = PsiTreeUtil.getParentOfType(element, LeoFunctionLikeDeclaration::class.java)
                     ?: error("Variable outside of functions")
-                function.functionParameters?.functionParameterList?.forEach {
+                function.functionParameterList.functionParameterList.forEach {
                     if (it.name == element.text) {
                         return it
                     }

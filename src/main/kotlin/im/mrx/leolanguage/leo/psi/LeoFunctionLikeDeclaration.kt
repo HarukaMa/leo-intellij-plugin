@@ -16,11 +16,14 @@
 
 package im.mrx.leolanguage.leo.psi
 
-import com.intellij.psi.tree.IElementType
-import im.mrx.leolanguage.leo.LeoLanguage
+import com.intellij.psi.PsiElement
 
-class LeoTokenType(name: String) : IElementType(name, LeoLanguage) {
-//    override fun toString(): String {
-//        return "LeoTokenType." + super.toString()
-//    }
+interface LeoFunctionLikeDeclaration : LeoNamedElement, LeoTypedElement {
+    val annotationList: List<LeoAnnotation>
+
+    val block: LeoBlock?
+
+    val functionParameterList: LeoFunctionParameterList
+
+    val identifier: PsiElement?
 }

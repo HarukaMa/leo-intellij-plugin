@@ -20,7 +20,7 @@ import com.intellij.openapi.fileTypes.LanguageFileType
 import im.mrx.leolanguage.aleo.AleoIcons
 import javax.swing.Icon
 
-class LeoFileType : LanguageFileType(LeoLanguage.INSTANCE) {
+class LeoFileType : LanguageFileType(LeoLanguage) {
     companion object {
         val INSTANCE = LeoFileType()
     }

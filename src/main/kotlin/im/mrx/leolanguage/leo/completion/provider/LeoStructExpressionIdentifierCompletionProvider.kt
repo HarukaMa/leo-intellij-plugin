@@ -27,10 +27,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
+import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.*
 
-object LeoCircuitExpressionIdentifierCompletionProvider : LeoCompletionProvider() {
+object LeoStructExpressionIdentifierCompletionProvider : LeoCompletionProvider() {
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
@@ -41,19 +42,19 @@ object LeoCircuitExpressionIdentifierCompletionProvider : LeoCompletionProvider(
         val type = declaration.namedType ?: return
         val arrayList = arrayListOf<Any>()
         arrayList.addAll(
-            PsiTreeUtil.getChildrenOfType(parameters.originalFile, LeoRecordDeclaration::class.java) ?: emptyArray()
+            LeoUtils.getProgramChildrenOfTypeInFile(parameters.originalFile, LeoRecordDeclaration::class.java)
         )
         arrayList.addAll(
-            PsiTreeUtil.getChildrenOfType(parameters.originalFile, LeoCircuitDeclaration::class.java) ?: emptyArray()
+            LeoUtils.getProgramChildrenOfTypeInFile(parameters.originalFile, LeoStructDeclaration::class.java)
         )
         arrayList.forEach {
-            val typeName = ((it as? LeoRecordDeclaration) ?: (it as? LeoCircuitDeclaration))?.name ?: return@forEach
+            val typeName = ((it as? LeoRecordDeclaration) ?: (it as? LeoStructDeclaration))?.name ?: return@forEach
             if (typeName == type.text) {
                 result.addElement(
                     LookupElementBuilder
                         .create(typeName)
                         .withPsiElement(it as PsiElement)
-                        .withIcon(if (it is LeoRecordDeclaration) AleoIcons.RECORD else AleoIcons.CIRCUIT)
+                        .withIcon(if (it is LeoRecordDeclaration) AleoIcons.RECORD else AleoIcons.STRUCT)
                         .withInsertHandler { context, _ ->
                             context.document.insertString(context.selectionEndOffset, " {}")
                             EditorModificationUtil.moveCaretRelatively(context.editor, 2)
@@ -66,7 +67,7 @@ object LeoCircuitExpressionIdentifierCompletionProvider : LeoCompletionProvider(
     override val elementPattern: ElementPattern<PsiElement>
         get() = psiElement(LeoTypes.IDENTIFIER).and(
             // we have to go long way to detect if we should provide record type completion
-            // we are trying to find the circuit expression identifier here:
+            // we are trying to find the struct expression identifier here:
             psiElement()
                 // the identifier is part of variable declaration...
                 .withSuperParent(
@@ -77,12 +78,12 @@ object LeoCircuitExpressionIdentifierCompletionProvider : LeoCompletionProvider(
                                 // ... is a record type
                                 .referencing(
                                     PlatformPatterns.or(
-                                        psiElement(LeoCircuitDeclaration::class.java),
+                                        psiElement(LeoStructDeclaration::class.java),
                                         psiElement(LeoRecordDeclaration::class.java)
                                     )
                                 )
                         )
                 )
-            // TODO: circuit expression outside of variable declaration?
+            // TODO: struct expression outside of variable declaration?
         )
 }

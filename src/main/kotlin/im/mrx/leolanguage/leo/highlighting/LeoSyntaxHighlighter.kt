@@ -41,7 +41,7 @@ class LeoSyntaxHighlighter : SyntaxHighlighterBase() {
             LeoTypes.STRING_LITERAL -> STRING
             LeoTypes.NUMERIC_LITERAL -> NUMBER
             LeoTypes.BLOCK_COMMENT -> BLOCK_COMMENT
-            LeoTypes.END_OF_LINE_COMMENT -> LINE_COMMENT
+            LeoTypes.LINE_COMMENT -> LINE_COMMENT
             LeoTypes.LPAREN -> PARENS
             LeoTypes.RPAREN -> PARENS
             LeoTypes.BRACKETS -> BRACKETS

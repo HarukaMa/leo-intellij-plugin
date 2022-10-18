@@ -30,7 +30,7 @@ import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.*
 
-object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
+object LeoStructComponentCompletionProvider : LeoCompletionProvider() {
 
     override fun addCompletions(
         parameters: CompletionParameters,
@@ -39,7 +39,7 @@ object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
     ) {
         val element = parameters.position
         // token.owner
-        PsiTreeUtil.getParentOfType(element, LeoCircuitComponentExpression::class.java)?.let {
+        PsiTreeUtil.getParentOfType(element, LeoStructComponentExpression::class.java)?.let {
             val expression = it.expression as? LeoPrimaryExpression ?: return@let
             val declaration = expression.variableOrFreeConstant?.reference?.resolve() ?: return@let
             val namedType =
@@ -47,17 +47,17 @@ object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
                 ?: return@let
             val type = namedType.reference?.resolve() ?: return@let
             val componentList =
-                (type as? LeoRecordDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
-                    ?: (type as? LeoCircuitDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
+                (type as? LeoRecordDeclaration)?.structComponentDeclarations?.structComponentDeclarationList
+                    ?: (type as? LeoStructDeclaration)?.structComponentDeclarations?.structComponentDeclarationList
                     ?: return@let
             addElement(result, componentList, false)
         }
         // Token { owner }
-        PsiTreeUtil.getParentOfType(element, LeoCircuitExpression::class.java)?.let {
-            val type = it.circuitExpressionIdentifier.reference?.resolve() ?: return@let
+        PsiTreeUtil.getParentOfType(element, LeoStructExpression::class.java)?.let {
+            val type = it.structExpressionIdentifier.reference?.resolve() ?: return@let
             val componentList =
-                (type as? LeoRecordDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
-                    ?: (type as? LeoCircuitDeclaration)?.circuitComponentDeclarations?.circuitComponentDeclarationList
+                (type as? LeoRecordDeclaration)?.structComponentDeclarations?.structComponentDeclarationList
+                    ?: (type as? LeoStructDeclaration)?.structComponentDeclarations?.structComponentDeclarationList
                     ?: return@let
             addElement(result, componentList, true)
         }
@@ -66,7 +66,7 @@ object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
 
     private fun addElement(
         result: CompletionResultSet,
-        list: List<LeoCircuitComponentDeclaration>,
+        list: List<LeoStructComponentDeclaration>,
         insertColon: Boolean
     ) {
         list.forEach { component ->
@@ -74,7 +74,7 @@ object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
             result.addElement(
                 LookupElementBuilder
                     .create(component)
-                    .withIcon(AleoIcons.CIRCUIT_COMPONENT)
+                    .withIcon(AleoIcons.STRUCT_COMPONENT)
                     .withTypeText(type)
                     .withInsertHandler { context, _ ->
                         if (insertColon) {
@@ -88,6 +88,6 @@ object LeoCircuitComponentCompletionProvider : LeoCompletionProvider() {
     }
 
     override val elementPattern: ElementPattern<PsiElement>
-        get() = psiElement().withParent(LeoCircuitComponentIdentifier::class.java)
+        get() = psiElement().withParent(LeoStructComponentIdentifier::class.java)
 
 }

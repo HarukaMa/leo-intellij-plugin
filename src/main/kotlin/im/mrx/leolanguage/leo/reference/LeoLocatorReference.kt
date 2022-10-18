@@ -20,11 +20,10 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import im.mrx.leolanguage.leo.psi.LeoExternalFunctionIdentifier
+import im.mrx.leolanguage.leo.psi.LeoLocator
 import im.mrx.leolanguage.leo.stub.IndexUtils
 
-class LeoExternalFunctionReference(element: LeoExternalFunctionIdentifier) :
-    LeoReferenceBase<LeoExternalFunctionIdentifier>(element) {
+class LeoLocatorReference(element: LeoLocator) : LeoReferenceBase<LeoLocator>(element) {
 
     override fun resolve(): PsiElement? {
         return ResolveCache.getInstance(element.project).resolveWithCaching(this, Resolver, false, false)
@@ -35,11 +34,11 @@ class LeoExternalFunctionReference(element: LeoExternalFunctionIdentifier) :
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             if (DumbService.isDumb(ref.element.project)) return null
-            val element = ref.element as LeoExternalFunctionIdentifier
-            val file =
-                element.containingFile.containingDirectory.parentDirectory?.findSubdirectory("imports")
-                    ?.findFile(element.programId.text) ?: return null
-            return IndexUtils.getNamedElementFromFile(element.identifier?.text ?: return null, file)
+            val element = ref.element as LeoLocator
+            val file = element.containingFile.containingDirectory.parentDirectory?.findSubdirectory("imports")
+                ?.findFile(element.programId.text) ?: return null
+            IndexUtils.getNamedElementFromFile(element.identifier?.text ?: "", file)?.let { return it }
+            return null
         }
 
     }

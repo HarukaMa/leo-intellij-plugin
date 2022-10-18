@@ -14,22 +14,24 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.leo.psi
+package im.mrx.leolanguage.leo.formatting
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement
-import com.intellij.lang.ASTNode
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
-import im.mrx.leolanguage.leo.reference.LeoExternalFunctionReference
+import com.intellij.lang.Language
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
+import im.mrx.leolanguage.leo.LeoLanguage
 
-abstract class LeoExternalFunctionIdentifierImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
-    LeoExternalFunctionIdentifier {
+class LeoCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
+    override fun getLanguage(): Language = LeoLanguage
 
-    override fun getReference(): PsiReference? {
-        return LeoExternalFunctionReference(this)
+    override fun getCodeSample(settingsType: SettingsType): String? {
+        return null
     }
 
-    override fun referenceNameElement(): PsiElement? {
-        return this.identifier
+    override fun customizeDefaults(
+        commonSettings: CommonCodeStyleSettings,
+        indentOptions: CommonCodeStyleSettings.IndentOptions
+    ) {
+        indentOptions.CONTINUATION_INDENT_SIZE = indentOptions.INDENT_SIZE
     }
 }

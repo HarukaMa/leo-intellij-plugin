@@ -29,7 +29,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.LeoFile
-import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
+import im.mrx.leolanguage.leo.psi.LeoTransitionDeclaration
 
 object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
 
@@ -38,7 +38,7 @@ object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        listOf("function", "record", "circuit", "mapping").forEach {
+        listOf("function", "transition", "record", "struct", "mapping").forEach {
             result.addElement(
                 LookupElementBuilder
                     .create(it)
@@ -48,14 +48,14 @@ object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
                     }
             )
         }
-        PsiTreeUtil.getTopmostParentOfType(parameters.position, LeoFunctionDeclaration::class.java)?.let {
-            val functionName = it.name ?: return
+        PsiTreeUtil.getTopmostParentOfType(parameters.position, LeoTransitionDeclaration::class.java)?.let {
+            val transitionName = it.name ?: return
             result.addElement(
                 LookupElementBuilder
                     .create("finalize")
                     .withInsertHandler { ctx, _ ->
-                        ctx.document.insertString(ctx.selectionEndOffset, " ${functionName}()")
-                        EditorModificationUtil.moveCaretRelatively(ctx.editor, functionName.length + 2)
+                        ctx.document.insertString(ctx.selectionEndOffset, " ${transitionName}()")
+                        EditorModificationUtil.moveCaretRelatively(ctx.editor, transitionName.length + 2)
                     }
             )
         }
@@ -71,7 +71,7 @@ object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
             // end of function declaration, possible `finalize`
             psiElement().withParent(
                 psiElement(PsiErrorElement::class.java).withParent(
-                    LeoFunctionDeclaration::class.java
+                    LeoTransitionDeclaration::class.java
                 )
             )
         )

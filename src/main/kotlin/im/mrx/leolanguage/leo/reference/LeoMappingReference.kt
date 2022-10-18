@@ -19,7 +19,7 @@ package im.mrx.leolanguage.leo.reference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import com.intellij.psi.util.PsiTreeUtil
+import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.psi.LeoMappingDeclaration
 import im.mrx.leolanguage.leo.psi.LeoMappingIdentifier
 
@@ -35,7 +35,7 @@ class LeoMappingReference(element: LeoMappingIdentifier) : LeoReferenceBase<LeoM
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             val element = ref.element as LeoMappingIdentifier
-            PsiTreeUtil.getChildrenOfType(element.containingFile, LeoMappingDeclaration::class.java)?.forEach {
+            LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoMappingDeclaration::class.java).forEach {
                 if (it.name == element.text) {
                     return it
                 }

@@ -26,8 +26,8 @@ class LeoCompletionContributor : CompletionContributor() {
 
     init {
         extend(LeoTypeCompletionProvider)
-        extend(LeoCircuitExpressionIdentifierCompletionProvider)
-        extend(LeoCircuitComponentCompletionProvider)
+        extend(LeoStructExpressionIdentifierCompletionProvider)
+        extend(LeoStructComponentCompletionProvider)
         extend(LeoVariableCompletionProvider)
         extend(LeoStatementCompletionProvider)
         extend(LeoFunctionCompletionProvider)

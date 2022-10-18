@@ -63,12 +63,12 @@ object LeoVariableCompletionProvider : LeoCompletionProvider() {
         }
         val finalizer = PsiTreeUtil.getParentOfType(element, LeoFinalizer::class.java)
         if (finalizer != null) {
-            finalizer.functionParameters?.functionParameterList?.forEach {
+            finalizer.functionParameterList?.functionParameterList?.forEach {
                 addElement(result, it)
             }
         } else {
-            val functionDeclaration = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
-            functionDeclaration?.functionParameters?.functionParameterList?.forEach {
+            val functionDeclaration = PsiTreeUtil.getParentOfType(element, LeoFunctionLikeDeclaration::class.java)
+            functionDeclaration?.functionParameterList?.functionParameterList?.forEach {
                 addElement(result, it)
             }
         }

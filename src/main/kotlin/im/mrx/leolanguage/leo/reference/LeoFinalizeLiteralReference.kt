@@ -21,7 +21,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.psi.LeoFinalizeLiteral
-import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
+import im.mrx.leolanguage.leo.psi.LeoTransitionDeclaration
 
 class LeoFinalizeLiteralReference(element: LeoFinalizeLiteral) : LeoReferenceBase<LeoFinalizeLiteral>(element) {
 
@@ -34,9 +34,9 @@ class LeoFinalizeLiteralReference(element: LeoFinalizeLiteral) : LeoReferenceBas
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             val element = ref.element
-            val function = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java)
+            val transition = PsiTreeUtil.getParentOfType(element, LeoTransitionDeclaration::class.java)
                 ?: error("finalize outside of functions")
-            return function.finalizer
+            return transition.finalizer
         }
 
     }

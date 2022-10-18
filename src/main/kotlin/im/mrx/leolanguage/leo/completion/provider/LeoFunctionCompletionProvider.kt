@@ -23,13 +23,12 @@ import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
-import im.mrx.leolanguage.leo.psi.LeoFunctionDeclaration
 import im.mrx.leolanguage.leo.psi.LeoFunctionIdentifier
+import im.mrx.leolanguage.leo.psi.LeoFunctionLikeDeclaration
 
 object LeoFunctionCompletionProvider : LeoCompletionProvider() {
     override val elementPattern: ElementPattern<PsiElement>
@@ -45,28 +44,28 @@ object LeoFunctionCompletionProvider : LeoCompletionProvider() {
 
     fun addFunctions(parameters: CompletionParameters, result: CompletionResultSet) {
         val element = parameters.position
-        PsiTreeUtil.getChildrenOfType(element.containingFile, LeoFunctionDeclaration::class.java)?.forEach {
-            val function = it ?: return@forEach
-            result.addElement(
-                LookupElementBuilder
-                    .create(function.name ?: "<BUG IN PLUGIN>")
-                    .withPsiElement(function)
-                    .withIcon(if (LeoUtils.functionIsProgram(function)) AleoIcons.FUNCTION else AleoIcons.CLOSURE)
-                    .withTypeText(LeoUtils.typeToString(function))
-                    .withTailText("(${LeoUtils.functionParameterListToString(function)})")
-                    .withInsertHandler { context, _ ->
-                        val seq = context.document.charsSequence
-                        var offset = context.tailOffset
-                        while (seq[offset] == ' ' || seq[offset] == '\t') {
-                            offset += 1
+        LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoFunctionLikeDeclaration::class.java)
+            .forEach { function ->
+                result.addElement(
+                    LookupElementBuilder
+                        .create(function.name ?: "<BUG IN PLUGIN>")
+                        .withPsiElement(function)
+                        .withIcon(if (LeoUtils.functionIsTransition(function)) AleoIcons.TRANSITION else AleoIcons.FUNCTION)
+                        .withTypeText(LeoUtils.typeToString(function))
+                        .withTailText("(${LeoUtils.functionParameterListToString(function)})")
+                        .withInsertHandler { context, _ ->
+                            val seq = context.document.charsSequence
+                            var offset = context.tailOffset
+                            while (seq[offset] == ' ' || seq[offset] == '\t') {
+                                offset += 1
+                            }
+                            if (seq[offset] != '(') {
+                                context.document.insertString(offset, "();")
+                                EditorModificationUtil.moveCaretRelatively(context.editor, -2)
+                            }
                         }
-                        if (seq[offset] != '(') {
-                            context.document.insertString(offset, "();")
-                            EditorModificationUtil.moveCaretRelatively(context.editor, -2)
-                        }
-                    }
-            )
-        }
+                )
+            }
     }
 
 }

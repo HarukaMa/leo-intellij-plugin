@@ -16,10 +16,21 @@
 
 package im.mrx.leolanguage.leo.psi
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import im.mrx.leolanguage.leo.reference.LeoLocatorReference
 
-interface LeoCircuitComponentIdentifierExt {
+abstract class LeoLocatorImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
+    LeoLocator {
 
-    fun getTypeElement(): PsiElement?
+    override fun getReference(): PsiReference? {
+        return LeoLocatorReference(this)
+    }
+
+    override fun referenceNameElement(): PsiElement? {
+        return null
+    }
 
 }

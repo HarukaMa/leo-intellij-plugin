@@ -22,9 +22,9 @@ import im.mrx.leolanguage.leo.psi.impl.*
 
 fun factory(name: String): LeoSymbolStubType<*> {
     return when (name) {
-        "CIRCUIT_DECLARATION" -> LeoSymbolStubType<LeoCircuitDeclaration>(
-            "CIRCUIT_DECLARATION",
-            ::LeoCircuitDeclarationImpl
+        "STRUCT_DECLARATION" -> LeoSymbolStubType<LeoStructDeclaration>(
+            "STRUCT_DECLARATION",
+            ::LeoStructDeclarationImpl
         )
 
         "RECORD_DECLARATION" -> LeoSymbolStubType<LeoRecordDeclaration>(
@@ -37,9 +37,14 @@ fun factory(name: String): LeoSymbolStubType<*> {
             ::LeoFunctionDeclarationImpl
         )
 
-        "CIRCUIT_COMPONENT_DECLARATION" -> LeoSymbolStubType<LeoCircuitComponentDeclaration>(
-            "CIRCUIT_COMPONENT_DECLARATION",
-            ::LeoCircuitComponentDeclarationImpl
+        "TRANSITION_DECLARATION" -> LeoSymbolStubType<LeoTransitionDeclaration>(
+            "TRANSITION_DECLARATION",
+            ::LeoTransitionDeclarationImpl
+        )
+
+        "STRUCT_COMPONENT_DECLARATION" -> LeoSymbolStubType<LeoStructComponentDeclaration>(
+            "STRUCT_COMPONENT_DECLARATION",
+            ::LeoStructComponentDeclarationImpl
         )
 
         "MAPPING_DECLARATION" -> LeoSymbolStubType<LeoMappingDeclaration>(

@@ -22,42 +22,24 @@ import com.intellij.util.containers.Stack
 
 @Suppress("UNUSED_PARAMETER")
 object LeoParserUtil : GeneratedParserUtilBase() {
-    private var ALLOW_CIRCUIT_EXPRESSION: Key<Boolean> = Key("LeoParserUtil.ALLOW_CIRCUIT_EXPRESSION")
-    private var ALLOW_EXTERNAL_RECORD: Key<Boolean> = Key("LeoParserUtil.ALLOW_EXTERNAL_RECORD")
+    private var ALLOW_STRUCT_EXPRESSION: Key<Boolean> = Key("LeoParserUtil.ALLOW_STRUCT_EXPRESSION")
 
     private var DATA_STACK: Key<MutableMap<Key<*>, Stack<Boolean>>> = Key("LeoParserUtil.DATA_STACK")
 
     @JvmStatic
-    fun checkCircuitExpressionAllowed(builder: PsiBuilder, level: Int): Boolean {
-        return builder.getUserData(ALLOW_CIRCUIT_EXPRESSION) ?: true
+    fun checkStructExpressionAllowed(builder: PsiBuilder, level: Int): Boolean {
+        return builder.getUserData(ALLOW_STRUCT_EXPRESSION) ?: true
     }
 
     @JvmStatic
-    fun setAllowCircuitExpression(builder: PsiBuilder, level: Int, allow: Int): Boolean {
-        builder.pushValue(ALLOW_CIRCUIT_EXPRESSION, allow == 1)
+    fun setAllowStructExpression(builder: PsiBuilder, level: Int, allow: Int): Boolean {
+        builder.pushValue(ALLOW_STRUCT_EXPRESSION, allow == 1)
         return true
     }
 
     @JvmStatic
-    fun resetAllowCircuitExpression(builder: PsiBuilder, level: Int): Boolean {
-        builder.popValue(ALLOW_CIRCUIT_EXPRESSION)
-        return true
-    }
-
-    @JvmStatic
-    fun checkExternalRecordAllowed(builder: PsiBuilder, level: Int): Boolean {
-        return builder.getUserData(ALLOW_EXTERNAL_RECORD) ?: false
-    }
-
-    @JvmStatic
-    fun setAllowExternalRecord(builder: PsiBuilder, level: Int, allow: Int): Boolean {
-        builder.pushValue(ALLOW_EXTERNAL_RECORD, allow == 1)
-        return true
-    }
-
-    @JvmStatic
-    fun resetAllowExternalRecord(builder: PsiBuilder, level: Int): Boolean {
-        builder.popValue(ALLOW_EXTERNAL_RECORD)
+    fun resetAllowStructExpression(builder: PsiBuilder, level: Int): Boolean {
+        builder.popValue(ALLOW_STRUCT_EXPRESSION)
         return true
     }
 
@@ -68,7 +50,7 @@ object LeoParserUtil : GeneratedParserUtilBase() {
     private fun PsiBuilder.pushValue(key: Key<Boolean>, value: Boolean) {
         val stacks = userDataStacks
         val stack = stacks[key] ?: Stack<Boolean>()
-        stack.push(value)
+        stack.push(getUserData(ALLOW_STRUCT_EXPRESSION) ?: true)
         stacks[key] = stack
         userDataStacks = stacks
         putUserData(key, value)

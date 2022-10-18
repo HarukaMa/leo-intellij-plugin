@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Added ARC3 grammar support for Leo
 - Fixed mapping type name not highlighted
 - Added reference for imported files
 

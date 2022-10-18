@@ -40,7 +40,7 @@ class LeoFoldingBuilder : FoldingBuilderEx(), DumbAware {
 
     private class FoldingVisitor(val descriptors: ArrayList<FoldingDescriptor>) : LeoVisitor() {
         override fun visitRecordDeclaration(o: LeoRecordDeclaration) {
-            val block = o.circuitComponentDeclarations ?: return
+            val block = o.structComponentDeclarations ?: return
 
             descriptors.add(FoldingDescriptor(block, block.textRange))
         }

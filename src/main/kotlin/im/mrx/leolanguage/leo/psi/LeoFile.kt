@@ -22,7 +22,7 @@ import com.intellij.psi.FileViewProvider
 import im.mrx.leolanguage.leo.LeoFileType
 import im.mrx.leolanguage.leo.LeoLanguage
 
-class LeoFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, LeoLanguage.INSTANCE) {
+class LeoFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, LeoLanguage) {
     override fun getFileType(): FileType = LeoFileType.INSTANCE
 
     override fun toString(): String {

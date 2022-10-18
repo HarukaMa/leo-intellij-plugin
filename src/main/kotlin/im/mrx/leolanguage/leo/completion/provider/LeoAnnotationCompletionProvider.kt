@@ -27,13 +27,13 @@ import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.LeoAnnotation
-import im.mrx.leolanguage.leo.psi.LeoFile
+import im.mrx.leolanguage.leo.psi.LeoProgramBlock
 
 object LeoAnnotationCompletionProvider : LeoCompletionProvider() {
     override val elementPattern: ElementPattern<PsiElement>
         get() = PlatformPatterns.or(
             psiElement().withParent(LeoAnnotation::class.java),
-            psiElement().withParent(LeoFile::class.java).afterLeaf("@")
+            psiElement().withParent(LeoProgramBlock::class.java).afterLeaf("@")
         )
 
     override fun addCompletions(

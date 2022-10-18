@@ -24,11 +24,11 @@ class AleoIcons {
     companion object {
         val FILE = IconLoader.getIcon("/icons/aleo.svg", AleoIcons::class.java)
         val RECORD = IconLoader.getIcon("/icons/record.svg", AleoIcons::class.java)
-        val FUNCTION = AllIcons.Nodes.Function
-        val CIRCUIT = IconLoader.getIcon("/icons/circuit.svg", AleoIcons::class.java)
-        val CLOSURE = IconLoader.getIcon("/icons/closure.svg", AleoIcons::class.java)
+        val TRANSITION = AllIcons.Nodes.Function
+        val STRUCT = IconLoader.getIcon("/icons/circuit.svg", AleoIcons::class.java)
+        val FUNCTION = IconLoader.getIcon("/icons/closure.svg", AleoIcons::class.java)
         val INTERFACE = IconLoader.getIcon("/icons/interface.svg", AleoIcons::class.java)
-        val CIRCUIT_COMPONENT = AllIcons.Nodes.Field
+        val STRUCT_COMPONENT = AllIcons.Nodes.Field
         val VARIABLE = AllIcons.Nodes.Variable
         val FUNCTION_PARAMETER = AllIcons.Nodes.Parameter
         val ANNOTATION = AllIcons.Nodes.Annotationtype

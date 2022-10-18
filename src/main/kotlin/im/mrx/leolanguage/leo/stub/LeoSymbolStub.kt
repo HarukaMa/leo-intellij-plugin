@@ -20,10 +20,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.LeoLanguage
-import im.mrx.leolanguage.leo.psi.LeoCircuitComponentDeclaration
-import im.mrx.leolanguage.leo.psi.LeoCircuitDeclaration
 import im.mrx.leolanguage.leo.psi.LeoNamedElement
 import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
+import im.mrx.leolanguage.leo.psi.LeoStructComponentDeclaration
+import im.mrx.leolanguage.leo.psi.LeoStructDeclaration
 
 class LeoSymbolStub<T : LeoNamedElement>(
     parent: StubElement<*>?,
@@ -34,7 +34,7 @@ class LeoSymbolStub<T : LeoNamedElement>(
 class LeoSymbolStubType<T : LeoNamedElement>(
     debugName: String,
     private val psiConstructor: (LeoSymbolStub<*>, IStubElementType<*, *>) -> T
-) : IStubElementType<LeoSymbolStub<LeoNamedElement>, LeoNamedElement>(debugName, LeoLanguage.INSTANCE) {
+) : IStubElementType<LeoSymbolStub<LeoNamedElement>, LeoNamedElement>(debugName, LeoLanguage) {
     override fun getExternalId(): String {
         return "leo." + super.toString()
     }
@@ -47,9 +47,9 @@ class LeoSymbolStubType<T : LeoNamedElement>(
         psi: LeoNamedElement,
         parentStub: StubElement<out PsiElement>?
     ): LeoSymbolStub<LeoNamedElement> {
-        val name = if (psi is LeoCircuitComponentDeclaration) {
+        val name = if (psi is LeoStructComponentDeclaration) {
             "${
-                (PsiTreeUtil.getParentOfType(psi, LeoCircuitDeclaration::class.java) ?: PsiTreeUtil.getParentOfType(
+                (PsiTreeUtil.getParentOfType(psi, LeoStructDeclaration::class.java) ?: PsiTreeUtil.getParentOfType(
                     psi,
                     LeoRecordDeclaration::class.java
                 ))?.name ?: ""

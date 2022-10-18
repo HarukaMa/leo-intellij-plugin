@@ -20,13 +20,13 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
-import im.mrx.leolanguage.leo.reference.LeoCircuitExpressionIdentifierReference
+import im.mrx.leolanguage.leo.reference.LeoStructExpressionIdentifierReference
 
-abstract class LeoCircuitExpressionIdentifierImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
-    LeoCircuitExpressionIdentifier {
+abstract class LeoStructExpressionIdentifierImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
+    LeoStructExpressionIdentifier {
 
     override fun getReference(): PsiReference? {
-        return LeoCircuitExpressionIdentifierReference(this)
+        return LeoStructExpressionIdentifierReference(this)
     }
 
     override fun referenceNameElement(): PsiElement? {

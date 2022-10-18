@@ -19,10 +19,10 @@ package im.mrx.leolanguage.leo.stub
 import com.intellij.psi.tree.IStubFileElementType
 import im.mrx.leolanguage.leo.LeoLanguage
 
-class LeoFileStubType : IStubFileElementType<LeoFileStub>(LeoLanguage.INSTANCE) {
+class LeoFileStubType : IStubFileElementType<LeoFileStub>(LeoLanguage) {
     companion object {
         val INSTANCE = LeoFileStubType()
     }
 
-    override fun getStubVersion(): Int = 3
+    override fun getStubVersion(): Int = 4
 }

@@ -60,20 +60,20 @@ class LeoHighlightingAnnotator : Annotator {
             FINALIZER -> FUNCTION_DECLARATION_KEY
             FUNCTION_PARAMETER -> FUNCTION_PARAMETER_KEY
             RECORD_DECLARATION -> RECORD_DECLARATION_KEY
-            CIRCUIT_DECLARATION -> RECORD_DECLARATION_KEY
+            STRUCT_DECLARATION -> RECORD_DECLARATION_KEY
             VARIABLE_DECLARATION -> VARIABLE_DECLARATION_KEY
             STATIC_FUNCTION_CALL -> STATIC_FUNCTION_CALL_KEY
-            CIRCUIT_COMPONENT_DECLARATION -> CIRCUIT_COMPONENT_KEY
-            CIRCUIT_COMPONENT_INITIALIZER -> CIRCUIT_COMPONENT_KEY
+            STRUCT_COMPONENT_DECLARATION -> STRUCT_COMPONENT_KEY
+            STRUCT_COMPONENT_INITIALIZER -> STRUCT_COMPONENT_KEY
             ASSERT_CALL -> STATIC_FUNCTION_CALL_KEY
             ASSERT_EQUAL_CALL -> STATIC_FUNCTION_CALL_KEY
             ASSERT_NOT_EQUAL_CALL -> STATIC_FUNCTION_CALL_KEY
             MAPPING_DECLARATION -> MAPPING_DECLARATION_KEY
 
-            CIRCUIT_COMPONENT_IDENTIFIER -> highlightCircuitComponentWithReference(element, holder)
+            STRUCT_COMPONENT_IDENTIFIER -> highlightStructComponentWithReference(element, holder)
             VARIABLE_OR_FREE_CONSTANT -> highlightVariable(element, holder)
             NAMED_TYPE -> highlightRecordName(element, holder)
-            CIRCUIT_EXPRESSION_IDENTIFIER -> highlightRecordName(element, holder)
+            STRUCT_EXPRESSION_IDENTIFIER -> highlightRecordName(element, holder)
             FUNCTION_IDENTIFIER -> highlightFunctionCall(element, holder)
             else -> null
         }
@@ -82,14 +82,14 @@ class LeoHighlightingAnnotator : Annotator {
     private fun highlightVariable(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
         val finalizer = PsiTreeUtil.getParentOfType(element, LeoFinalizer::class.java)
         if (finalizer != null) {
-            finalizer.functionParameters?.functionParameterList?.forEach {
+            finalizer.functionParameterList?.functionParameterList?.forEach {
                 if (it.name == element.text) {
                     return FUNCTION_PARAMETER_KEY
                 }
             }
         } else {
-            val function = PsiTreeUtil.getParentOfType(element, LeoFunctionDeclaration::class.java) ?: return null
-            val parameters = function.functionParameters ?: return null
+            val function = PsiTreeUtil.getParentOfType(element, LeoFunctionLikeDeclaration::class.java) ?: return null
+            val parameters = function.functionParameterList
             for (parameter in parameters.functionParameterList) {
                 if (parameter.name == element.text) {
                     return FUNCTION_PARAMETER_KEY
@@ -106,11 +106,11 @@ class LeoHighlightingAnnotator : Annotator {
     }
 
     private fun highlightRecordName(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
-        (element.parent as LeoNamedType).reference?.resolve()?.let {
+        (element.parent as? LeoReferenceElement)?.reference?.resolve()?.let {
             return RECORD_DECLARATION_KEY
         }
-        if (element.parent.elementType == CIRCUIT_EXPRESSION_IDENTIFIER) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved circuit / record reference: ${element.text}")
+        if (element.parent.elementType == STRUCT_EXPRESSION_IDENTIFIER) {
+            holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved struct / record reference: ${element.text}")
                 .textAttributes(REFERENCE_ERROR_KEY)
                 .create()
         }
@@ -119,24 +119,23 @@ class LeoHighlightingAnnotator : Annotator {
         return null
     }
 
-    private fun highlightCircuitComponentWithReference(
+    private fun highlightStructComponentWithReference(
         element: PsiElement,
         holder: AnnotationHolder
     ): TextAttributesKey? {
-        val circuitComponent = element.parent as LeoCircuitComponentIdentifier
-        val reference = circuitComponent.reference ?: return null
+        val structComponent = element.parent as LeoStructComponentIdentifier
+        val reference = structComponent.reference ?: return null
         reference.resolve()?.let {
-            return CIRCUIT_COMPONENT_KEY
+            return STRUCT_COMPONENT_KEY
         }
 
-        annotateError(holder, "Unresolved circuit component reference: ${element.text}")
+        annotateError(holder, "Unresolved struct component reference: ${element.text}")
         return null
     }
 
     private fun highlightFunctionCall(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
         val functionCall = element.parent as LeoFunctionIdentifier
-        val reference = functionCall.reference ?: return null
-        reference.resolve()?.let {
+        functionCall.reference?.resolve()?.let {
             return FREE_FUNCTION_CALL_KEY
         }
 
@@ -172,8 +171,8 @@ class LeoHighlightingAnnotator : Annotator {
         val STATIC_FUNCTION_CALL_KEY = TextAttributesKey.createTextAttributesKey(
             "LEO_STATIC_FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL
         )
-        val CIRCUIT_COMPONENT_KEY = TextAttributesKey.createTextAttributesKey(
-            "LEO_CIRCUIT_COMPONENT_DECLARATION", DefaultLanguageHighlighterColors.STATIC_FIELD
+        val STRUCT_COMPONENT_KEY = TextAttributesKey.createTextAttributesKey(
+            "LEO_STRUCT_COMPONENT_DECLARATION", DefaultLanguageHighlighterColors.STATIC_FIELD
         )
         val REFERENCE_ERROR_KEY = TextAttributesKey.createTextAttributesKey(
             "LEO_WRONG_REFERENCE", CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES

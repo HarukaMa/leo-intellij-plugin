@@ -22,10 +22,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.formatter.FormatterUtil
 import im.mrx.leolanguage.leo.LeoLanguage
-import im.mrx.leolanguage.leo.psi.LeoBlock
-import im.mrx.leolanguage.leo.psi.LeoCircuitComponentDeclarations
-import im.mrx.leolanguage.leo.psi.LeoCircuitExpression
-import im.mrx.leolanguage.leo.psi.LeoTypes
+import im.mrx.leolanguage.leo.psi.*
 
 class LeoFormattingBlock(
     private val node: ASTNode,
@@ -44,7 +41,8 @@ class LeoFormattingBlock(
     override fun getAlignment(): Alignment? = alignment
 
     override fun getSpacing(child1: Block?, child2: Block): Spacing? {
-        return SpacingBuilder(ctx.codeStyleSettings, LeoLanguage.INSTANCE)
+        val inLocator = node.elementType == LeoTypes.LOCATOR
+        return SpacingBuilder(ctx.codeStyleSettings, LeoLanguage)
             .before(LeoTypes.COLON).spaces(0)
             .after(LeoTypes.COLON).spaces(1)
             .before(LeoTypes.LBRACE).spaces(1)
@@ -55,13 +53,15 @@ class LeoFormattingBlock(
             .before(LeoTypes.BLOCK).spaces(1)
             .after(LeoTypes.LPAREN).spaces(0)
             .before(LeoTypes.RPAREN).spaces(0)
+            .before(LeoTypes.SLASH).spaceIf(!inLocator)
+            .after(LeoTypes.SLASH).spaceIf(!inLocator)
             .getSpacing(this, child1, child2)
     }
 
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes {
 //        println(newChildIndex)
 //        println(node)
-        if (node.psi is LeoBlock || node.psi is LeoCircuitExpression || node.psi is LeoCircuitComponentDeclarations) {
+        if (node.psi is LeoBlock || node.psi is LeoStructExpression || node.psi is LeoStructComponentDeclarations) {
 //            if (newChildIndex > 0) {
             return ChildAttributes(Indent.getNormalIndent(), null)
 //            }
@@ -85,13 +85,20 @@ class LeoFormattingBlock(
 
     private fun getChildIndent(child: ASTNode): Indent {
         if (node.psi is LeoBlock
-            || node.psi is LeoCircuitExpression
-            || node.psi is LeoCircuitComponentDeclarations
+            || node.psi is LeoStructExpression
+            || node.psi is LeoStructComponentDeclarations
+            || node.psi is LeoProgramBlock
+            || node.psi is LeoFunctionParameterList
         ) {
-            if (child.elementType != LeoTypes.LBRACE && child.elementType != LeoTypes.RBRACE) {
+            if (child.elementType != LeoTypes.LBRACE && child.elementType != LeoTypes.RBRACE
+                && child.elementType != LeoTypes.LPAREN && child.elementType != LeoTypes.RPAREN
+            ) {
                 return Indent.getNormalIndent()
             }
             return Indent.getNoneIndent()
+        }
+        if (node.psi is LeoReturnStatement) {
+            return Indent.getContinuationWithoutFirstIndent(true)
         }
         return Indent.getNoneIndent()
     }

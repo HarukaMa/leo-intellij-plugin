@@ -28,10 +28,10 @@ WHITESPACE=(\ |\t|\n|\r|\r\n)+
 //NOT_STAR_OR_LINE_FEED_OR_CARRIAGE_RETURN=[\u0000-\u0009\u000B-\u000C\u000E-\u0029\u002B-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]
 //NOT_STAR_OR_SLASH_OR_LINE_FEED_OR_CARRIAGE_RETURN=[\u0000-\u0009\u000B-\u000C\u000E-\u0029\u002B-\u002E\u0030-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]
 //NOT_DOUBLE_QUOTE_OR_BACKSLASH_OR_LINE_FEED_OR_CARRIAGE_RETURN=[\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]
-END_OF_LINE_COMMENT=\/\/[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*
+LINE_COMMENT=\/\/[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*
 BLOCK_COMMENT=\/[*]([^*]|[*][^/])*([*]\/)?
-KEYWORD=address|bool|circuit|console|const|constant|else|field|for|function|group|i8|i16|i32|i64|i128|if|in|let|public|record|return|scalar|string|u8|u16|u32|u64|u128|increment|decrement|finalize|mapping|async|self|import
-CORE_CIRCUIT=BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8
+KEYWORD=address|async|bool|console|const|constant|decrement|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|increment|let|mapping|program|public|record|return|scalar|string|struct|transition|u8|u16|u32|u64|u128
+CORE_STRUCT=BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8
 //UPPERCASE_LETTER=[A_Z]
 //LOWERCASE_LETTER=[a_z]
 //LETTER=[a_zA_Z]
@@ -62,7 +62,7 @@ STRING_LITERAL=\"([\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u
 NUMERIC_LITERAL=[0-9]+([ui](8|16|32|64|128)|field|group|scalar)
 //ATOMIC_LITERAL=[0-9]+([ui](8|16|32|64|128)|field|group|scalar)|true|false|aleo1[a_z0-9]{58}|\"([\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]|\'|\\\"|\\|\\n|\\r|\\t|\\0|\\x[0-7][0-9a_f]|\\u\{[0-9a_f]{1,6}})*\"
 //ANNOTATION=\@[a-zA-Z][a-zA-Z0-9_]*
-SYMBOL=\!|&&|\|\||==|\!=|<|<=|>|>=|&|\||\^|<<|>>|\+|-|\*|"/"|%|\*\*|=|\+=|-=|\*=|"/"=|%=|\*\*=|<<=|>>=|&=|\|=|\^=|&&=|\|\|=|\(|\)|\[|]|\{|}|,|\.|\.\.|;|:|::|\?|->|_|=>|\)group
+SYMBOL=\!|&&|\|\||==|\!=|<|<=|>|>=|&|\||\^|<<|>>|\+|-|\*|%|\*\*|=|\+=|-=|\*=|"/"=|%=|\*\*=|<<=|>>=|&=|\|=|\^=|&&=|\|\|=|\(|\)|\[|]|\{|}|,|\.|\.\.|;|:|::|\?|->|_|=>|\)group
 BRACKETS=[\[\]]
 
 %state NUMERIC
@@ -83,6 +83,7 @@ BRACKETS=[\[\]]
   "}"                                                                  { return RBRACE; }
   "("                                                                  { return LPAREN; }
   ")"                                                                  { return RPAREN; }
+  "/"                                                                  { return SLASH; }
   ")group"                                                             { return GROUP_END; }
 
   {NUMERAL}                                                            { yybegin(NUMERIC); }
@@ -97,12 +98,12 @@ BRACKETS=[\[\]]
 //  {NOT_STAR_OR_LINE_FEED_OR_CARRIAGE_RETURN}                           { return NOT_STAR_OR_LINE_FEED_OR_CARRIAGE_RETURN; }
 //  {NOT_STAR_OR_SLASH_OR_LINE_FEED_OR_CARRIAGE_RETURN}                  { return NOT_STAR_OR_SLASH_OR_LINE_FEED_OR_CARRIAGE_RETURN; }
 //  {NOT_DOUBLE_QUOTE_OR_BACKSLASH_OR_LINE_FEED_OR_CARRIAGE_RETURN}      { return NOT_DOUBLE_QUOTE_OR_BACKSLASH_OR_LINE_FEED_OR_CARRIAGE_RETURN; }
-  {END_OF_LINE_COMMENT}                                                { return END_OF_LINE_COMMENT; }
+  {LINE_COMMENT}                                                       { return LINE_COMMENT; }
   {BLOCK_COMMENT}                                                      { return BLOCK_COMMENT; }
   {BOOLEAN_LITERAL}                                                    { return BOOLEAN_LITERAL; }
   {ADDRESS_LITERAL}                                                    { return ADDRESS_LITERAL; }
   {KEYWORD}                                                            { return KEYWORD; }
-  {CORE_CIRCUIT}                                                       { return CORE_CIRCUIT; }
+  {CORE_STRUCT}                                                        { return CORE_STRUCT; }
 //  {UPPERCASE_LETTER}                                                   { return UPPERCASE_LETTER; }
 //  {LOWERCASE_LETTER}                                                   { return LOWERCASE_LETTER; }
 //  {LETTER}                                                             { return LETTER; }

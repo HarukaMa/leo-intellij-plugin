@@ -16,32 +16,42 @@
 
 package im.mrx.leolanguage.leo.reference
 
-import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import im.mrx.leolanguage.leo.psi.LeoExternalRecord
-import im.mrx.leolanguage.leo.stub.IndexUtils
+import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
+import im.mrx.leolanguage.leo.psi.LeoStructComponentIdentifier
+import im.mrx.leolanguage.leo.psi.LeoStructDeclaration
 
-class LeoExternalRecordReference(element: LeoExternalRecord) :
-    LeoReferenceBase<LeoExternalRecord>(element) {
+class LeoStructComponentReference(element: LeoStructComponentIdentifier) :
+    LeoReferenceBase<LeoStructComponentIdentifier>(element) {
 
     override fun resolve(): PsiElement? {
         return ResolveCache.getInstance(element.project).resolveWithCaching(this, Resolver, false, false)
     }
 
-
     object Resolver : ResolveCache.Resolver {
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
-            if (DumbService.isDumb(ref.element.project)) return null
-            val element = ref.element as LeoExternalRecord
-            val file =
-                element.containingFile.containingDirectory.parentDirectory?.findSubdirectory("imports")
-                    ?.findFile(element.programId.text) ?: return null
-            return IndexUtils.getNamedElementFromFile(element.identifier?.text ?: return null, file)
+            val element = ref.element as LeoStructComponentIdentifier
+            val typeElement = element.getTypeElement() ?: return null
+
+            if (typeElement is LeoStructDeclaration) {
+                typeElement.structComponentDeclarations?.structComponentDeclarationList?.forEach {
+                    if (it.name == element.text) {
+                        return it
+                    }
+                }
+            } else if (typeElement is LeoRecordDeclaration) {
+                typeElement.structComponentDeclarations?.structComponentDeclarationList?.forEach {
+                    if (it.name == element.text) {
+                        return it
+                    }
+                }
+            }
+
+            return null
         }
 
     }
-
 }

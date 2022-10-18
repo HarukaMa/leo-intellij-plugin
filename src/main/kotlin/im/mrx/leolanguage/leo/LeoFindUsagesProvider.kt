@@ -31,7 +31,7 @@ class LeoFindUsagesProvider : FindUsagesProvider {
         return DefaultWordsScanner(
             LeoLexerAdapter(),
             TokenSet.create(IDENTIFIER),
-            TokenSet.create(BLOCK_COMMENT, END_OF_LINE_COMMENT),
+            TokenSet.create(BLOCK_COMMENT, LINE_COMMENT),
             TokenSet.create(
                 ADDRESS_LITERAL, BOOLEAN_LITERAL, STRING_LITERAL, NUMERIC_LITERAL
             )
@@ -49,10 +49,10 @@ class LeoFindUsagesProvider : FindUsagesProvider {
     override fun getType(element: PsiElement): String {
         return when (element.elementType) {
             RECORD_DECLARATION -> "record"
-            CIRCUIT_DECLARATION -> "circuit"
+            STRUCT_DECLARATION -> "struct"
             VARIABLE_DECLARATION -> "variable"
             FUNCTION_DECLARATION -> "function"
-            CIRCUIT_COMPONENT_DECLARATION -> "circuit component"
+            STRUCT_COMPONENT_DECLARATION -> "struct component"
             FUNCTION_PARAMETER -> "parameter"
             else -> "unknown type"
         }

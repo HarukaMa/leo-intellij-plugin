@@ -20,13 +20,13 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
-import im.mrx.leolanguage.leo.reference.LeoCircuitComponentReference
+import im.mrx.leolanguage.leo.reference.LeoStructComponentReference
 
-abstract class LeoCircuitComponentIdentifierImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
-    LeoCircuitComponentIdentifier {
+abstract class LeoStructComponentIdentifierImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
+    LeoStructComponentIdentifier {
 
     override fun getReference(): PsiReference? {
-        return LeoCircuitComponentReference(this)
+        return LeoStructComponentReference(this)
     }
 
     override fun referenceNameElement(): PsiElement? {
@@ -35,20 +35,20 @@ abstract class LeoCircuitComponentIdentifierImplMixin(node: ASTNode) : ASTWrappe
 
     override fun getTypeElement(): PsiElement? {
         when (parent) {
-            is LeoCircuitComponentExpression -> {
+            is LeoStructComponentExpression -> {
                 val expression =
-                    (parent as? LeoCircuitComponentExpression)?.expression as? LeoPrimaryExpression ?: return null
+                    (parent as? LeoStructComponentExpression)?.expression as? LeoPrimaryExpression ?: return null
                 val reference = expression.variableOrFreeConstant?.reference?.resolve() ?: return null
                 for (child in reference.children) {
                     if (child is LeoNamedType) {
-                        return child.externalRecord?.reference?.resolve() ?: child.reference?.resolve()
+                        return child.reference?.resolve()
                     }
                 }
             }
 
-            is LeoCircuitComponentInitializer -> {
-                val expression = parent.parent as? LeoCircuitExpression ?: return null
-                return expression.circuitExpressionIdentifier.reference?.resolve()
+            is LeoStructComponentInitializer -> {
+                val expression = parent.parent as? LeoStructExpression ?: return null
+                return expression.structExpressionIdentifier.reference?.resolve()
             }
         }
 

@@ -21,18 +21,22 @@ import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.ide.structureView.TextEditorBasedStructureViewModel
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
-import im.mrx.leolanguage.leo.psi.LeoCircuitDeclaration
+import com.intellij.psi.util.PsiTreeUtil
+import im.mrx.leolanguage.leo.psi.LeoProgramDeclaration
 import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
+import im.mrx.leolanguage.leo.psi.LeoStructDeclaration
 
 class LeoStructureViewModel(editor: Editor?, private val file: PsiFile) :
     TextEditorBasedStructureViewModel(editor, file), ElementInfoProvider {
     override fun getRoot(): StructureViewTreeElement {
-        return LeoStructureViewElement(file)
+        return LeoStructureViewElement(PsiTreeUtil.getChildOfType(file, LeoProgramDeclaration::class.java) ?: file)
     }
 
-    override fun isAlwaysShowsPlus(element: StructureViewTreeElement?): Boolean = element?.value is PsiFile
+    override fun isAlwaysShowsPlus(element: StructureViewTreeElement?): Boolean =
+        element?.value is PsiFile || element?.value is LeoProgramDeclaration
+
     override fun isAlwaysLeaf(element: StructureViewTreeElement?): Boolean {
         val value = element?.value
-        return value !is PsiFile && value !is LeoRecordDeclaration && value !is LeoCircuitDeclaration
+        return value !is PsiFile && value !is LeoProgramDeclaration && value !is LeoRecordDeclaration && value !is LeoStructDeclaration
     }
 }
