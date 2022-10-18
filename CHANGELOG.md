@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 - Fixed mapping type name not highlighted
-- Added reference for imported functions
+- Added reference for imported files
 
 ## [0.2.3]
 

@@ -18,8 +18,12 @@ package im.mrx.leolanguage.leo.stub
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
+import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.LeoLanguage
+import im.mrx.leolanguage.leo.psi.LeoCircuitComponentDeclaration
+import im.mrx.leolanguage.leo.psi.LeoCircuitDeclaration
 import im.mrx.leolanguage.leo.psi.LeoNamedElement
+import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
 
 class LeoSymbolStub<T : LeoNamedElement>(
     parent: StubElement<*>?,
@@ -43,7 +47,15 @@ class LeoSymbolStubType<T : LeoNamedElement>(
         psi: LeoNamedElement,
         parentStub: StubElement<out PsiElement>?
     ): LeoSymbolStub<LeoNamedElement> {
-        return LeoSymbolStub(parentStub, this, psi.name)
+        val name = if (psi is LeoCircuitComponentDeclaration) {
+            "${
+                (PsiTreeUtil.getParentOfType(psi, LeoCircuitDeclaration::class.java) ?: PsiTreeUtil.getParentOfType(
+                    psi,
+                    LeoRecordDeclaration::class.java
+                ))?.name ?: ""
+            }.${psi.name}"
+        } else psi.name
+        return LeoSymbolStub(parentStub, this, name)
     }
 
     override fun createPsi(stub: LeoSymbolStub<LeoNamedElement>): T {

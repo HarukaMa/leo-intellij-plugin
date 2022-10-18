@@ -106,16 +106,8 @@ class LeoHighlightingAnnotator : Annotator {
     }
 
     private fun highlightRecordName(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
-        val file = element.containingFile
-        PsiTreeUtil.getChildrenOfType(file.originalElement, LeoRecordDeclaration::class.java)?.forEach {
-            if (it.name == element.text) {
-                return RECORD_DECLARATION_KEY
-            }
-        }
-        PsiTreeUtil.getChildrenOfType(file.originalElement, LeoCircuitDeclaration::class.java)?.forEach {
-            if (it.name == element.text) {
-                return RECORD_DECLARATION_KEY
-            }
+        (element.parent as LeoNamedType).reference?.resolve()?.let {
+            return RECORD_DECLARATION_KEY
         }
         if (element.parent.elementType == CIRCUIT_EXPRESSION_IDENTIFIER) {
             holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved circuit / record reference: ${element.text}")

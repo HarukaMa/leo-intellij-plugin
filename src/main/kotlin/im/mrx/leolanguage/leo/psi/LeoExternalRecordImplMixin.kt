@@ -14,15 +14,22 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.leo.stub
+package im.mrx.leolanguage.leo.psi
 
-import com.intellij.psi.tree.IStubFileElementType
-import im.mrx.leolanguage.leo.LeoLanguage
+import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import im.mrx.leolanguage.leo.reference.LeoExternalRecordReference
 
-class LeoFileStubType : IStubFileElementType<LeoFileStub>(LeoLanguage.INSTANCE) {
-    companion object {
-        val INSTANCE = LeoFileStubType()
+abstract class LeoExternalRecordImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
+    LeoExternalRecord {
+
+    override fun getReference(): PsiReference? {
+        return LeoExternalRecordReference(this)
     }
 
-    override fun getStubVersion(): Int = 3
+    override fun referenceNameElement(): PsiElement? {
+        return this.identifier
+    }
 }

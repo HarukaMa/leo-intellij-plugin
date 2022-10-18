@@ -141,7 +141,12 @@ primitive_type ::= boolean_type | arithmetic_type | address_type | string_type
 
 program_id ::= identifier ".leo"
 
-external_record ::= <<checkExternalRecordAllowed>> program_id "/" identifier ".record" { pin = 3 }
+external_record ::= <<checkExternalRecordAllowed>> program_id "/" identifier ".record" {
+    pin = 3
+    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoExternalRecordImplMixin"
+
+}
 
 named_type ::= primitive_type | core_circuit | external_record | identifier {
     implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"

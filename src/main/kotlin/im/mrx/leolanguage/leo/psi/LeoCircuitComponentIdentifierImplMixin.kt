@@ -41,7 +41,7 @@ abstract class LeoCircuitComponentIdentifierImplMixin(node: ASTNode) : ASTWrappe
                 val reference = expression.variableOrFreeConstant?.reference?.resolve() ?: return null
                 for (child in reference.children) {
                     if (child is LeoNamedType) {
-                        return child.reference?.resolve()
+                        return child.externalRecord?.reference?.resolve() ?: child.reference?.resolve()
                     }
                 }
             }

@@ -21,8 +21,10 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.psi.LeoCircuitDeclaration
+import im.mrx.leolanguage.leo.psi.LeoImportDeclaration
 import im.mrx.leolanguage.leo.psi.LeoNamedType
 import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
+import im.mrx.leolanguage.leo.stub.IndexUtils
 
 class LeoTypeReference(element: LeoNamedType) : LeoReferenceBase<LeoNamedType>(element) {
 
@@ -42,6 +44,16 @@ class LeoTypeReference(element: LeoNamedType) : LeoReferenceBase<LeoNamedType>(e
             PsiTreeUtil.getChildrenOfType(element.containingFile, LeoCircuitDeclaration::class.java)?.forEach {
                 if (it.name == element.text) {
                     return it
+                }
+            }
+
+            // try imported files
+
+            PsiTreeUtil.getChildrenOfType(element.containingFile, LeoImportDeclaration::class.java)?.forEach {
+                val file = element.containingFile.containingDirectory.parentDirectory?.findSubdirectory("imports")
+                    ?.findFile(it.programId?.text ?: return@forEach) ?: return@forEach
+                IndexUtils.getNamedElementKeysFromFile(file).find { key -> key == element.text }?.let { key ->
+                    return IndexUtils.getNamedElementFromFile(key, file) ?: return@let
                 }
             }
 
