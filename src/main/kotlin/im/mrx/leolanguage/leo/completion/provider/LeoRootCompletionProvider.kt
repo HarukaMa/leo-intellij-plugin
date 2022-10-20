@@ -21,24 +21,21 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.patterns.ElementPattern
-import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
-import im.mrx.leolanguage.leo.psi.LeoProgramBlock
-import im.mrx.leolanguage.leo.psi.LeoTransitionDeclaration
+import im.mrx.leolanguage.leo.psi.LeoFile
 
-object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
+object LeoRootCompletionProvider : LeoCompletionProvider() {
 
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        listOf("function", "transition", "record", "struct", "mapping").forEach {
+        listOf("import", "program").forEach {
             result.addElement(
                 LookupElementBuilder
                     .create(it)
@@ -48,31 +45,12 @@ object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
                     }
             )
         }
-        PsiTreeUtil.getTopmostParentOfType(parameters.position, LeoTransitionDeclaration::class.java)?.let {
-            val transitionName = it.name ?: return
-            result.addElement(
-                LookupElementBuilder
-                    .create("finalize")
-                    .withInsertHandler { ctx, _ ->
-                        ctx.document.insertString(ctx.selectionEndOffset, " ${transitionName}()")
-                        EditorModificationUtil.moveCaretRelatively(ctx.editor, transitionName.length + 2)
-                    }
-            )
-        }
     }
 
 
     override val elementPattern: ElementPattern<PsiElement>
-        get() = PlatformPatterns.or(
-            // start of declaration
-            psiElement().withParent(
-                psiElement(PsiErrorElement::class.java).withParent(LeoProgramBlock::class.java)
-            ),
-            // end of function declaration, possible `finalize`
-            psiElement().withParent(
-                psiElement(PsiErrorElement::class.java).withParent(
-                    LeoTransitionDeclaration::class.java
-                )
-            )
+        // root scope
+        get() = psiElement().withParent(
+            psiElement(PsiErrorElement::class.java).withParent(LeoFile::class.java)
         )
 }

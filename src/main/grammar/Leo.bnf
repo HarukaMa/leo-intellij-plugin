@@ -514,7 +514,12 @@ mapping_declaration ::= "mapping" identifier ":" mapping_type ";" {
     elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
 }
 
-import_declaration ::= "import" program_id ";" { pin = 1 }
+import_declaration ::= "import" program_id ";" {
+    pin = 1
+    recoverWhile = import_declaration_recover
+}
+
+private import_declaration_recover ::= !( 'import' | 'program' )
 
 program_declaration ::= "program" program_id program_block {
     pin = 1
@@ -524,7 +529,7 @@ program_declaration ::= "program" program_id program_block {
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
 }
 
-program_block ::= "{" program_item * "}" { pin = 1 }
+program_block ::= "{" program_item* "}" { pin = 1 }
 
 private program_item ::= function_declaration
                     | transition_declaration

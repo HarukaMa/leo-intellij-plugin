@@ -26,6 +26,6 @@ class LeoFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, LeoLan
     override fun getFileType(): FileType = LeoFileType.INSTANCE
 
     override fun toString(): String {
-        return "Leo File"
+        return "Leo File (${originalFile.virtualFile.path})"
     }
 }
