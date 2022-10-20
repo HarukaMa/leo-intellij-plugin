@@ -52,6 +52,7 @@ class LeoFindUsagesProvider : FindUsagesProvider {
             STRUCT_DECLARATION -> "struct"
             VARIABLE_DECLARATION -> "variable"
             FUNCTION_DECLARATION -> "function"
+            TRANSITION_DECLARATION -> "transition"
             STRUCT_COMPONENT_DECLARATION -> "struct component"
             FUNCTION_PARAMETER -> "parameter"
             else -> "unknown type"

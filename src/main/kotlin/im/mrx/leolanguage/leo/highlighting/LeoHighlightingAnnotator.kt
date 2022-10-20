@@ -57,6 +57,7 @@ class LeoHighlightingAnnotator : Annotator {
 
         return when (parent.elementType) {
             FUNCTION_DECLARATION -> FUNCTION_DECLARATION_KEY
+            TRANSITION_DECLARATION -> FUNCTION_DECLARATION_KEY
             FINALIZER -> FUNCTION_DECLARATION_KEY
             FUNCTION_PARAMETER -> FUNCTION_PARAMETER_KEY
             RECORD_DECLARATION -> RECORD_DECLARATION_KEY
@@ -75,6 +76,7 @@ class LeoHighlightingAnnotator : Annotator {
             NAMED_TYPE -> highlightRecordName(element, holder)
             STRUCT_EXPRESSION_IDENTIFIER -> highlightRecordName(element, holder)
             FUNCTION_IDENTIFIER -> highlightFunctionCall(element, holder)
+            LOCATOR -> highlightLocator(element, holder)
             else -> null
         }
     }
@@ -140,6 +142,21 @@ class LeoHighlightingAnnotator : Annotator {
         }
 
         annotateError(holder, "Unresolved function reference: ${element.text}")
+        return null
+    }
+
+    private fun highlightLocator(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
+        val locator = element.parent as LeoLocator
+        locator.reference?.resolve()?.let {
+            when (it) {
+                is LeoFunctionDeclaration -> return FREE_FUNCTION_CALL_KEY
+                is LeoTransitionDeclaration -> return FREE_FUNCTION_CALL_KEY
+                is LeoRecordDeclaration -> return RECORD_DECLARATION_KEY
+                else -> return@let
+            }
+        }
+
+        annotateError(holder, "Unresolved locator reference: ${element.text}")
         return null
     }
 
