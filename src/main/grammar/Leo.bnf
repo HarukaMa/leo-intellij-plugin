@@ -514,7 +514,12 @@ mapping_declaration ::= "mapping" identifier ":" mapping_type ";" {
     elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
 }
 
-import_declaration ::= "import" program_id ";" {
+import_program_id ::= program_id {
+    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoImportProgramIdImplMixin"
+}
+
+import_declaration ::= "import" import_program_id ";" {
     pin = 1
     recoverWhile = import_declaration_recover
 }

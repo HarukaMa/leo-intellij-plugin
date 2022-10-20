@@ -61,7 +61,7 @@ class LeoTypeReference(element: LeoNamedType) : LeoReferenceBase<LeoNamedType>(e
 
             PsiTreeUtil.getChildrenOfType(element.containingFile, LeoImportDeclaration::class.java)?.forEach {
                 val file = element.containingFile.containingDirectory.parentDirectory?.findSubdirectory("imports")
-                    ?.findFile(it.programId?.text ?: return@forEach) ?: return@forEach
+                    ?.findFile(it.importProgramId?.text ?: return@forEach) ?: return@forEach
                 IndexUtils.getNamedElementKeysFromFile(file).find { key -> key == element.text }?.let { key ->
                     return IndexUtils.getNamedElementFromFile(key, file) ?: return@let
                 }
