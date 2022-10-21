@@ -21,12 +21,14 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.patterns.ElementPattern
+import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.LeoFile
+import im.mrx.leolanguage.leo.psi.LeoImportDeclaration
 
 object LeoRootCompletionProvider : LeoCompletionProvider() {
 
@@ -50,7 +52,14 @@ object LeoRootCompletionProvider : LeoCompletionProvider() {
 
     override val elementPattern: ElementPattern<PsiElement>
         // root scope
-        get() = psiElement().withParent(
-            psiElement(PsiErrorElement::class.java).withParent(LeoFile::class.java)
+        get() = PlatformPatterns.or(
+            psiElement().withParent(
+                psiElement(PsiErrorElement::class.java).withParent(LeoFile::class.java)
+            ),
+            psiElement().withParent(
+                psiElement(PsiErrorElement::class.java).withParent(
+                    LeoImportDeclaration::class.java
+                )
+            )
         )
 }

@@ -21,13 +21,11 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.patterns.ElementPattern
-import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
-import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.*
 
@@ -40,28 +38,16 @@ object LeoStructExpressionIdentifierCompletionProvider : LeoCompletionProvider()
         // we should have known the exact type of the expression
         val declaration = PsiTreeUtil.getParentOfType(parameters.position, LeoVariableDeclaration::class.java) ?: return
         val type = declaration.namedType ?: return
-        val arrayList = arrayListOf<Any>()
-        arrayList.addAll(
-            LeoUtils.getProgramChildrenOfTypeInFile(parameters.originalFile, LeoRecordDeclaration::class.java)
+        val element = (type.reference?.resolve() as? LeoNamedElement) ?: return
+        result.addElement(
+            LookupElementBuilder
+                .create(element.name ?: "?")
+                .withIcon(if (element is LeoRecordDeclaration) AleoIcons.RECORD else AleoIcons.STRUCT)
+                .withInsertHandler { ctx, _ ->
+                    ctx.document.insertString(ctx.selectionEndOffset, " {}")
+                    EditorModificationUtil.moveCaretRelatively(ctx.editor, 2)
+                }
         )
-        arrayList.addAll(
-            LeoUtils.getProgramChildrenOfTypeInFile(parameters.originalFile, LeoStructDeclaration::class.java)
-        )
-        arrayList.forEach {
-            val typeName = ((it as? LeoRecordDeclaration) ?: (it as? LeoStructDeclaration))?.name ?: return@forEach
-            if (typeName == type.text) {
-                result.addElement(
-                    LookupElementBuilder
-                        .create(typeName)
-                        .withPsiElement(it as PsiElement)
-                        .withIcon(if (it is LeoRecordDeclaration) AleoIcons.RECORD else AleoIcons.STRUCT)
-                        .withInsertHandler { context, _ ->
-                            context.document.insertString(context.selectionEndOffset, " {}")
-                            EditorModificationUtil.moveCaretRelatively(context.editor, 2)
-                        }
-                )
-            }
-        }
     }
 
     override val elementPattern: ElementPattern<PsiElement>
@@ -76,12 +62,7 @@ object LeoStructExpressionIdentifierCompletionProvider : LeoCompletionProvider()
                         .withChild(
                             psiElement(LeoNamedType::class.java)
                                 // ... is a record type
-                                .referencing(
-                                    PlatformPatterns.or(
-                                        psiElement(LeoStructDeclaration::class.java),
-                                        psiElement(LeoRecordDeclaration::class.java)
-                                    )
-                                )
+                                .referencing(psiElement(LeoStructLikeDeclaration::class.java))
                         )
                 )
             // TODO: struct expression outside of variable declaration?

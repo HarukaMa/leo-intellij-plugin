@@ -61,7 +61,12 @@ class LeoFormattingBlock(
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes {
 //        println(newChildIndex)
 //        println(node)
-        if (node.psi is LeoBlock || node.psi is LeoStructExpression || node.psi is LeoStructComponentDeclarations) {
+        if (node.psi is LeoBlock
+            || node.psi is LeoStructExpression
+            || node.psi is LeoStructComponentDeclarations
+            || node.psi is LeoProgramBlock
+            || node.psi is LeoFunctionParameterList
+        ) {
 //            if (newChildIndex > 0) {
             return ChildAttributes(Indent.getNormalIndent(), null)
 //            }

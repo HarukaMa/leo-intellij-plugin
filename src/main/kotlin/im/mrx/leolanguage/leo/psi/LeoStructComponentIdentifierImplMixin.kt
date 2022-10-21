@@ -37,8 +37,20 @@ abstract class LeoStructComponentIdentifierImplMixin(node: ASTNode) : ASTWrapper
         when (parent) {
             is LeoStructComponentExpression -> {
                 val expression =
-                    (parent as? LeoStructComponentExpression)?.expression as? LeoPrimaryExpression ?: return null
-                val reference = expression.variableOrFreeConstant?.reference?.resolve() ?: return null
+                    (parent as? LeoStructComponentExpression)?.expression ?: return null
+                val reference = when (expression) {
+                    is LeoStructComponentExpression -> {
+                        expression.lastChild.reference?.resolve() ?: return null
+                    }
+
+                    is LeoPrimaryExpression -> {
+                        expression.variableOrFreeConstant?.reference?.resolve() ?: return null
+                    }
+
+                    else -> {
+                        return null
+                    }
+                }
                 for (child in reference.children) {
                     if (child is LeoNamedType) {
                         return child.reference?.resolve()

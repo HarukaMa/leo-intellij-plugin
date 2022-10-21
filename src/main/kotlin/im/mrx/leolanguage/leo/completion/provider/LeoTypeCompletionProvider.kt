@@ -19,14 +19,17 @@ package im.mrx.leolanguage.leo.completion.provider
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.*
+import im.mrx.leolanguage.leo.stub.IndexUtils
 
 object LeoTypeCompletionProvider : LeoCompletionProvider() {
     override fun addCompletions(
@@ -34,25 +37,79 @@ object LeoTypeCompletionProvider : LeoCompletionProvider() {
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        val arrayList = arrayListOf<Any>()
+        val arrayList = arrayListOf<LeoNamedElement>()
+        val file = parameters.originalFile
         arrayList.addAll(
             LeoUtils.getProgramChildrenOfTypeInFile(
-                parameters.position.containingFile,
-                LeoRecordDeclaration::class.java
+                file,
+                LeoStructLikeDeclaration::class.java
             )
         )
-        arrayList.addAll(
-            LeoUtils.getProgramChildrenOfTypeInFile(
-                parameters.position.containingFile,
-                LeoStructDeclaration::class.java
+        // disallow external records on struct component declaration
+        if (PsiTreeUtil.getTopmostParentOfType(
+                parameters.position,
+                LeoStructComponentDeclaration::class.java
+            ) == null
+        ) {
+            PsiTreeUtil.getChildrenOfType(file, LeoImportDeclaration::class.java)?.forEach {
+                val filename = it.importProgramId?.text ?: return@forEach
+                val importedFile = LeoUtils.getImportFile(file, filename) ?: return@forEach
+                IndexUtils.getNamedElementKeysFromFile(importedFile).forEach inner@{ key ->
+                    val element = IndexUtils.getNamedElementFromFile(key, importedFile) ?: return@inner
+                    if (element is LeoRecordDeclaration) {
+                        arrayList.add(element)
+                    }
+                }
+            }
+        }
+        // disallow recursive struct component declaration
+        PsiTreeUtil.getTopmostParentOfType(parameters.position, LeoStructLikeDeclaration::class.java)?.let {
+            arrayList.removeIf { element ->
+                element.name == it.name
+            }
+        }
+
+        listOf(
+            "u8",
+            "u16",
+            "u32",
+            "u64",
+            "u128",
+            "i8",
+            "i16",
+            "i32",
+            "i64",
+            "i128",
+            "bool",
+            "field",
+            "group",
+            "scalar",
+            "address",
+            "string"
+        ).forEach {
+            result.addElement(
+                LookupElementBuilder.create(it)
             )
-        )
+        }
         arrayList.forEach {
+            val name = it.name ?: "<BUG IN PLUGIN>"
             result.addElement(
                 LookupElementBuilder
-                    .create((it as? LeoNamedElement)?.name ?: "<BUG IN PLUGIN>")
+                    .create(name)
                     .withPsiElement(it as PsiElement)
                     .withIcon(if (it is LeoStructDeclaration) AleoIcons.STRUCT else AleoIcons.RECORD)
+                    .withInsertHandler { context, _ ->
+                        if (it.containingFile != file && PsiTreeUtil.getTopmostParentOfType(
+                                parameters.position,
+                                LeoFunctionParameter::class.java
+                            ) != null
+                        ) {
+                            EditorModificationUtil.moveCaretRelatively(context.editor, -name.length)
+                            EditorModificationUtil.insertStringAtCaret(context.editor, it.containingFile.name + "/")
+                            EditorModificationUtil.moveCaretRelatively(context.editor, name.length)
+                            EditorModificationUtil.insertStringAtCaret(context.editor, ".record")
+                        }
+                    }
             )
         }
     }

@@ -51,4 +51,6 @@ abstract class LeoStubbedElementImpl<T : StubElement<PsiElement>> : StubBasedPsi
     override fun getTextOffset(): Int {
         return nameIdentifier()?.textOffset ?: super.getTextOffset()
     }
+
+    override fun toString(): String = "${javaClass.simpleName}($elementType)"
 }

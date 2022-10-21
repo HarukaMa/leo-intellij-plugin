@@ -19,6 +19,7 @@ package im.mrx.leolanguage.leo.reference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
+import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.psi.LeoImportProgramId
 
 class LeoImportProgramIdReference(element: LeoImportProgramId) : LeoReferenceBase<LeoImportProgramId>(element) {
@@ -34,7 +35,7 @@ class LeoImportProgramIdReference(element: LeoImportProgramId) : LeoReferenceBas
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             val element = ref.element as LeoImportProgramId
-            element.containingFile.originalFile.containingDirectory.parentDirectory?.findSubdirectory("imports")?.files?.forEach {
+            LeoUtils.getImportableFiles(element.containingFile).forEach {
                 if (it.name == element.programId.text) {
                     return it
                 }

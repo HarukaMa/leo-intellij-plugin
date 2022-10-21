@@ -27,19 +27,19 @@ object LeoUtils {
         function is LeoTransitionDeclaration
 
     fun functionParameterListToTypeString(function: LeoFunctionLikeDeclaration): String {
-        return function.functionParameterList.functionParameterList.joinToString(", ") {
+        return function.functionParameterList?.functionParameterList?.joinToString(", ") {
             typeToString(it) ?: "?"
-        }
+        } ?: "?"
     }
 
     fun functionParameterListToString(function: LeoFunctionLikeDeclaration): String {
-        return function.functionParameterList.functionParameterList.joinToString(", ") {
+        return function.functionParameterList?.functionParameterList?.joinToString(", ") {
             val doc = "${it.name}${typeToStringWithColon(it)}"
             if (functionIsTransition(function)) {
                 return@joinToString "${getParameterVisibility(it)} $doc"
             }
             return@joinToString doc
-        }
+        } ?: "?"
     }
 
     fun getParameterVisibility(parameter: LeoFunctionParameter): String {
@@ -100,4 +100,13 @@ object LeoUtils {
             return PsiTreeUtil.getChildrenOfTypeAsList(it.programBlock, type)
         } ?: return emptyList()
     }
+
+    fun getImportFile(file: PsiFile, name: String): PsiFile? =
+        file.originalFile.containingDirectory?.parentDirectory?.findSubdirectory("imports")?.findFile(name)
+
+    fun getImportableFiles(file: PsiFile): List<PsiFile> =
+        file.originalFile.containingDirectory?.parentDirectory?.findSubdirectory("imports")?.files?.filter {
+            it.name.endsWith(".leo")
+        } ?: emptyList()
+
 }

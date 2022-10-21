@@ -18,12 +18,8 @@ package im.mrx.leolanguage.leo.psi
 
 import com.intellij.psi.PsiElement
 
-interface LeoFunctionLikeDeclaration : LeoNamedElement, LeoTypedElement {
-    val annotationList: List<LeoAnnotation>
-
-    val block: LeoBlock?
-
-    val functionParameterList: LeoFunctionParameterList?
+interface LeoStructLikeDeclaration : LeoNamedElement {
+    val structComponentDeclarations: LeoStructComponentDeclarations?
 
     val identifier: PsiElement?
 }

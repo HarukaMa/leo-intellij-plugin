@@ -47,8 +47,7 @@ object LeoStructComponentCompletionProvider : LeoCompletionProvider() {
                 ?: return@let
             val type = namedType.reference?.resolve() ?: return@let
             val componentList =
-                (type as? LeoRecordDeclaration)?.structComponentDeclarations?.structComponentDeclarationList
-                    ?: (type as? LeoStructDeclaration)?.structComponentDeclarations?.structComponentDeclarationList
+                (type as? LeoStructLikeDeclaration)?.structComponentDeclarations?.structComponentDeclarationList
                     ?: return@let
             addElement(result, componentList, false)
         }
@@ -56,8 +55,7 @@ object LeoStructComponentCompletionProvider : LeoCompletionProvider() {
         PsiTreeUtil.getParentOfType(element, LeoStructExpression::class.java)?.let {
             val type = it.structExpressionIdentifier.reference?.resolve() ?: return@let
             val componentList =
-                (type as? LeoRecordDeclaration)?.structComponentDeclarations?.structComponentDeclarationList
-                    ?: (type as? LeoStructDeclaration)?.structComponentDeclarations?.structComponentDeclarationList
+                (type as? LeoStructLikeDeclaration)?.structComponentDeclarations?.structComponentDeclarationList
                     ?: return@let
             addElement(result, componentList, true)
         }

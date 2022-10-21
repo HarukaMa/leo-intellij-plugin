@@ -16,6 +16,8 @@
 
 package im.mrx.leolanguage.leo.stub
 
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
@@ -24,7 +26,10 @@ import im.mrx.leolanguage.leo.psi.LeoNamedElement
 
 object IndexUtils {
 
+    private fun isDumb(project: Project) = DumbService.isDumb(project)
+
     fun getNamedElementFromFile(name: String, file: PsiFile): LeoNamedElement? {
+        if (isDumb(file.project)) return null
         return StubIndex.getElements(
             LeoNamedElementIndex.KEY,
             name,
@@ -35,6 +40,7 @@ object IndexUtils {
     }
 
     fun getNamedElementKeysFromFile(file: PsiFile): List<String> {
+        if (isDumb(file.project)) return emptyList()
         val result = mutableListOf<String>()
         StubIndex.getInstance().processAllKeys(
             LeoNamedElementIndex.KEY,

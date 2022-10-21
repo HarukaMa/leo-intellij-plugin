@@ -23,8 +23,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.psi.LeoProgramDeclaration
-import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
-import im.mrx.leolanguage.leo.psi.LeoStructDeclaration
+import im.mrx.leolanguage.leo.psi.LeoStructLikeDeclaration
 
 class LeoStructureViewModel(editor: Editor?, private val file: PsiFile) :
     TextEditorBasedStructureViewModel(editor, file), ElementInfoProvider {
@@ -37,6 +36,6 @@ class LeoStructureViewModel(editor: Editor?, private val file: PsiFile) :
 
     override fun isAlwaysLeaf(element: StructureViewTreeElement?): Boolean {
         val value = element?.value
-        return value !is PsiFile && value !is LeoProgramDeclaration && value !is LeoRecordDeclaration && value !is LeoStructDeclaration
+        return value !is PsiFile && value !is LeoProgramDeclaration && value !is LeoStructLikeDeclaration
     }
 }

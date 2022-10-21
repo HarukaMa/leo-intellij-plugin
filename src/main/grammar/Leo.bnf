@@ -115,7 +115,7 @@
 //lexeme ::= token | comment | whitespace
 
 // root
-file ::= import_declaration* program_declaration
+file ::= import_declaration* program_declaration { pin = 1 }
 
 // from lexical
 
@@ -431,16 +431,25 @@ function_declaration ::= annotation* "function" identifier
                         elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
                         }
 
-function_parameter_list ::= "(" [ function_parameter ( "," function_parameter )* [ "," ] ] ")" { pin = 1 }
+function_parameter_list ::= "(" [ function_parameter ( "," function_parameter )* [ "," ] ] ")" {
+    pin = 1
+    recoverWhile = function_parameter_list_recover
+}
+
+private function_parameter_list_recover ::= !( '->' | '@' | 'function' | 'mapping' | 'record' | 'struct' | 'transition' | '{' | '}' )
 
 function_parameter ::= [ "public" | "constant" | "const" ]
                      identifier ":" type {
+                        pin = 3
                         implements = [
                             "im.mrx.leolanguage.leo.psi.LeoNamedElement"
                             "im.mrx.leolanguage.leo.psi.LeoTypedElement"
                         ]
                         mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+                        recoverWhile = function_parameter_recover
                      }
+
+private function_parameter_recover ::= !( ')' | ',' | '->' | '@' | 'function' | 'mapping' | 'record' | 'struct' | 'transition' | '{' | '}' )
 
 transition_declaration ::= annotation* "transition" identifier
                        function_parameter_list [ "->" type ]
@@ -469,7 +478,7 @@ struct_declaration ::= "struct" identifier
                       struct_component_declarations {
                         pin = 1
                         implements = [
-                          "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                          "im.mrx.leolanguage.leo.psi.LeoStructLikeDeclaration"
                           "com.intellij.psi.StubBasedPsiElement"
                         ]
                         mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"
@@ -495,7 +504,7 @@ record_declaration ::= "record" identifier
                      struct_component_declarations {
                         pin = 1
                         implements = [
-                          "im.mrx.leolanguage.leo.psi.LeoNamedElement"
+                          "im.mrx.leolanguage.leo.psi.LeoStructLikeDeclaration"
                           "com.intellij.psi.StubBasedPsiElement"
                         ]
                         mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"
@@ -524,7 +533,7 @@ import_declaration ::= "import" import_program_id ";" {
     recoverWhile = import_declaration_recover
 }
 
-private import_declaration_recover ::= !( 'import' | 'program' )
+private import_declaration_recover ::= !( 'import' | 'program' | <<eof>> )
 
 program_declaration ::= "program" program_id program_block {
     pin = 1
@@ -532,7 +541,10 @@ program_declaration ::= "program" program_id program_block {
         "im.mrx.leolanguage.leo.psi.LeoNamedElement"
     ]
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
+    recoverWhile = program_declaration_recover
 }
+
+private program_declaration_recover ::= !<<eof>>
 
 program_block ::= "{" program_item* "}" { pin = 1 }
 

@@ -24,7 +24,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.psi.LeoBlock
-import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
+import im.mrx.leolanguage.leo.psi.LeoStructLikeDeclaration
 import im.mrx.leolanguage.leo.psi.LeoVisitor
 
 class LeoFoldingBuilder : FoldingBuilderEx(), DumbAware {
@@ -39,7 +39,7 @@ class LeoFoldingBuilder : FoldingBuilderEx(), DumbAware {
     }
 
     private class FoldingVisitor(val descriptors: ArrayList<FoldingDescriptor>) : LeoVisitor() {
-        override fun visitRecordDeclaration(o: LeoRecordDeclaration) {
+        override fun visitStructLikeDeclaration(o: LeoStructLikeDeclaration) {
             val block = o.structComponentDeclarations ?: return
 
             descriptors.add(FoldingDescriptor(block, block.textRange))

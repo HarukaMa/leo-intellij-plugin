@@ -20,9 +20,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import im.mrx.leolanguage.leo.LeoUtils
-import im.mrx.leolanguage.leo.psi.LeoRecordDeclaration
-import im.mrx.leolanguage.leo.psi.LeoStructDeclaration
 import im.mrx.leolanguage.leo.psi.LeoStructExpressionIdentifier
+import im.mrx.leolanguage.leo.psi.LeoStructLikeDeclaration
 
 class LeoStructExpressionIdentifierReference(element: LeoStructExpressionIdentifier) :
     LeoReferenceBase<LeoStructExpressionIdentifier>(element) {
@@ -35,17 +34,12 @@ class LeoStructExpressionIdentifierReference(element: LeoStructExpressionIdentif
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             val element = ref.element as LeoStructExpressionIdentifier
-            LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoRecordDeclaration::class.java).forEach {
-                if (it.name == element.text) {
-                    return it
+            LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoStructLikeDeclaration::class.java)
+                .forEach {
+                    if (it.name == element.text) {
+                        return it
+                    }
                 }
-            }
-            LeoUtils.getProgramChildrenOfTypeInFile(element.containingFile, LeoStructDeclaration::class.java).forEach {
-                if (it.name == element.text) {
-                    return it
-                }
-            }
-
             return null
         }
 

@@ -82,7 +82,7 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
                 elements.add(LeoStructureViewElement(it as NavigatablePsiElement))
             }
         }
-        if (element is LeoStructDeclaration || element is LeoRecordDeclaration) {
+        if (element is LeoStructLikeDeclaration) {
             PsiTreeUtil.getChildOfType(element, LeoStructComponentDeclarations::class.java)?.let {
                 it.structComponentDeclarationList.forEach { declaration ->
                     elements.add(LeoStructureViewElement(declaration as NavigatablePsiElement))

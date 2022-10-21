@@ -29,7 +29,10 @@ import im.mrx.leolanguage.leo.psi.*
 class LeoDocumentationProvider : AbstractDocumentationProvider() {
 
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String? {
-        println(element.elementType)
+        if (System.getProperty("idea.required.plugins.id") == "im.mrx.leolanguage") {
+            println("--- generating document for ---")
+            println(element.elementType)
+        }
         return when (element) {
             is LeoFunctionParameter -> generateDoc(element)
             is LeoStructComponentDeclaration -> generateDoc(element)
