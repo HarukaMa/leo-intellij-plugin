@@ -2,13 +2,13 @@
 
 ## [Unreleased]
 
+## [0.3.0]
 - Added ARC3 grammar support for Leo
 - Fixed mapping type name not highlighted
 - Added reference for imported files
 - Added more autocomplete for Leo
 
 ## [0.2.3]
-
 - Fixed extra colon in circuit component completion
 - Fixed wrong candidate of function completion
 - Fixed exception when completing circuit expression identifier
@@ -16,7 +16,6 @@
 - Added highlighting for assert calls
 
 ## [0.2.2]
-
 - Added reference and document for finalize statement
 - Added comments to hover document
 
