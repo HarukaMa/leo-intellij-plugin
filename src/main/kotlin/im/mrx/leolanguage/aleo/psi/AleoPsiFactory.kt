@@ -30,9 +30,9 @@ class AleoPsiFactory {
 
     fun createIdentifier(project: Project, name: String): PsiElement {
         val file = PsiFileFactory.getInstance(project)
-            .createFileFromText("temp.aleo", AleoFileType.INSTANCE, "interface ${name}: a as u8;")
+            .createFileFromText("temp.aleo", AleoFileType.INSTANCE, "struct ${name}: a as u8;")
         val declaration = PsiTreeUtil.findChildOfType(file, AleoDefinition::class.java, true)
             ?: error("Failed to create identifier")
-        return declaration.`interface`!!.identifier!!
+        return declaration.struct!!.identifier!!
     }
 }

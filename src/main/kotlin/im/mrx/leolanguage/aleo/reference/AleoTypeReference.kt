@@ -34,8 +34,8 @@ class AleoTypeReference(element: AleoPlaintextType) : AleoReferenceBase<AleoPlai
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             val element = ref.element
             PsiTreeUtil.getChildrenOfType(element.containingFile, AleoDefinition::class.java)?.forEach {
-                if (it.`interface`?.name == element.text) {
-                    return it.`interface`
+                if (it.struct?.name == element.text) {
+                    return it.struct
                 }
                 if (it.record?.name == element.text) {
                     return it.record

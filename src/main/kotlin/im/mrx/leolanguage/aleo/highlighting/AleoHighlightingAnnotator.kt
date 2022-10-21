@@ -54,7 +54,8 @@ class AleoHighlightingAnnotator : Annotator {
         val parent = element.parent
 
         return when (parent.elementType) {
-            INTERFACE -> INTERFACE_KEY
+            STRUCT -> STRUCT_KEY
+            RECORD -> STRUCT_KEY
             PLAINTEXT_TYPE -> highlightInterfaceName(element, holder)
             else -> null
         }
@@ -63,14 +64,14 @@ class AleoHighlightingAnnotator : Annotator {
     private fun highlightInterfaceName(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
         val file = element.containingFile
         PsiTreeUtil.getChildrenOfType(file, AleoDefinition::class.java)?.forEach { definition ->
-            definition.`interface`?.let {
+            definition.struct?.let {
                 if (it.name == element.text) {
-                    return INTERFACE_KEY
+                    return STRUCT_KEY
                 }
             }
             definition.record?.let {
                 if (it.name == element.text) {
-                    return INTERFACE_KEY
+                    return STRUCT_KEY
                 }
             }
         }
@@ -80,7 +81,7 @@ class AleoHighlightingAnnotator : Annotator {
     }
 
     companion object {
-        val INTERFACE_KEY =
-            TextAttributesKey.createTextAttributesKey("ALEO_INTERFACE", DefaultLanguageHighlighterColors.INTERFACE_NAME)
+        val STRUCT_KEY =
+            TextAttributesKey.createTextAttributesKey("ALEO_STRUCT", DefaultLanguageHighlighterColors.INTERFACE_NAME)
     }
 }
