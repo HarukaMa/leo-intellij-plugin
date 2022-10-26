@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- Fixed incorrect struct expression in loop statement
 
 ## [0.3.0]
 - Added ARC3 grammar support for Leo

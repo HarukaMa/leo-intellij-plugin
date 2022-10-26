@@ -352,7 +352,7 @@ conditional_statement ::= branch "else" block
 }
 
 loop_statement ::= "for" identifier ":" type
-                 "in" expression ".." [ "=" ] expression
+                 "in" expression ".." [ "=" ] no_struct_literal_expression
                  block {
     pin = 1
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
