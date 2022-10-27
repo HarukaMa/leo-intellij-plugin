@@ -203,7 +203,7 @@ private shift_expression_group ::= shift_left_expression | shift_right_expressio
 private additive_expression_group ::= additive_add_expression | additive_sub_expression
 private multiplicative_expression_group ::= multiplicative_mul_expression | multiplicative_div_expression | multiplicative_mod_expression
 private unary_expression_group ::= unary_not_expression | unary_minus_expression { rightAssociative = true }
-private postfix_expression_group ::= tuple_component_expression | struct_component_expression | operator_call
+private postfix_expression_group ::= tuple_component_expression | operator_call | struct_component_expression
 
 conditional_ternary_expression ::= expression "?" expression ":" expression { rightAssociative = true }
 
@@ -250,8 +250,8 @@ struct_component_identifier ::= identifier {
 }
 struct_component_expression ::= expression "." struct_component_identifier
 private operator_call ::= unary_operator_call | binary_operator_call
-unary_operator_call ::= expression "." identifier "(" ")"
-binary_operator_call ::= expression "." identifier "(" expression [ "," ] ")"
+unary_operator_call ::= expression "." identifier "(" ")" { pin = 4 }
+binary_operator_call ::= expression "." identifier "(" expression [ "," ] ")" { pin = 4 }
 
 primary_expression ::= literal
                    | static_function_call
@@ -312,9 +312,10 @@ private statement ::= return_statement
           | finalize_statement
           | increment_statement
           | decrement_statement
+          | expression_statement // unofficial definition
           | block { recoverWhile = statement_recover }
 
-private statement_recover ::= !( ";" | "}" | identifier | keyword | line-terminator )
+private statement_recover ::= !( "}" | keyword | line-terminator )
 
 block ::= "{" statement* "}" { pin = 1 }
 
@@ -408,6 +409,8 @@ decrement_statement ::= "decrement" "(" mapping_identifier "," expression "," ex
     pin = 1
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
+
+expression_statement ::= expression ";" // unofficial definition
 
 private console_call ::= assert_call
              | assert_equal_call
