@@ -45,6 +45,11 @@ class LeoVariableReference(element: LeoVariableOrFreeConstant) : LeoReferenceBas
                         return it
                     }
                 }
+                block.constantDeclarationList.forEach {
+                    if (it.name == element.text) {
+                        return it
+                    }
+                }
                 block = PsiTreeUtil.getParentOfType(block, LeoBlock::class.java)
             }
             val finalizer = PsiTreeUtil.getParentOfType(element, LeoFinalizer::class.java)

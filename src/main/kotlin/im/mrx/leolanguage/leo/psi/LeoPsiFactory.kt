@@ -21,18 +21,19 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.LeoFileType
+import im.mrx.leolanguage.leo.LeoUtils
 
-class LeoPsiFactory {
-
-    companion object {
-        val instance = LeoPsiFactory()
-    }
-
+object LeoPsiFactory {
     fun createIdentifier(project: Project, name: String): PsiElement {
         val file = PsiFileFactory.getInstance(project)
-            .createFileFromText("temp.leo", LeoFileType.INSTANCE, "function ${name}() {}")
-        val declaration = PsiTreeUtil.findChildOfType(file, LeoFunctionDeclaration::class.java, true)
-            ?: error("Failed to create identifier")
+            .createFileFromText("temp.leo", LeoFileType.INSTANCE, "program temp.aleo { function ${name}() {} }")
+        val declaration = LeoUtils.getProgramChildrenOfTypeInFile(file, LeoFunctionDeclaration::class.java).first()
         return declaration.identifier!!
+    }
+
+    fun createProgramId(project: Project, name: String): LeoProgramId {
+        val file = PsiFileFactory.getInstance(project)
+            .createFileFromText("temp.leo", LeoFileType.INSTANCE, "program $name.aleo {}")
+        return PsiTreeUtil.findChildOfType(file, LeoProgramId::class.java)!!
     }
 }

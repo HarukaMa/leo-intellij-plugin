@@ -44,7 +44,7 @@ abstract class LeoStubbedElementImpl<T : StubElement<PsiElement>> : StubBasedPsi
     }
 
     override fun setName(name: String): PsiElement {
-        nameIdentifier()?.replace(LeoPsiFactory.instance.createIdentifier(project, name))
+        nameIdentifier()?.replace(LeoPsiFactory.createIdentifier(project, name))
         return this
     }
 

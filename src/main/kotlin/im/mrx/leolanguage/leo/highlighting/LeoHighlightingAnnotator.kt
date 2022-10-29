@@ -98,10 +98,8 @@ class LeoHighlightingAnnotator : Annotator {
                 }
             }
         }
-        (element.parent as LeoVariableOrFreeConstant).reference?.resolve()?.let {
-            if (it is LeoVariableDeclaration) {
-                return VARIABLE_DECLARATION_KEY
-            }
+        (element.parent as? LeoReferenceElement)?.reference?.resolve()?.let {
+            return VARIABLE_DECLARATION_KEY
         }
         annotateError(holder, "Unresolved variable reference: ${element.text}")
         return null

@@ -100,6 +100,11 @@ For more info on Aleo: <a href="https://www.aleo.org/">aleo.org</a> <br/>
                 implementationClass="im.mrx.leolanguage.leo.LeoDocumentationProvider"/>
         <langCodeStyleSettingsProvider
                 implementation="im.mrx.leolanguage.leo.formatting.LeoCodeStyleSettingsProvider"/>
+        <localInspection
+                language="Leo"
+                implementationClass="im.mrx.leolanguage.leo.inspection.LeoCompilerInspection"
+                displayName="Compiler checks" groupName="Leo"
+                enabledByDefault="true" level="ERROR"/>
 
         <fileType
                 name="Aleo"

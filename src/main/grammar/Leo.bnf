@@ -192,7 +192,7 @@ expression ::= conditional_ternary_expression
              | postfix_expression_group
              | primary_expression
 
-no_struct_literal_expression ::= <<setAllowStructExpression 0>> expression <<resetAllowStructExpression>> {
+private no_struct_literal_expression ::= <<setAllowStructExpression 0>> expression <<resetAllowStructExpression>> {
  elementType = expression
  name = "expression"
 }
@@ -358,7 +358,10 @@ loop_statement ::= "for" identifier ":" type
                  "in" expression ".." [ "=" ] no_struct_literal_expression
                  block {
     pin = 1
-    implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
+    implements = [
+        "im.mrx.leolanguage.leo.psi.LeoStatement"
+        "im.mrx.leolanguage.leo.psi.LeoTypedElement"
+    ]
 }
 
 assignment_operator ::= "="

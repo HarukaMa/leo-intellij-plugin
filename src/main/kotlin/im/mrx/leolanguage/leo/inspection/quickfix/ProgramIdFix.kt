@@ -14,25 +14,24 @@
  * Leo / Aleo IntelliJ plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package im.mrx.leolanguage.leo.reference
+package im.mrx.leolanguage.leo.inspection.quickfix
 
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.ElementManipulators
+import com.intellij.codeInspection.LocalQuickFixOnPsiElement
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReferenceBase
+import com.intellij.psi.PsiFile
+import im.mrx.leolanguage.leo.psi.LeoProgramId
 import im.mrx.leolanguage.leo.psi.LeoPsiFactory
-import im.mrx.leolanguage.leo.psi.LeoReferenceElement
 
-abstract class LeoReferenceBase<T : LeoReferenceElement>(element: T) : PsiReferenceBase<T>(element) {
+class ProgramIdFix(element: LeoProgramId, private val correctName: String) : LocalQuickFixOnPsiElement(element) {
+    override fun getFamilyName(): String = "Change program ID"
 
-    override fun handleElementRename(newElementName: String): PsiElement {
-        val identifier = element.referenceNameElement() ?: return element
-        identifier.replace(LeoPsiFactory.createIdentifier(element.project, newElementName))
-        return element
+    override fun getText(): String {
+        return "Change program ID to $correctName"
     }
 
-    override fun getRangeInElement(): TextRange {
-        return ElementManipulators.getValueTextRange(element)
+    override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
+        val element = startElement as LeoProgramId
+        element.replace(LeoPsiFactory.createProgramId(project, correctName))
     }
-
 }

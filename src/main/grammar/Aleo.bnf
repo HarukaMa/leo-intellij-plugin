@@ -128,9 +128,14 @@ struct ::= "interface" identifier ":" tuple+ {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
+ recoverWhile = struct_recover
 }
 
-tuple ::= identifier "as" plaintext_type ";"
+private struct_recover ::= !( "interface" | "mapping" | "record" | "struct" | "transition" | <<eof>> )
+
+tuple ::= identifier "as" plaintext_type ";" // { recoverWhile = tuple_recover }
+
+// private tuple_recover ::= !( 'closure' | 'function' | 'interface' | 'mapping' | 'record' | identifier | <<eof>> )
 
 
 record ::= "record" identifier ":" entry* {
@@ -139,7 +144,9 @@ record ::= "record" identifier ":" entry* {
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-entry ::= identifier "as" entry_type ";"
+entry ::= identifier "as" entry_type ";" { recoverWhile = entry_recover }
+
+private entry_recover ::= !( 'closure' | 'function' | 'interface' | 'mapping' | 'record' | identifier | <<eof>> )
 
 
 unary_op ::= "abs" | "abs.w" | "double" | "inv"
