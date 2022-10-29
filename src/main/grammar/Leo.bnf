@@ -50,7 +50,7 @@
     not-double-quote-or-backslash-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
     line-comment = "regexp:(//[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*)"
     block-comment = "regexp:(/[*](?:[^*]|[*][^/])*[*]/)"
-    keyword = "regexp:address|async|bool|console|const|constant|decrement|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|increment|let|mapping|program|public|record|return|scalar|string|struct|transition|u8|u16|u32|u64|u128"
+    keyword = "regexp:address|async|bool|console|const|constant|decrement|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|increment|let|mapping|program|public|record|return|scalar|string|struct|transition|u8|u16|u32|u64|u128|self"
     core_struct = "regexp:BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8"
     uppercase-letter = "regexp:[A-Z]"
     lowercase-letter = "regexp:[a-z]"
@@ -263,7 +263,9 @@ primary_expression ::= literal
                    | struct_expression
                    | variable_or_free_constant
 
-self_expression ::= "self" "." identifier
+self_expression ::= "self" "." identifier {
+    extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
+}
 
 variable_or_free_constant ::= identifier {
     implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
@@ -315,7 +317,7 @@ private statement ::= return_statement
           | expression_statement // unofficial definition
           | block { recoverWhile = statement_recover }
 
-private statement_recover ::= !( "}" | keyword | line-terminator )
+private statement_recover ::= !( "}" | identifier | keyword | line-terminator )
 
 block ::= "{" statement* "}" { pin = 1 }
 
