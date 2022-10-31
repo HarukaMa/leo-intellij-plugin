@@ -351,7 +351,11 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
         // Type checker #48
         run {
-            if (PsiTreeUtil.getParentOfType(o, LeoTransitionDeclaration::class.java) != null && o.locator == null) {
+            if (PsiTreeUtil.getParentOfType(
+                    o,
+                    LeoTransitionDeclaration::class.java
+                ) != null && o.locator == null && o.functionIdentifier?.reference?.resolve() as? LeoTransitionDeclaration != null
+            ) {
                 holder.registerProblem(
                     o,
                     "[ETYC0372048]: Cannot call a local transition function from a transition function.",
@@ -683,7 +687,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             if (o.primitiveType != null || o.coreStruct != null) {
                 return@run
             }
-            o.reference?.resolve() ?: run {
+            o.reference?.resolve() ?: o.locator?.reference?.resolve() ?: run {
                 holder.registerProblem(
                     o,
                     "[ETYC0372017]: The type `${o.text}` is not found in the current scope.",
