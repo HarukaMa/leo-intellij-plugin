@@ -20,10 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.PsiTreeUtil
-import im.mrx.leolanguage.leo.psi.LeoBlock
-import im.mrx.leolanguage.leo.psi.LeoFinalizer
-import im.mrx.leolanguage.leo.psi.LeoFunctionLikeDeclaration
-import im.mrx.leolanguage.leo.psi.LeoVariableOrFreeConstant
+import im.mrx.leolanguage.leo.psi.*
 
 class LeoVariableReference(element: LeoVariableOrFreeConstant) : LeoReferenceBase<LeoVariableOrFreeConstant>(element) {
 
@@ -51,6 +48,11 @@ class LeoVariableReference(element: LeoVariableOrFreeConstant) : LeoReferenceBas
                     }
                 }
                 block = PsiTreeUtil.getParentOfType(block, LeoBlock::class.java)
+            }
+            PsiTreeUtil.getParentOfType(element, LeoLoopStatement::class.java)?.let {
+                if (it.identifier?.text == element.text) {
+                    return it
+                }
             }
             val finalizer = PsiTreeUtil.getParentOfType(element, LeoFinalizer::class.java)
             if (finalizer != null) {

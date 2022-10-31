@@ -361,7 +361,9 @@ loop_statement ::= "for" identifier ":" type
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoStatement"
         "im.mrx.leolanguage.leo.psi.LeoTypedElement"
+        "im.mrx.leolanguage.leo.psi.LeoNamedElement"
     ]
+    mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
 }
 
 assignment_operator ::= "="
