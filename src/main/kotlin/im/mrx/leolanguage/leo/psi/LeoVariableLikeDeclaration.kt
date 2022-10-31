@@ -18,8 +18,10 @@ package im.mrx.leolanguage.leo.psi
 
 import com.intellij.psi.PsiElement
 
-interface LeoTypedElement : PsiElement {
-    val namedType: LeoNamedType?
+interface LeoVariableLikeDeclaration : LeoTypedElement, LeoNamedElement, LeoStatement {
 
-    val tupleType: LeoTupleType?
+    val expression: LeoExpression?
+
+    val identifier: PsiElement?
+
 }

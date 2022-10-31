@@ -41,7 +41,7 @@ class LeoStructureViewElement(private val element: NavigatablePsiElement) : Stru
                     return "${element.name}${LeoUtils.typeToStringWithColon(element)}"
                 }
                 if (element is LeoMappingDeclaration) {
-                    return "${element.name}: ${element.mappingType?.text}"
+                    return "${element.name}: ${element.mappingTypeList.joinToString(" => ") { LeoUtils.typeToString(it) ?: "?" }}"
                 }
                 if (element is LeoProgramDeclaration) {
                     return element.programId?.text ?: "Program"

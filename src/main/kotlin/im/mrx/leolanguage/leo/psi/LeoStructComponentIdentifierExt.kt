@@ -20,6 +20,6 @@ import com.intellij.psi.PsiElement
 
 interface LeoStructComponentIdentifierExt {
 
-    fun getTypeElement(): PsiElement?
+    val typeElement: PsiElement?
 
 }

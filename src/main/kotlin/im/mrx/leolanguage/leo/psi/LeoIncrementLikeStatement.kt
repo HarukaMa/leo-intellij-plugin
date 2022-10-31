@@ -16,10 +16,8 @@
 
 package im.mrx.leolanguage.leo.psi
 
-import com.intellij.psi.PsiElement
+interface LeoIncrementLikeStatement : LeoStatement {
+    val expressionList: List<LeoExpression>
 
-interface LeoTypedElement : PsiElement {
-    val namedType: LeoNamedType?
-
-    val tupleType: LeoTupleType?
+    val mappingIdentifier: LeoMappingIdentifier?
 }

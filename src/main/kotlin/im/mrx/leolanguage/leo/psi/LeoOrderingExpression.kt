@@ -16,10 +16,7 @@
 
 package im.mrx.leolanguage.leo.psi
 
-import com.intellij.psi.PsiElement
+interface LeoOrderingExpression : LeoExpression {
 
-interface LeoTypedElement : PsiElement {
-    val namedType: LeoNamedType?
-
-    val tupleType: LeoTupleType?
+    val expressionList: List<LeoExpression>
 }

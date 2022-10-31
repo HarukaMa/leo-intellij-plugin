@@ -20,7 +20,6 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
-import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -36,7 +35,7 @@ class LeoHighlightingAnnotator : Annotator {
         }
         val attribute = when (element) {
             is LeoAnnotation -> ANNOTATION_KEY
-            is LeafPsiElement -> highlightLeaf(element, holder)
+            is LeafPsiElement -> highlightLeaf(element)
             else -> null
         } ?: return
 
@@ -45,14 +44,14 @@ class LeoHighlightingAnnotator : Annotator {
             .create()
     }
 
-    private fun highlightLeaf(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
+    private fun highlightLeaf(element: PsiElement): TextAttributesKey? {
         return when (element.elementType) {
-            IDENTIFIER -> highlightIdentifier(element, holder)
+            IDENTIFIER -> highlightIdentifier(element)
             else -> null
         }
     }
 
-    private fun highlightIdentifier(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
+    private fun highlightIdentifier(element: PsiElement): TextAttributesKey? {
         val parent = element.parent
 
         return when (parent.elementType) {
@@ -71,17 +70,17 @@ class LeoHighlightingAnnotator : Annotator {
             ASSERT_NOT_EQUAL_CALL -> STATIC_FUNCTION_CALL_KEY
             MAPPING_DECLARATION -> MAPPING_DECLARATION_KEY
 
-            STRUCT_COMPONENT_IDENTIFIER -> highlightStructComponentWithReference(element, holder)
-            VARIABLE_OR_FREE_CONSTANT -> highlightVariable(element, holder)
-            NAMED_TYPE -> highlightRecordName(element, holder)
-            STRUCT_EXPRESSION_IDENTIFIER -> highlightRecordName(element, holder)
-            FUNCTION_IDENTIFIER -> highlightFunctionCall(element, holder)
-            LOCATOR -> highlightLocator(element, holder)
+            STRUCT_COMPONENT_IDENTIFIER -> highlightStructComponentWithReference(element)
+            VARIABLE_OR_FREE_CONSTANT -> highlightVariable(element)
+            NAMED_TYPE -> highlightRecordName(element)
+            STRUCT_EXPRESSION_IDENTIFIER -> highlightRecordName(element)
+            FUNCTION_IDENTIFIER -> highlightFunctionCall(element)
+            LOCATOR -> highlightLocator(element)
             else -> null
         }
     }
 
-    private fun highlightVariable(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
+    private fun highlightVariable(element: PsiElement): TextAttributesKey? {
         val finalizer = PsiTreeUtil.getParentOfType(element, LeoFinalizer::class.java)
         if (finalizer != null) {
             finalizer.functionParameterList?.functionParameterList?.forEach {
@@ -101,27 +100,18 @@ class LeoHighlightingAnnotator : Annotator {
         (element.parent as? LeoReferenceElement)?.reference?.resolve()?.let {
             return VARIABLE_DECLARATION_KEY
         }
-        annotateError(holder, "Unresolved variable reference: ${element.text}")
         return null
     }
 
-    private fun highlightRecordName(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
+    private fun highlightRecordName(element: PsiElement): TextAttributesKey? {
         (element.parent as? LeoReferenceElement)?.reference?.resolve()?.let {
             return RECORD_DECLARATION_KEY
         }
-        if (element.parent.elementType == STRUCT_EXPRESSION_IDENTIFIER) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved struct / record reference: ${element.text}")
-                .textAttributes(REFERENCE_ERROR_KEY)
-                .create()
-        }
-        // TODO: named_type -> identifier but not user-defined type?
-        annotateError(holder, "Unresolved reference: ${element.text}")
         return null
     }
 
     private fun highlightStructComponentWithReference(
         element: PsiElement,
-        holder: AnnotationHolder
     ): TextAttributesKey? {
         val structComponent = element.parent as LeoStructComponentIdentifier
         val reference = structComponent.reference ?: return null
@@ -129,21 +119,19 @@ class LeoHighlightingAnnotator : Annotator {
             return STRUCT_COMPONENT_KEY
         }
 
-        annotateError(holder, "Unresolved struct component reference: ${element.text}")
         return null
     }
 
-    private fun highlightFunctionCall(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
+    private fun highlightFunctionCall(element: PsiElement): TextAttributesKey? {
         val functionCall = element.parent as LeoFunctionIdentifier
         functionCall.reference?.resolve()?.let {
             return FREE_FUNCTION_CALL_KEY
         }
 
-        annotateError(holder, "Unresolved function reference: ${element.text}")
         return null
     }
 
-    private fun highlightLocator(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
+    private fun highlightLocator(element: PsiElement): TextAttributesKey? {
         val locator = element.parent as LeoLocator
         locator.reference?.resolve()?.let {
             when (it) {
@@ -154,14 +142,7 @@ class LeoHighlightingAnnotator : Annotator {
             }
         }
 
-        annotateError(holder, "Unresolved locator reference: ${element.text}")
         return null
-    }
-
-    private fun annotateError(holder: AnnotationHolder, message: String) {
-        holder.newAnnotation(HighlightSeverity.ERROR, message)
-            .textAttributes(REFERENCE_ERROR_KEY)
-            .create()
     }
 
     companion object {
@@ -188,9 +169,6 @@ class LeoHighlightingAnnotator : Annotator {
         )
         val STRUCT_COMPONENT_KEY = TextAttributesKey.createTextAttributesKey(
             "LEO_STRUCT_COMPONENT_DECLARATION", DefaultLanguageHighlighterColors.STATIC_FIELD
-        )
-        val REFERENCE_ERROR_KEY = TextAttributesKey.createTextAttributesKey(
-            "LEO_WRONG_REFERENCE", CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES
         )
         val MAPPING_DECLARATION_KEY = TextAttributesKey.createTextAttributesKey(
             "LEO_MAPPING_DECLARATION", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE

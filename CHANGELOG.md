@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 - Fixed incorrect struct expression in loop statement
-- Implemented compiler checks of the official compiler (Incomplete)
+- Implemented compiler checks of the official compiler
 
 ## [0.3.0]
 - Added ARC3 grammar support for Leo

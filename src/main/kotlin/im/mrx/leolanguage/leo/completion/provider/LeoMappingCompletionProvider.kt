@@ -48,7 +48,9 @@ object LeoMappingCompletionProvider : LeoCompletionProvider() {
                 LookupElementBuilder
                     .create(it)
                     .withIcon(AleoIcons.MAPPING)
-                    .withTypeText(it.mappingType?.text ?: "?")
+                    .withTypeText(it.mappingTypeList.joinToString(" => ") { type ->
+                        LeoUtils.typeToString(type) ?: "?"
+                    })
             )
         }
     }

@@ -214,10 +214,18 @@ conditional_conjunctive_expression ::= expression "&&" expression
 equality_expression ::= expression "==" expression
 inequality_expression ::= expression "!=" expression
 
-ordering_less_expression ::= expression "<" expression
-ordering_greater_expression ::= expression ">" expression
-ordering_less_or_equal_expression ::= expression "<=" expression
-ordering_greater_or_equal_expression ::= expression ">=" expression
+ordering_less_expression ::= expression "<" expression {
+    implements = "im.mrx.leolanguage.leo.psi.LeoOrderingExpression"
+}
+ordering_greater_expression ::= expression ">" expression {
+    implements = "im.mrx.leolanguage.leo.psi.LeoOrderingExpression"
+}
+ordering_less_or_equal_expression ::= expression "<=" expression {
+    implements = "im.mrx.leolanguage.leo.psi.LeoOrderingExpression"
+}
+ordering_greater_or_equal_expression ::= expression ">=" expression {
+    implements = "im.mrx.leolanguage.leo.psi.LeoOrderingExpression"
+}
 
 exclusive_disjunctive_expression ::= expression "^" expression
 
@@ -328,21 +336,13 @@ return_statement ::= "return" expression ";" {
 
 variable_declaration ::= "let" identifier ":" type "=" expression ";" {
     pin = 1
-    implements = [
-        "im.mrx.leolanguage.leo.psi.LeoNamedElement"
-        "im.mrx.leolanguage.leo.psi.LeoTypedElement"
-        "im.mrx.leolanguage.leo.psi.LeoStatement"
-    ]
+    implements = "im.mrx.leolanguage.leo.psi.LeoVariableLikeDeclaration"
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
 }
 
 constant_declaration ::= "const" identifier ":" type "=" expression ";" {
     pin = 1
-    implements = [
-        "im.mrx.leolanguage.leo.psi.LeoNamedElement"
-        "im.mrx.leolanguage.leo.psi.LeoTypedElement"
-        "im.mrx.leolanguage.leo.psi.LeoStatement"
-    ]
+    implements = "im.mrx.leolanguage.leo.psi.LeoVariableLikeDeclaration"
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedElementImpl"
 }
 
@@ -407,12 +407,12 @@ mapping_identifier ::= identifier {
 
 increment_statement ::= "increment" "(" mapping_identifier "," expression "," expression [ "," ] ")" ";" {
     pin = 1
-    implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
+    implements = "im.mrx.leolanguage.leo.psi.LeoIncrementLikeStatement"
 }
 
 decrement_statement ::= "decrement" "(" mapping_identifier "," expression "," expression [ "," ] ")" ";" {
     pin = 1
-    implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
+    implements = "im.mrx.leolanguage.leo.psi.LeoIncrementLikeStatement"
 }
 
 expression_statement ::= expression ";" // unofficial definition
@@ -460,7 +460,7 @@ function_parameter ::= [ "public" | "constant" | "const" ]
 private function_parameter_recover ::= !( ')' | ',' | '->' | '@' | 'function' | 'mapping' | 'record' | 'struct' | 'transition' | '{' | '}' )
 
 transition_declaration ::= annotation* "transition" identifier
-                       function_parameter_list [ "->" type ]
+                       function_parameter_list [ "->" [ "public" ] type ]
                        block [ finalizer ] {
                         pin = 2
                         implements = [
@@ -519,9 +519,11 @@ record_declaration ::= "record" identifier
                         elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
                     }
 
-mapping_type ::= type "=>" type
+mapping_type ::= type {
+    implements = "im.mrx.leolanguage.leo.psi.LeoTypedElement"
+}
 
-mapping_declaration ::= "mapping" identifier ":" mapping_type ";" {
+mapping_declaration ::= "mapping" identifier ":" mapping_type "=>" mapping_type ";" {
     pin = 1
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoNamedElement"

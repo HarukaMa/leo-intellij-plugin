@@ -33,38 +33,39 @@ abstract class LeoStructComponentIdentifierImplMixin(node: ASTNode) : ASTWrapper
         return this.identifier
     }
 
-    override fun getTypeElement(): PsiElement? {
-        when (parent) {
-            is LeoStructComponentExpression -> {
-                val expression =
-                    (parent as? LeoStructComponentExpression)?.expression ?: return null
-                val reference = when (expression) {
-                    is LeoStructComponentExpression -> {
-                        expression.lastChild.reference?.resolve() ?: return null
-                    }
+    override val typeElement: PsiElement?
+        get() {
+            when (parent) {
+                is LeoStructComponentExpression -> {
+                    val expression =
+                        (parent as? LeoStructComponentExpression)?.expression ?: return null
+                    val reference = when (expression) {
+                        is LeoStructComponentExpression -> {
+                            expression.lastChild.reference?.resolve() ?: return null
+                        }
 
-                    is LeoPrimaryExpression -> {
-                        expression.variableOrFreeConstant?.reference?.resolve() ?: return null
-                    }
+                        is LeoPrimaryExpression -> {
+                            expression.variableOrFreeConstant?.reference?.resolve() ?: return null
+                        }
 
-                    else -> {
-                        return null
+                        else -> {
+                            return null
+                        }
+                    }
+                    for (child in reference.children) {
+                        if (child is LeoNamedType) {
+                            return child.reference?.resolve()
+                        }
                     }
                 }
-                for (child in reference.children) {
-                    if (child is LeoNamedType) {
-                        return child.reference?.resolve()
-                    }
+
+                is LeoStructComponentInitializer -> {
+                    val expression = parent.parent as? LeoStructExpression ?: return null
+                    return expression.structExpressionIdentifier.reference?.resolve()
                 }
             }
 
-            is LeoStructComponentInitializer -> {
-                val expression = parent.parent as? LeoStructExpression ?: return null
-                return expression.structExpressionIdentifier.reference?.resolve()
-            }
+            return null
         }
-
-        return null
-    }
 
 }

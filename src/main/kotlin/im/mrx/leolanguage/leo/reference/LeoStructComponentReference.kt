@@ -34,7 +34,7 @@ class LeoStructComponentReference(element: LeoStructComponentIdentifier) :
 
         override fun resolve(ref: PsiReference, incompleteCode: Boolean): PsiElement? {
             val element = ref.element as LeoStructComponentIdentifier
-            val typeElement = element.getTypeElement() ?: return null
+            val typeElement = element.typeElement ?: return null
 
             if (typeElement is LeoStructDeclaration) {
                 typeElement.structComponentDeclarations?.structComponentDeclarationList?.forEach {
