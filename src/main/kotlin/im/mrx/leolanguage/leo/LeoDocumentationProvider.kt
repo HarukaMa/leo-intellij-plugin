@@ -36,7 +36,7 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
         return when (element) {
             is LeoFunctionParameter -> generateDoc(element)
             is LeoStructComponentDeclaration -> generateDoc(element)
-            is LeoVariableDeclaration -> generateDoc(element)
+            is LeoIdentifierItem -> generateDoc(element)
             is LeoStructDeclaration -> generateDoc(element)
             is LeoRecordDeclaration -> generateDoc(element)
             is LeoMappingDeclaration -> generateDoc(element)
@@ -82,7 +82,7 @@ class LeoDocumentationProvider : AbstractDocumentationProvider() {
         return generateMarkedUpDoc("${element.name}${LeoUtils.typeToStringWithColon(element)}", element)
     }
 
-    private fun generateDoc(element: LeoVariableDeclaration): String {
+    private fun generateDoc(element: LeoIdentifierItem): String {
         return generateMarkedUpDoc("${element.name}${LeoUtils.typeToStringWithColon(element)}", element)
     }
 

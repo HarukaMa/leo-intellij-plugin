@@ -22,4 +22,6 @@ interface LeoTypedElement : PsiElement {
     val namedType: LeoNamedType?
 
     val tupleType: LeoTupleType?
+
+    val unitType: LeoUnitType?
 }

@@ -1,10 +1,18 @@
 # Changelog
 
 ## [Unreleased]
+
+## [0.5.0]
+
+- Added latest grammar support for Leo
+
+## [0.4.0]
+
 - Fixed incorrect struct expression in loop statement
 - Implemented compiler checks of the official compiler
 
 ## [0.3.0]
+
 - Added ARC3 grammar support for Leo
 - Fixed mapping type name not highlighted
 - Added reference for imported files

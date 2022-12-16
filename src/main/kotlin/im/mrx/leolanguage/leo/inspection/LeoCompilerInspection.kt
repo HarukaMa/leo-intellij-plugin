@@ -65,14 +65,14 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             }
         }
 
-        // Parser #24
+        // Parser #23
         run {
             val programId = o.programId
             val extension = programId.text.split(".").last()
             if (extension != "leo") {
                 holder.registerProblem(
                     programId,
-                    "[EPAR0370024]: Invalid import call to non-leo file.\n\nOnly imports of Leo `.leo` files are currently supported.",
+                    "[EPAR0370023]: Invalid import call to non-leo file.\n\nOnly imports of Leo `.leo` files are currently supported.",
                     ProblemHighlightType.GENERIC_ERROR,
                     TextRange(programId.text.indexOf('.') + 1, programId.text.length),
                 )
@@ -102,13 +102,13 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             }
         }
 
-        // Parser #30
+        // Parser #29
         run {
             val networkIdentifier = o.programId?.text?.split(".")?.last() ?: return@run
             if (networkIdentifier != "aleo") {
                 holder.registerProblem(
                     o.programId!!,
-                    "[EPAR0370030]: Invalid network identifier. The only supported identifier is `aleo`.",
+                    "[EPAR0370029]: Invalid network identifier. The only supported identifier is `aleo`.",
                     ProblemHighlightType.GENERIC_ERROR,
                     TextRange(o.programId!!.text.indexOf('.') + 1, o.programId!!.text.length),
                 )
@@ -116,16 +116,8 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
     }
 
-    override fun visitExpressionStatement(o: LeoExpressionStatement) {
-        // Parser #21
-        run {
-            holder.registerProblem(o, "[EPAR0370021]: Expression statements are not supported.")
-            ProblemHighlightType.GENERIC_ERROR
-        }
-    }
-
     override fun visitUnaryOperatorCall(o: LeoUnaryOperatorCall) {
-        // Parser #22.1
+        // Parser #21.1
         run {
             val operator = o.identifier.text
             if (operator !in listOf(
@@ -141,7 +133,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             ) {
                 holder.registerProblem(
                     o,
-                    "[EPAR0370022]: The type of `${o.expression.text}` has no associated function `$operator`",
+                    "[EPAR0370021]: The type of `${o.expression.text}` has no associated function `$operator`",
                     ProblemHighlightType.GENERIC_ERROR
                 )
             }
@@ -149,7 +141,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     }
 
     override fun visitBinaryOperatorCall(o: LeoBinaryOperatorCall) {
-        // Parser #22.2
+        // Parser #21.2
         run {
             val operator = o.identifier.text
             if (operator !in listOf(
@@ -185,7 +177,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             ) {
                 holder.registerProblem(
                     o,
-                    "[EPAR0370022]: The type of `${o.expressionList.first().text}` has no associated function `$operator`",
+                    "[EPAR0370021]: The type of `${o.expressionList.first().text}` has no associated function `$operator`",
                     ProblemHighlightType.GENERIC_ERROR
                 )
             }
@@ -193,20 +185,20 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     }
 
     override fun visitAssociatedConstant(o: LeoAssociatedConstant) {
-        // Parser #23
+        // Parser #22
         // placeholder as the official compiler is crashing here
         run {}
     }
 
     override fun visitAnnotation(o: LeoAnnotation) {
-        // Parser #25
+        // Parser #24
         run {
             var child = o.firstChild
             while (child != null) {
                 if (child is PsiWhiteSpace) {
                     holder.registerProblem(
                         o,
-                        "[EPAR0370025]: Illegal spacing in the annotation declaration.\n\nRemove whitespace between the `@` symbol and the identifier.",
+                        "[EPAR0370024]: Illegal spacing in the annotation declaration.\n\nRemove whitespace between the `@` symbol and the identifier.",
                         ProblemHighlightType.GENERIC_ERROR
                     )
                     break
@@ -259,6 +251,39 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             val type = LeoUtils.typeToString(function) ?: return@run
             val actualType = getExpressionType(o.expression ?: return@run)
             checkTYC3(o.expression!!, type, actualType)
+        }
+        // Type checker #35
+        run {
+            if (o.finalizeLiteral != null) {
+                fun registerTYC35Problem() {
+                    holder.registerProblem(
+                        o,
+                        "[ETYC0372035]: Cannot use a `finalize` statement without a `finalize` block.",
+                        ProblemHighlightType.GENERIC_ERROR
+                    )
+                }
+
+                val transition = PsiTreeUtil.getParentOfType(o, LeoTransitionDeclaration::class.java)
+                if (transition == null) {
+                    registerTYC35Problem()
+                } else {
+                    transition.finalizer ?: registerTYC35Problem()
+                }
+            }
+        }
+        // Type checker #42
+        run {
+            val transition = PsiTreeUtil.getParentOfType(o, LeoTransitionDeclaration::class.java) ?: return@run
+            val finalizer = transition.finalizer ?: return@run
+            val params = finalizer.functionParameterList?.functionParameterList?.size ?: return@run
+            val actualParams = o.functionArguments?.expressionList?.size ?: return@run
+            if (params != actualParams) {
+                holder.registerProblem(
+                    o,
+                    "[ETYC0372042]: `finalize` expected `$params` args, but got `$actualParams`",
+                    ProblemHighlightType.GENERIC_ERROR
+                )
+            }
         }
     }
 
@@ -319,6 +344,9 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         // Type checker #5
         run {
             o.functionIdentifier?.let {
+                if (it.text in listOf("assert", "assert_eq", "assert_neq")) {
+                    return@let
+                }
                 it.reference?.resolve() ?: run {
                     holder.registerProblem(
                         it,
@@ -684,7 +712,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     override fun visitNamedType(o: LeoNamedType) {
         // Type checker #17
         run {
-            if (o.primitiveType != null || o.coreStruct != null) {
+            if (o.namedPrimitiveType != null || o.coreStruct != null) {
                 return@run
             }
             o.reference?.resolve() ?: o.locator?.reference?.resolve() ?: run {
@@ -845,19 +873,19 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             if (PsiTreeUtil.getParentOfType(o, LeoLoopStatement::class.java) == null) {
                 return@run
             }
-            if (o.children.any { it is LeoReturnStatement }) {
+            PsiTreeUtil.findChildOfType(o, LeoReturnStatement::class.java)?.let {
                 holder.registerProblem(
                     o,
                     "[ETYC0372027]: Loop body contains a return statement or always returns.\n\nRemove the code in the loop body that always returns.",
                     ProblemHighlightType.GENERIC_ERROR
                 )
-            }
-            if (o.children.any { it is LeoFinalizeStatement }) {
-                holder.registerProblem(
-                    o,
-                    "[ETYC0372036]: Loop body contains a finalize statement.\n\nRemove the finalize statement.",
-                    ProblemHighlightType.GENERIC_ERROR
-                )
+                if (it.finalizeLiteral != null) {
+                    holder.registerProblem(
+                        o,
+                        "[ETYC0372036]: Loop body contains a finalize statement.\n\nRemove the finalize statement.",
+                        ProblemHighlightType.GENERIC_ERROR
+                    )
+                }
             }
         }
         // Type checker #33
@@ -865,12 +893,14 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             if (PsiTreeUtil.getParentOfType(o, LeoFinalizer::class.java) == null) {
                 return@run
             }
-            if (o.children.any { it is LeoFinalizeStatement }) {
-                holder.registerProblem(
-                    o,
-                    "[ETYC0372033]: A finalize block cannot contain a finalize statement.",
-                    ProblemHighlightType.GENERIC_ERROR
-                )
+            PsiTreeUtil.findChildOfType(o, LeoReturnStatement::class.java)?.let {
+                if (it.finalizeLiteral != null) {
+                    holder.registerProblem(
+                        o,
+                        "[ETYC0372033]: A finalize block cannot contain a finalize statement.",
+                        ProblemHighlightType.GENERIC_ERROR
+                    )
+                }
             }
         }
         // Type checker #34
@@ -960,40 +990,6 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
     }
 
-    override fun visitFinalizeStatement(o: LeoFinalizeStatement) {
-        // Type checker #35
-        run {
-            fun registerTYC35Problem() {
-                holder.registerProblem(
-                    o,
-                    "[ETYC0372035]: Cannot use a `finalize` statement without a `finalize` block.",
-                    ProblemHighlightType.GENERIC_ERROR
-                )
-            }
-
-            val transition = PsiTreeUtil.getParentOfType(o, LeoTransitionDeclaration::class.java)
-            if (transition == null) {
-                registerTYC35Problem()
-            } else {
-                transition.finalizer ?: registerTYC35Problem()
-            }
-        }
-        // Type checker #42
-        run {
-            val transition = PsiTreeUtil.getParentOfType(o, LeoTransitionDeclaration::class.java) ?: return@run
-            val finalizer = transition.finalizer ?: return@run
-            val params = finalizer.functionParameterList?.functionParameterList?.size ?: return@run
-            val actualParams = o.functionArguments?.expressionList?.size ?: return@run
-            if (params != actualParams) {
-                holder.registerProblem(
-                    o,
-                    "[ETYC0372042]: `finalize` expected `$params` args, but got `$actualParams`",
-                    ProblemHighlightType.GENERIC_ERROR
-                )
-            }
-        }
-    }
-
     override fun visitFinalizer(o: LeoFinalizer) {
         // Type checker #39
         run {
@@ -1040,10 +1036,9 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             when (statement) {
                 is LeoReturnStatement -> {
                     hasReturn = true
-                }
-
-                is LeoFinalizeStatement -> {
-                    hasFinalize = true
+                    if (statement.finalizeLiteral != null) {
+                        hasFinalize = true
+                    }
                 }
 
                 is LeoBlock -> {

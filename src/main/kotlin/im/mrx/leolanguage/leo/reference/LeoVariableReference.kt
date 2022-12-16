@@ -37,14 +37,18 @@ class LeoVariableReference(element: LeoVariableOrFreeConstant) : LeoReferenceBas
             val element = ref.element
             var block = PsiTreeUtil.getParentOfType(element, LeoBlock::class.java)
             while (block != null) {
-                block.variableDeclarationList.forEach {
-                    if (it.name == element.text) {
-                        return it
+                block.variableDeclarationList.forEach { vd ->
+                    PsiTreeUtil.findChildrenOfType(vd, LeoIdentifierItem::class.java).forEach { id ->
+                        if (id.name == element.text) {
+                            return id
+                        }
                     }
                 }
-                block.constantDeclarationList.forEach {
-                    if (it.name == element.text) {
-                        return it
+                block.constantDeclarationList.forEach { cd ->
+                    PsiTreeUtil.findChildrenOfType(cd, LeoIdentifierItem::class.java).forEach { id ->
+                        if (id.name == element.text) {
+                            return id
+                        }
                     }
                 }
                 block = PsiTreeUtil.getParentOfType(block, LeoBlock::class.java)

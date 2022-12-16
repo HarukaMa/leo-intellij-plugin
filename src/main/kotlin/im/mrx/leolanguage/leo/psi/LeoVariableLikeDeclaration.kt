@@ -16,12 +16,10 @@
 
 package im.mrx.leolanguage.leo.psi
 
-import com.intellij.psi.PsiElement
-
-interface LeoVariableLikeDeclaration : LeoTypedElement, LeoNamedElement, LeoStatement {
+interface LeoVariableLikeDeclaration : LeoTypedElement, LeoStatement {
 
     val expression: LeoExpression?
 
-    val identifier: PsiElement?
+    val identifierOrIdentifiers: LeoIdentifierOrIdentifiers?
 
 }

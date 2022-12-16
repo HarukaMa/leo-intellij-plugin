@@ -84,6 +84,9 @@ object LeoUtils {
         element.tupleType?.let {
             return tupleTypeToString(it)
         }
+        element.unitType?.let {
+            return "()"
+        }
         return null
     }
 
