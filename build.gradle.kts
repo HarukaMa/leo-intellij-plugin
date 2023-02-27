@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -17,12 +17,12 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.7.20"
-    id("org.jetbrains.intellij") version "1.9.0"
+    id("org.jetbrains.intellij") version "1.13.0"
     id("org.jetbrains.changelog") version "1.3.1"
 }
 
 group = "im.mrx"
-version = "0.5.0"
+version = "0.6.0"
 
 sourceSets["main"].java.srcDirs("src/main/gen")
 

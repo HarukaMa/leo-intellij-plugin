@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -217,19 +217,6 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     }
 
     override fun visitAssignmentStatement(o: LeoAssignmentStatement) {
-        // Type checker #2
-        run {
-            val variable = o.expressionList.first().firstChild
-            variable.reference?.resolve()?.let { resolved ->
-                if (resolved is LeoConstantDeclaration) {
-                    holder.registerProblem(
-                        o,
-                        "[ETYC0372002]: Cannot assign to const variable `${variable.text}`.",
-                        ProblemHighlightType.GENERIC_ERROR
-                    )
-                }
-            }
-        }
         // Type checker #3
         run {
 
@@ -288,15 +275,6 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     }
 
     override fun visitVariableLikeDeclaration(o: LeoVariableLikeDeclaration) {
-        // Type checker #3
-        run {
-            val type = LeoUtils.typeToString(o) ?: return@run
-            val actualType = getExpressionType(o.expression ?: return@run)
-            checkTYC3(o.expression!!, type, actualType)
-        }
-    }
-
-    override fun visitConstantDeclaration(o: LeoConstantDeclaration) {
         // Type checker #3
         run {
             val type = LeoUtils.typeToString(o) ?: return@run
@@ -483,7 +461,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
     }
 
-    override fun visitVariableOrFreeConstant(o: LeoVariableOrFreeConstant) {
+    override fun visitVariable(o: LeoVariable) {
         // Type checker #5
         run {
             o.reference?.resolve() ?: run {
@@ -1220,7 +1198,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                 exp.structExpressionIdentifier.text
             } ?: "pass"
 
-            is LeoVariableOrFreeConstant -> exp.reference?.resolve()?.let {
+            is LeoVariable -> exp.reference?.resolve()?.let {
                 LeoUtils.typeToString(it as? LeoTypedElement ?: return@let "unknown") ?: "unknown"
             } ?: "pass"
 

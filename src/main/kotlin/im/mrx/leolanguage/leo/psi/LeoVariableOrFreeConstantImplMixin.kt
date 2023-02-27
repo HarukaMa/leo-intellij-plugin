@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -22,8 +22,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import im.mrx.leolanguage.leo.reference.LeoVariableReference
 
-abstract class LeoVariableOrFreeConstantImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
-    LeoVariableOrFreeConstant {
+abstract class LeoVariableImplMixin(node: ASTNode) : ASTWrapperPsiElement(node),
+    LeoVariable {
 
     override fun getReference(): PsiReference? {
         return LeoVariableReference(this)

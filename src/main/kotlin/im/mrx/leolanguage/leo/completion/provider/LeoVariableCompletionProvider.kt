@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -32,7 +32,7 @@ import im.mrx.leolanguage.leo.psi.*
 object LeoVariableCompletionProvider : LeoCompletionProvider() {
 
     override val elementPattern: ElementPattern<PsiElement>
-        get() = psiElement().withParent(LeoVariableOrFreeConstant::class.java)
+        get() = psiElement().withParent(LeoVariable::class.java)
 
     override fun addCompletions(
         parameters: CompletionParameters,

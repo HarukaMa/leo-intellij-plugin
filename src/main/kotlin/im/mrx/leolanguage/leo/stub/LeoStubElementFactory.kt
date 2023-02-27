@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -52,6 +52,11 @@ fun factory(name: String): LeoSymbolStubType<*> {
             ::LeoMappingDeclarationImpl
         )
 
-        else -> error("Unknown symbol $name")
+        "INLINE_DECLARATION" -> LeoSymbolStubType<LeoInlineDeclaration>(
+            "INLINE_DECLARATION",
+            ::LeoInlineDeclarationImpl
+        )
+
+        else -> error("Unknown symbol $name - Update LeoSymbolStubType.kt")
     }
 }

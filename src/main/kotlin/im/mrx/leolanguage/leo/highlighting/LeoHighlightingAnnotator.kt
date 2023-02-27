@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -71,7 +71,7 @@ class LeoHighlightingAnnotator : Annotator {
             MAPPING_DECLARATION -> MAPPING_DECLARATION_KEY
 
             STRUCT_COMPONENT_IDENTIFIER -> highlightStructComponentWithReference(element)
-            VARIABLE_OR_FREE_CONSTANT -> highlightVariable(element)
+            VARIABLE -> highlightVariable(element)
             NAMED_TYPE -> highlightRecordName(element)
             STRUCT_EXPRESSION_IDENTIFIER -> highlightRecordName(element)
             FUNCTION_IDENTIFIER -> highlightFunctionCall(element)

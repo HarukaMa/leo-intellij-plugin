@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -50,7 +50,7 @@
     not-double-quote-or-backslash-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
     line-comment = "regexp:(//[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*)"
     block-comment = "regexp:(/[*](?:[^*]|[*][^/])*[*]/)"
-    keyword = "regexp:address|async|bool|console|const|constant|decrement|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|increment|let|mapping|private|program|public|record|return|scalar|string|struct|then|transition|u8|u16|u32|u64|u128|self"
+    keyword = "regexp:address|async|bool|console|constant|decrement|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|inline|increment|let|mapping|private|program|public|record|return|scalar|string|struct|then|transition|u8|u16|u32|u64|u128|self"
     core_struct = "regexp:BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8"
     uppercase-letter = "regexp:[A-Z]"
     lowercase-letter = "regexp:[a-z]"
@@ -272,15 +272,15 @@ primary_expression ::= literal
                    | unit_expression
                    | tuple_expression
                    | struct_expression
-                   | variable_or_free_constant
+                   | variable
 
 self_expression ::= "self" "." identifier {
     extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
 }
 
-variable_or_free_constant ::= identifier {
+variable ::= identifier {
     implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
-    mixin = "im.mrx.leolanguage.leo.psi.LeoVariableOrFreeConstantImplMixin"
+    mixin = "im.mrx.leolanguage.leo.psi.LeoVariableImplMixin"
 }
 
 associated_constant ::= named_type "::" identifier
@@ -320,7 +320,6 @@ struct_component_initializer ::= struct_component_identifier ":" expression | st
 private statement ::= return_statement
           | expression_statement
           | variable_declaration
-          | constant_declaration
           | conditional_statement
           | loop_statement
           | assignment_statement
@@ -341,13 +340,6 @@ return_statement ::= "return" [ expression ] [ "then" finalize_literal function_
 expression_statement ::= expression ";"
 
 variable_declaration ::= "let" identifier_or_identifiers ":" type "=" expression ";" {
-    pin = 1
-    implements = [
-        "im.mrx.leolanguage.leo.psi.LeoVariableLikeDeclaration"
-    ]
-}
-
-constant_declaration ::= "const" identifier_or_identifiers ":" type "=" expression ";" {
     pin = 1
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoVariableLikeDeclaration"
@@ -461,7 +453,7 @@ function_parameter_list ::= "(" [ function_parameter ( "," function_parameter )*
 
 private function_parameter_list_recover ::= !( '->' | '@' | 'function' | 'mapping' | 'record' | 'struct' | 'transition' | '{' | '}' )
 
-function_parameter ::= [ "public" | "private" | "constant" | "const" ]
+function_parameter ::= [ "public" | "private" | "constant" ]
                      identifier ":" type {
                         pin = 3
                         implements = [
@@ -472,10 +464,22 @@ function_parameter ::= [ "public" | "private" | "constant" | "const" ]
                         recoverWhile = function_parameter_recover
                      }
 
+inline_declaration ::= annotation* "inline" identifier
+                       function_parameter_list "->" type
+                       block {
+                        pin = 2
+                        implements = [
+                          "im.mrx.leolanguage.leo.psi.LeoFunctionLikeDeclaration"
+                          "com.intellij.psi.StubBasedPsiElement"
+                        ]
+                        mixin = "im.mrx.leolanguage.leo.stub.LeoStubbedElementImpl"
+                        elementTypeFactory = "im.mrx.leolanguage.leo.stub.LeoStubElementFactoryKt.factory"
+                        }
+
 private function_parameter_recover ::= !( ')' | ',' | '->' | '@' | 'function' | 'mapping' | 'record' | 'struct' | 'transition' | '{' | '}' )
 
 transition_declaration ::= annotation* "transition" identifier
-                       function_parameter_list [ "->" [ "public" | "private" | "constant" | "const" ] type ]
+                       function_parameter_list [ "->" [ "public" | "private" | "constant" ] type ]
                        block [ finalizer ] {
                         pin = 2
                         implements = [
@@ -487,7 +491,7 @@ transition_declaration ::= annotation* "transition" identifier
                         }
 
 finalizer ::= "finalize" identifier
-            function_parameter_list [ "->" [ "public" | "private" | "constant" | "const" ] type ]
+            function_parameter_list [ "->" [ "public" | "private" | "constant" ] type ]
             block {
                 pin = 1
                 implements = [
@@ -574,9 +578,10 @@ private program_declaration_recover ::= !<<eof>>
 program_block ::= "{" program_item* "}" { pin = 1 }
 
 private program_item ::= function_declaration
+                    | inline_declaration
                     | transition_declaration
                     | struct_declaration
                     | record_declaration
                     | mapping_declaration {recoverWhile=program_item_recover}
 
-private program_item_recover ::= !( "@" | "function" | "struct" | "record" | "mapping" | "transition" | "}" )
+private program_item_recover ::= !( "@" | "function" | "inline" | "struct" | "record" | "mapping" | "transition" | "}" )

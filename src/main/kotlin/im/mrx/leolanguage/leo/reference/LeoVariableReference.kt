@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -22,7 +22,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.PsiTreeUtil
 import im.mrx.leolanguage.leo.psi.*
 
-class LeoVariableReference(element: LeoVariableOrFreeConstant) : LeoReferenceBase<LeoVariableOrFreeConstant>(element) {
+class LeoVariableReference(element: LeoVariable) : LeoReferenceBase<LeoVariable>(element) {
 
 //    constructor(element: LeoVariableOrFreeConstant, textRange: TextRange) : super(element, textRange)
 
@@ -39,13 +39,6 @@ class LeoVariableReference(element: LeoVariableOrFreeConstant) : LeoReferenceBas
             while (block != null) {
                 block.variableDeclarationList.forEach { vd ->
                     PsiTreeUtil.findChildrenOfType(vd, LeoIdentifierItem::class.java).forEach { id ->
-                        if (id.name == element.text) {
-                            return id
-                        }
-                    }
-                }
-                block.constantDeclarationList.forEach { cd ->
-                    PsiTreeUtil.findChildrenOfType(cd, LeoIdentifierItem::class.java).forEach { id ->
                         if (id.name == element.text) {
                             return id
                         }

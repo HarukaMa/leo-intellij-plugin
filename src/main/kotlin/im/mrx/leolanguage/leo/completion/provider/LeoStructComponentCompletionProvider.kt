@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -41,7 +41,7 @@ object LeoStructComponentCompletionProvider : LeoCompletionProvider() {
         // token.owner
         PsiTreeUtil.getParentOfType(element, LeoStructComponentExpression::class.java)?.let {
             val expression = it.expression as? LeoPrimaryExpression ?: return@let
-            val declaration = expression.variableOrFreeConstant?.reference?.resolve() ?: return@let
+            val declaration = expression.variable?.reference?.resolve() ?: return@let
             val namedType =
                 (declaration as? LeoVariableDeclaration)?.namedType ?: (declaration as? LeoFunctionParameter)?.namedType
                 ?: return@let

@@ -16,6 +16,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; This file specifies the grammar of Leo in the ABNF notation,
+; which is defined in:
+; - RFC 5234 (https://www.rfc-editor.org/rfc/rfc5234)
+; - RFC 7405 (https://www.rfc-editor.org/rfc/rfc7405)
+
+; Leo files are written in Unicode, encoded in UTF-8.
+; The grammar in this file applies to the Unicode scalar values
+; that result from the UTF-8 decoding of the files.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; Lexical Grammar
 ; ---------------
 
@@ -89,7 +100,6 @@ not-line-feed-or-carriage-return = horizontal-tab
 keyword = %s"address"
         / %s"bool"
         / %s"console"
-        / %s"const"
         / %s"constant"
         / %s"decrement"
         / %s"else"
@@ -106,6 +116,7 @@ keyword = %s"address"
         / %s"if"
         / %s"import"
         / %s"in"
+        / %s"inline"
         / %s"increment"
         / %s"let"
         / %s"mapping"
@@ -298,7 +309,7 @@ literal = atomic-literal / affine-group-literal
 group-literal = product-group-literal / affine-group-literal
 
 primary-expression = literal
-                   / variable-or-free-constant
+                   / variable
                    / associated-constant
                    / "(" expression ")"
                    / free-function-call
@@ -307,7 +318,7 @@ primary-expression = literal
                    / tuple-expression
                    / struct-expression
 
-variable-or-free-constant = identifier
+variable = identifier
 
 associated-constant = named-type "::" identifier
 
@@ -404,7 +415,6 @@ expression = conditional-ternary-expression
 statement = return-statement
           / expression-statement
           / variable-declaration
-          / constant-declaration
           / conditional-statement
           / loop-statement
           / assignment-statement
@@ -421,9 +431,6 @@ return-statement =
 expression-statement = expression ";"
 
 variable-declaration = %s"let" identifier-or-identifiers ":" type
-                       "=" expression ";"
-
-constant-declaration = %s"const" identifier-or-identifiers ":" type
                        "=" expression ";"
 
 identifier-or-identifiers = identifier
@@ -481,19 +488,23 @@ function-declaration = *annotation %s"function" identifier
 
 function-parameters = function-parameter *( "," function-parameter ) [ "," ]
 
-function-parameter = [ %s"public" / %s"private" / %s"constant" / %s"const" ]
+function-parameter = [ %s"public" / %s"private" / %s"constant" ]
                      identifier ":" type
+
+inline-declaration = *annotation %s"inline" identifier
+                     "(" [ function-parameters ] ")" "->" type
+                     block
 
 transition-declaration =
     *annotation %s"transition" identifier
     "(" [ function-parameters ] ")"
-    [ "->" [ %s"public" / %s"private" / %s"constant" / %s"const" ] type ]
+    [ "->" [ %s"public" / %s"private" / %s"constant" ] type ]
     block [ finalizer ]
 
 finalizer =
     %s"finalize" identifier
     "(" [ function-parameters ] ")"
-    [ "->" [ %s"public" / %s"private" / %s"constant" / %s"const" ] type ]
+    [ "->" [ %s"public" / %s"private" / %s"constant" ] type ]
     block
 
 struct-declaration = %s"struct" identifier
@@ -511,6 +522,7 @@ record-declaration = %s"record" identifier
 mapping-declaration = %s"mapping" identifier ":" type "=>" type ";"
 
 program-item = function-declaration
+             / inline-declaration
              / transition-declaration
              / struct-declaration
              / record-declaration
@@ -533,7 +545,7 @@ input-expression = expression
 
 input-item = identifier ":" input-type "=" input-expression ";"
 
-input-title = "[" ( %s"public" / %s"private" / %s"constant" / %s"const" ) "]"
+input-title = "[" ( %s"public" / %s"private" / %s"constant" ) "]"
 
 input-section = input-title *input-item
 
