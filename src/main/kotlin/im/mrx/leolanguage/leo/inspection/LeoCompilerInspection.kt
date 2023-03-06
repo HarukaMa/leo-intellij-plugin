@@ -303,7 +303,8 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             val types = LeoUtils.functionParameterListToTypeString(
                 (o.locator ?: o.functionIdentifier ?: return@run).reference?.resolve() as? LeoFunctionLikeDeclaration
                     ?: return@run
-            ).split(", ")
+            ).split(", ").toMutableList()
+            types.remove("")
             o.functionArguments.expressionList.forEachIndexed { index, expression ->
                 val type = types.getOrNull(index) ?: return@forEachIndexed
                 val actualType = getExpressionType(expression)
