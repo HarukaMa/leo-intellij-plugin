@@ -234,7 +234,11 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     override fun visitReturnStatement(o: LeoReturnStatement) {
         // Type checker #3
         run {
-            val function = PsiTreeUtil.getParentOfType(o, LeoFunctionLikeDeclaration::class.java) ?: return@run
+            val function =
+                PsiTreeUtil.getParentOfType(o, LeoFinalizer::class.java) ?: PsiTreeUtil.getParentOfType(
+                    o,
+                    LeoFunctionLikeDeclaration::class.java
+                ) ?: return@run
             val type = LeoUtils.typeToString(function) ?: return@run
             val actualType = getExpressionType(o.expression ?: return@run)
             checkTYC3(o.expression!!, type, actualType)
