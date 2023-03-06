@@ -84,6 +84,7 @@ BRACKETS=[\[\]]
   "("                                                                  { return LPAREN; }
   ")"                                                                  { return RPAREN; }
   "/"                                                                  { return SLASH; }
+  "-"                                                                  { return DASH; }
   ")group"                                                             { return GROUP_END; }
 
   {NUMERAL}                                                            { yybegin(NUMERIC); }

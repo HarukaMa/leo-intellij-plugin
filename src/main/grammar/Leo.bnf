@@ -97,6 +97,7 @@
     comma = ","
     semicolon = ";"
     slash = "/"
+    dash = "-"
 
     // TODO highlighting?
     colon = ":"

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -55,6 +55,7 @@ class LeoFormattingBlock(
             .before(LeoTypes.RPAREN).spaces(0)
             .before(LeoTypes.SLASH).spaceIf(!inLocator)
             .after(LeoTypes.SLASH).spaceIf(!inLocator)
+            .after(LeoTypes.DASH).spaceIf(node.elementType != LeoTypes.UNARY_MINUS_EXPRESSION)
             .getSpacing(this, child1, child2)
     }
 
