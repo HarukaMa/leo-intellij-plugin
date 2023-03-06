@@ -466,7 +466,7 @@ function_parameter ::= [ "public" | "private" | "constant" ]
                      }
 
 inline_declaration ::= annotation* "inline" identifier
-                       function_parameter_list "->" type
+                       function_parameter_list [ "->" type ]
                        block {
                         pin = 2
                         implements = [
