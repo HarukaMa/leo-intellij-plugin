@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -26,10 +26,15 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.LeoFunctionParameterList
+import im.mrx.leolanguage.leo.psi.LeoTransitionDeclaration
 
 object LeoVisibilityCompletionProvider : LeoCompletionProvider() {
     override val elementPattern: ElementPattern<PsiElement>
-        get() = psiElement().withParent(psiElement(PsiErrorElement::class.java).withParent(LeoFunctionParameterList::class.java))
+        get() = psiElement().withParent(
+            psiElement(PsiErrorElement::class.java).withParent(
+                psiElement(LeoFunctionParameterList::class.java).withParent(LeoTransitionDeclaration::class.java)
+            )
+        )
 
     override fun addCompletions(
         parameters: CompletionParameters,
