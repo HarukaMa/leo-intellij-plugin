@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -38,7 +38,7 @@ object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        listOf("function", "transition", "record", "struct", "mapping").forEach {
+        listOf("inline", "function", "transition", "record", "struct", "mapping").forEach {
             result.addElement(
                 LookupElementBuilder
                     .create(it)
