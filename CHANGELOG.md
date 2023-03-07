@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 - Fixed highlighting of inline function name
+- Fixed parsing of Aleo instructions
 
 ## [0.6.0]
 - Added latest grammar support for Leo

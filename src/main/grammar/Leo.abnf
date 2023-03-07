@@ -98,6 +98,9 @@ not-line-feed-or-carriage-return = horizontal-tab
                                  ; anything but <LF> and <CR>
 
 keyword = %s"address"
+        / %s"assert"
+        / %s"assert_eq"
+        / %s"assert_neq"
         / %s"bool"
         / %s"console"
         / %s"constant"
@@ -492,7 +495,8 @@ function-parameter = [ %s"public" / %s"private" / %s"constant" ]
                      identifier ":" type
 
 inline-declaration = *annotation %s"inline" identifier
-                     "(" [ function-parameters ] ")" "->" type
+                     "(" [ function-parameters ] ")"
+                     [ "->" type ]
                      block
 
 transition-declaration =

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -30,7 +30,7 @@
   tokenTypeClass="im.mrx.leolanguage.aleo.psi.AleoTokenType"
 
   tokens = [
-    keyword = "regexp:program|function|mapping|record|struct|transition|import|key|value|into|cast|call|increment|decrement|by|finalize|input|output|field|group|scalar|u8|u16|u32|u64|u128|i8|i16|i32|i64|i128|address|boolean|string|interface|closure"
+    keyword = "regexp:program|function|mapping|record|struct|transition|import|key|value|into|cast|call|increment|decrement|by|finalize|input|output|field|group|scalar|u8|u16|u32|u64|u128|i8|i16|i32|i64|i128|address|boolean|string|closure"
     instruction_name = "regexp:input|output|cast|call|abs|abs.w|double|inv|neg|not|square|sqrt|hash.bhp256|hash.bhp512|hash.bhp768|hash.bhp1024|hash.ped64|hash.ped128|hash.psd2|hash.psd4|hash.psd8|add|add.w|sub|sub.w|mul|mul.w|div|div.w|rem|rem.w|mod|pow|pow.w|shl|shl.w|shr|shr.w|and|or|xor|nand|nor|gt|gte|lt|lte|is.eq|is.neq|commit.bhp256|commit.bhp512|commit.bhp768|commit.bhp1024|commit.ped64|commit.ped128|ternary|assert.eq|assert.neq"
     entry_visibility = "regexp:public|private|constant"
     address_literal = "regexp:aleo1[ac-hj-np-z02-9]{58}"
@@ -57,15 +57,17 @@ program ::= import* "program" program_id ";" definition* { pin = 2 }
 
 definition ::= mapping | struct | record | function | transition { recoverWhile = definition_recover }
 
-private definition_recover ::= !( "function" | "mapping" | "record" | "struct" | "transition" | <<eof>> )
+private definition_recover ::= !( "function" | "mapping" | "record" | "struct" | "closure" | <<eof>> )
+
+// registers are valid identifiers as well
+private identifier_or_register ::= identifier | register
+
+program_id ::= identifier_or_register "." identifier_or_register
+
+locator ::= program_id "/" identifier_or_register
 
 
-program_id ::= identifier "." identifier
-
-locator ::= program_id "/" identifier
-
-
-register_access ::= register ( "." identifier )*
+register_access ::= register ( "." identifier_or_register )*
 
 
 literal ::= arithmetic_literal | address_literal | boolean_literal | string_literal
@@ -96,57 +98,54 @@ string_type ::= "string"
 
 literal_type ::= arithmetic_type | address_type | boolean_type | string_type
 
-plaintext_type ::= literal_type | identifier {
+plaintext_type ::= literal_type | identifier_or_register {
  implements = "im.mrx.leolanguage.aleo.psi.AleoReferenceElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedTypeImplMixin"
 }
 
-value_type ::= plaintext_type "." entry_visibility | identifier ".record" | locator ".record"
+value_type ::= plaintext_type "." entry_visibility | identifier_or_register ".record" | locator ".record"
 
-finalize_type ::= plaintext_type ".public" | identifier ".record" | locator ".record"
+finalize_type ::= plaintext_type ".public" | identifier_or_register ".record" | locator ".record"
 
 entry_type ::= plaintext_type "." entry_visibility
 
-register_type ::= locator ".record" | identifier ".record" | plaintext_type
+register_type ::= locator ".record" | identifier_or_register ".record" | plaintext_type
 
 
 import ::= "import" program_id ";" { pin = 1 }
 
 
-mapping ::= "mapping" identifier ":" mapping_key mapping_value {
+mapping ::= "mapping" identifier_or_register ":" mapping_key mapping_value {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-mapping_key ::= "key" identifier "as" finalize_type ";" { pin = 1 }
+mapping_key ::= "key" identifier_or_register "as" finalize_type ";" { pin = 1 }
 
-mapping_value ::= "value" identifier "as" finalize_type ";" { pin = 1 }
+mapping_value ::= "value" identifier_or_register "as" finalize_type ";" { pin = 1 }
 
 
-struct ::= "interface" identifier ":" tuple+ {
+struct ::= "struct" identifier_or_register ":" tuple+ {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
- recoverWhile = struct_recover
 }
 
-private struct_recover ::= !( "interface" | "mapping" | "record" | "struct" | "transition" | <<eof>> )
-
-tuple ::= identifier "as" plaintext_type ";" // { recoverWhile = tuple_recover }
+tuple ::= identifier_or_register "as" plaintext_type ";" // { recoverWhile = tuple_recover }
 
 // private tuple_recover ::= !( 'closure' | 'function' | 'interface' | 'mapping' | 'record' | identifier | <<eof>> )
 
 
-record ::= "record" identifier ":" entry* {
+record ::= "record" identifier_or_register ":" entry* {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-entry ::= identifier "as" entry_type ";" { recoverWhile = entry_recover }
+entry ::= identifier_or_register "as" entry_type ";" { recoverWhile = entry_recover }
 
-private entry_recover ::= !( 'closure' | 'function' | 'interface' | 'mapping' | 'record' | identifier | <<eof>> )
+private entry_recover ::= !( 'closure' | 'function' | 'struct' | 'mapping' | 'record' | identifier | <<eof>> )
 
 
 unary_op ::= "abs" | "abs.w" | "double" | "inv"
@@ -187,22 +186,22 @@ hash ::= hash_op operand "into" register { pin = 1 }
 
 cast ::= "cast" operand+ "into" register "as" register_type { pin = 1 }
 
-call ::= "call" ( locator | identifier ) operand+ "into" register+ { pin = 1 }
+call ::= "call" ( locator | identifier_or_register ) operand* "into" register+ { pin = 1 }
 
 instruction ::= ( unary | binary | ternary | is | assert | commit | hash | cast | call ) ";" { recoverWhile = instruction_recover }
 
 private instruction_recover ::= !( instruction_name | keyword | <<eof>> )
 
-increment ::= "increment" identifier "[" operand "]" "by" operand ";" { pin = 1 }
+increment ::= "increment" identifier_or_register "[" operand "]" "by" operand ";" { pin = 1 }
 
-decrement ::= "decrement" identifier "[" operand "]" "by" operand ";" { pin = 1 }
+decrement ::= "decrement" identifier_or_register "[" operand "]" "by" operand ";" { pin = 1 }
 
 command ::= increment | decrement | instruction
 
 finalize_command ::= "finalize" operand* ";" { pin = 1 }
 
 
-function ::= "closure" identifier ":" function_input* instruction+ function_output* {
+function ::= "closure" identifier_or_register ":" function_input* instruction+ function_output* {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
@@ -213,7 +212,7 @@ function_input ::= "input" register "as" register_type ";" { pin = 1 }
 function_output ::= "output" register_access "as" register_type ";" { pin = 1 }
 
 
-transition ::= "function" identifier ":" transition_input* instruction* transition_output* [ finalize_command finalize ] {
+transition ::= "function" identifier_or_register ":" transition_input* instruction* transition_output* [ finalize_command finalize ] {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
@@ -223,7 +222,7 @@ transition_input ::= "input" register "as" value_type ";" { pin = 1 }
 
 transition_output ::= "output" register_access "as" value_type ";" { pin = 1 }
 
-finalize ::= "finalize" identifier ":" finalize_input* command+ finalize_output* { pin = 1 }
+finalize ::= "finalize" identifier_or_register ":" finalize_input* command+ finalize_output* { pin = 1 }
 
 finalize_input ::= "input" register "as" finalize_type ";" { pin = 1 }
 
