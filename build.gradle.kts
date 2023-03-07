@@ -55,7 +55,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("212")
-        untilBuild.set("223.*")
+        untilBuild.set("231.*")
         changeNotes.set(
             changelog.getAll().filter {
                 it.key != "[Unreleased]"
