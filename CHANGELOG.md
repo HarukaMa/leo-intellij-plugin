@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- Fixed highlighting of inline function name
 
 ## [0.6.0]
 - Added latest grammar support for Leo

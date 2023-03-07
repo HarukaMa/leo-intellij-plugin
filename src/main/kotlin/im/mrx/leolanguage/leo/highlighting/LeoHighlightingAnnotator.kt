@@ -56,6 +56,7 @@ class LeoHighlightingAnnotator : Annotator {
 
         return when (parent.elementType) {
             FUNCTION_DECLARATION -> FUNCTION_DECLARATION_KEY
+            INLINE_DECLARATION -> FUNCTION_DECLARATION_KEY
             TRANSITION_DECLARATION -> FUNCTION_DECLARATION_KEY
             FINALIZER -> FUNCTION_DECLARATION_KEY
             FUNCTION_PARAMETER -> FUNCTION_PARAMETER_KEY
