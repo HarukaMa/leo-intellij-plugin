@@ -59,15 +59,12 @@ definition ::= mapping | struct | record | function | transition { recoverWhile 
 
 private definition_recover ::= !( "function" | "mapping" | "record" | "struct" | "closure" | <<eof>> )
 
-// registers are valid identifiers as well
-private identifier_or_register ::= identifier | register
+program_id ::= identifier "." identifier
 
-program_id ::= identifier_or_register "." identifier_or_register
-
-locator ::= program_id "/" identifier_or_register
+locator ::= program_id "/" identifier
 
 
-register_access ::= register ( "." identifier_or_register )*
+register_access ::= register ( "." identifier )*
 
 
 literal ::= arithmetic_literal | address_literal | boolean_literal | string_literal
@@ -98,52 +95,52 @@ string_type ::= "string"
 
 literal_type ::= arithmetic_type | address_type | boolean_type | string_type
 
-plaintext_type ::= literal_type | identifier_or_register {
+plaintext_type ::= literal_type | identifier {
  implements = "im.mrx.leolanguage.aleo.psi.AleoReferenceElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedTypeImplMixin"
 }
 
-value_type ::= plaintext_type "." entry_visibility | identifier_or_register ".record" | locator ".record"
+value_type ::= plaintext_type "." entry_visibility | identifier ".record" | locator ".record"
 
-finalize_type ::= plaintext_type ".public" | identifier_or_register ".record" | locator ".record"
+finalize_type ::= plaintext_type ".public" | identifier ".record" | locator ".record"
 
 entry_type ::= plaintext_type "." entry_visibility
 
-register_type ::= locator ".record" | identifier_or_register ".record" | plaintext_type
+register_type ::= locator ".record" | identifier ".record" | plaintext_type
 
 
 import ::= "import" program_id ";" { pin = 1 }
 
 
-mapping ::= "mapping" identifier_or_register ":" mapping_key mapping_value {
+mapping ::= "mapping" identifier ":" mapping_key mapping_value {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-mapping_key ::= "key" identifier_or_register "as" finalize_type ";" { pin = 1 }
+mapping_key ::= "key" identifier "as" finalize_type ";" { pin = 1 }
 
-mapping_value ::= "value" identifier_or_register "as" finalize_type ";" { pin = 1 }
+mapping_value ::= "value" identifier "as" finalize_type ";" { pin = 1 }
 
 
-struct ::= "struct" identifier_or_register ":" tuple+ {
+struct ::= "struct" identifier ":" tuple+ {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-tuple ::= identifier_or_register "as" plaintext_type ";" // { recoverWhile = tuple_recover }
+tuple ::= identifier "as" plaintext_type ";" // { recoverWhile = tuple_recover }
 
 // private tuple_recover ::= !( 'closure' | 'function' | 'interface' | 'mapping' | 'record' | identifier | <<eof>> )
 
 
-record ::= "record" identifier_or_register ":" entry* {
+record ::= "record" identifier ":" entry* {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
 }
 
-entry ::= identifier_or_register "as" entry_type ";" { recoverWhile = entry_recover }
+entry ::= identifier "as" entry_type ";" { recoverWhile = entry_recover }
 
 private entry_recover ::= !( 'closure' | 'function' | 'struct' | 'mapping' | 'record' | identifier | <<eof>> )
 
@@ -186,22 +183,22 @@ hash ::= hash_op operand "into" register { pin = 1 }
 
 cast ::= "cast" operand+ "into" register "as" register_type { pin = 1 }
 
-call ::= "call" ( locator | identifier_or_register ) operand* "into" register+ { pin = 1 }
+call ::= "call" ( locator | identifier ) operand* "into" register+ { pin = 1 }
 
 instruction ::= ( unary | binary | ternary | is | assert | commit | hash | cast | call ) ";" { recoverWhile = instruction_recover }
 
 private instruction_recover ::= !( instruction_name | keyword | <<eof>> )
 
-increment ::= "increment" identifier_or_register "[" operand "]" "by" operand ";" { pin = 1 }
+increment ::= "increment" identifier "[" operand "]" "by" operand ";" { pin = 1 }
 
-decrement ::= "decrement" identifier_or_register "[" operand "]" "by" operand ";" { pin = 1 }
+decrement ::= "decrement" identifier "[" operand "]" "by" operand ";" { pin = 1 }
 
 command ::= increment | decrement | instruction
 
 finalize_command ::= "finalize" operand* ";" { pin = 1 }
 
 
-function ::= "closure" identifier_or_register ":" function_input* instruction+ function_output* {
+function ::= "closure" identifier ":" function_input* instruction+ function_output* {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
@@ -212,7 +209,7 @@ function_input ::= "input" register "as" register_type ";" { pin = 1 }
 function_output ::= "output" register_access "as" register_type ";" { pin = 1 }
 
 
-transition ::= "function" identifier_or_register ":" transition_input* instruction* transition_output* [ finalize_command finalize ] {
+transition ::= "function" identifier ":" transition_input* instruction* transition_output* [ finalize_command finalize ] {
  pin = 1
  implements = "im.mrx.leolanguage.aleo.psi.AleoNamedElement"
  mixin = "im.mrx.leolanguage.aleo.psi.AleoNamedElementImpl"
@@ -222,7 +219,7 @@ transition_input ::= "input" register "as" value_type ";" { pin = 1 }
 
 transition_output ::= "output" register_access "as" value_type ";" { pin = 1 }
 
-finalize ::= "finalize" identifier_or_register ":" finalize_input* command+ finalize_output* { pin = 1 }
+finalize ::= "finalize" identifier ":" finalize_input* command+ finalize_output* { pin = 1 }
 
 finalize_input ::= "input" register "as" finalize_type ";" { pin = 1 }
 
