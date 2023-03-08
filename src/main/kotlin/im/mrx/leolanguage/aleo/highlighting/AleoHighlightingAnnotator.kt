@@ -46,6 +46,7 @@ class AleoHighlightingAnnotator : Annotator {
     private fun highlightLeaf(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
         return when (element.elementType) {
             IDENTIFIER -> highlightIdentifier(element, holder)
+            REGISTER -> highlightRegister(element, holder)
             else -> null
         }
     }
@@ -80,8 +81,28 @@ class AleoHighlightingAnnotator : Annotator {
         return null
     }
 
+    private fun highlightRegister(element: PsiElement, holder: AnnotationHolder): TextAttributesKey? {
+        val location = element.parent.elementType
+        if (location !in listOf(REGISTER_ACCESS, UNARY, BINARY, TERNARY, IS, COMMIT, HASH, CAST, CALL, FUNCTION_INPUT, TRANSITION_INPUT, FINALIZE_INPUT)) {
+            return highlightIdentifier(element, holder)
+        }
+        if (location == CALL) {
+            if (element.prevSibling.prevSibling.text == "call") {
+                return highlightIdentifier(element, holder)
+            }
+        }
+        if (location == REGISTER_ACCESS) {
+            if (element.prevSibling != null) {
+                return highlightIdentifier(element, holder)
+            }
+        }
+        return REGISTER_KEY
+    }
+
     companion object {
         val STRUCT_KEY =
             TextAttributesKey.createTextAttributesKey("ALEO_STRUCT", DefaultLanguageHighlighterColors.INTERFACE_NAME)
+        val REGISTER_KEY =
+            TextAttributesKey.createTextAttributesKey("ALEO_REGISTER", DefaultLanguageHighlighterColors.CONSTANT)
     }
 }

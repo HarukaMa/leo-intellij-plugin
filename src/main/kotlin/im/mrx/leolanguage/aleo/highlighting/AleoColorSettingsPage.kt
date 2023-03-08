@@ -32,12 +32,14 @@ class AleoColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor("Identifier", AleoSyntaxHighlighter.IDENTIFIER),
             AttributesDescriptor("String", AleoSyntaxHighlighter.STRING),
             AttributesDescriptor("Number", AleoSyntaxHighlighter.NUMBER),
-            AttributesDescriptor("Register", AleoSyntaxHighlighter.REGISTER),
             AttributesDescriptor("Comment", AleoSyntaxHighlighter.COMMENT),
             AttributesDescriptor("Address", AleoSyntaxHighlighter.ADDRESS),
             AttributesDescriptor("Visibility", AleoSyntaxHighlighter.ENTRY_VISIBILITY),
             AttributesDescriptor("Braces and Operators//Semicolon", AleoSyntaxHighlighter.SEMICOLON),
             AttributesDescriptor("Braces and Operators//Dot", AleoSyntaxHighlighter.DOT),
+
+            AttributesDescriptor("Register", AleoHighlightingAnnotator.REGISTER_KEY),
+            AttributesDescriptor("Struct", AleoHighlightingAnnotator.STRUCT_KEY),
         )
     }
 

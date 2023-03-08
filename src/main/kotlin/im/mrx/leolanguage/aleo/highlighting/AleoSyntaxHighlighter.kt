@@ -40,7 +40,6 @@ class AleoSyntaxHighlighter : SyntaxHighlighterBase() {
             AleoTypes.SEMICOLON -> SEMICOLON
             AleoTypes.DOT -> DOT
             AleoTypes.AS -> KEYWORD
-            AleoTypes.REGISTER -> REGISTER
             AleoTypes.STRING_LITERAL -> STRING
             AleoTypes.BLOCK_COMMENT -> COMMENT
             AleoTypes.LINE_COMMENT -> COMMENT
@@ -73,8 +72,6 @@ class AleoSyntaxHighlighter : SyntaxHighlighterBase() {
 
         //        val COMMA = TextAttributesKey.createTextAttributesKey("ALEO_COMMA", DefaultLanguageHighlighterColors.COMMA)
 //        val AS = TextAttributesKey.createTextAttributesKey("ALEO_AS", DefaultLanguageHighlighterColors.KEYWORD)
-        val REGISTER =
-            TextAttributesKey.createTextAttributesKey("ALEO_REGISTER", DefaultLanguageHighlighterColors.CONSTANT)
         val INSTRUCTION_NAME = TextAttributesKey.createTextAttributesKey(
             "ALEO_INSTRUCTION_NAME",
             DefaultLanguageHighlighterColors.INSTANCE_FIELD
