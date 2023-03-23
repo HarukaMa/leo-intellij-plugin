@@ -58,7 +58,7 @@ class AleoHighlightingAnnotator : Annotator {
             STRUCT -> STRUCT_KEY
             RECORD -> STRUCT_KEY
             PLAINTEXT_TYPE -> highlightInterfaceName(element, holder)
-            else -> null
+            else -> AleoSyntaxHighlighter.IDENTIFIER
         }
     }
 

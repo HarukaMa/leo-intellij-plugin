@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fixed highlighting of identifiers in Aleo instructions
+
 ## [0.6.1]
 
 - Fixed highlighting of inline function name
