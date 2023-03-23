@@ -517,8 +517,8 @@ struct_component_declarations ::= "{" struct_component_declaration
                                  ( "," struct_component_declaration )*
                                  [ "," ] "}" { pin = 1 }
 
-struct_component_declaration ::= identifier ":" type  {
-    pin = 1
+struct_component_declaration ::= [ "public" | "private" | "constant" ] identifier ":" type  {
+    pin = 2
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoNamedElement"
         "im.mrx.leolanguage.leo.psi.LeoTypedElement"

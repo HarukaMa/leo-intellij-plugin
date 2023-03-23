@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Fixed highlighting of identifiers in Aleo instructions
+- Added modes to Leo record components
 
 ## [0.6.1]
 
