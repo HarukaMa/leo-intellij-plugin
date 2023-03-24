@@ -2,18 +2,17 @@
 
 ## [Unreleased]
 
+## [0.6.2]
 - Fixed highlighting of identifiers in Aleo instructions
 - Added modes to Leo record components
 - Changed outputs to operands in Aleo instructions
 
 ## [0.6.1]
-
 - Fixed highlighting of inline function name
 - Fixed parsing of Aleo instructions
 - Fixed highlighting of register-like identifiers in Aleo instructions
 
 ## [0.6.0]
-
 - Added latest grammar support for Leo
 - Fixed extra space in minus numeral literal
 - Fixed incorrect function argument count in type checker
