@@ -73,7 +73,7 @@ register_access ::= register ( "." identifier_or_register )*
 literal ::= arithmetic_literal | address_literal | boolean_literal | string_literal
 
 
-operand ::= literal | register_access | "self.caller" | program_id
+operand ::= literal | "group::GEN" | register_access | "self.caller" | program_id
 
 
 unsigned_type ::= "u8" | "u16" | "u32" | "u64" | "u128"
@@ -192,11 +192,13 @@ instruction ::= ( unary | binary | ternary | is | assert | commit | hash | cast 
 
 private instruction_recover ::= !( instruction_name | keyword | <<eof>> )
 
-increment ::= "increment" identifier_or_register "[" operand "]" "by" operand ";" { pin = 1 }
+get ::= "get" identifier_or_register "[" operand "]" "into" register { pin = 1 }
 
-decrement ::= "decrement" identifier_or_register "[" operand "]" "by" operand ";" { pin = 1 }
+get_or_init ::= "get.or_init" identifier_or_register "[" operand "]" "into" register { pin = 1 }
 
-command ::= increment | decrement | instruction
+set ::= "set" identifier_or_register "[" operand "]" operand "into" register { pin = 1 }
+
+command ::= get | get_or_init | set | instruction
 
 finalize_command ::= "finalize" operand* ";" { pin = 1 }
 

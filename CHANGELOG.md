@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- Added support for latest Leo and Aleo instructions grammar
 
 ## [0.6.2]
 - Fixed highlighting of identifiers in Aleo instructions

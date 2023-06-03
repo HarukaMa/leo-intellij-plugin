@@ -116,74 +116,6 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
     }
 
-    override fun visitUnaryOperatorCall(o: LeoUnaryOperatorCall) {
-        // Parser #21.1
-        run {
-            val operator = o.identifier.text
-            if (operator !in listOf(
-                    "abs",
-                    "abs_wrapped",
-                    "double",
-                    "inv",
-                    "neg",
-                    "not",
-                    "square",
-                    "square_root"
-                )
-            ) {
-                holder.registerProblem(
-                    o,
-                    "[EPAR0370021]: The type of `${o.expression.text}` has no associated function `$operator`",
-                    ProblemHighlightType.GENERIC_ERROR
-                )
-            }
-        }
-    }
-
-    override fun visitBinaryOperatorCall(o: LeoBinaryOperatorCall) {
-        // Parser #21.2
-        run {
-            val operator = o.identifier.text
-            if (operator !in listOf(
-                    "add",
-                    "add_wrapped",
-                    "and",
-                    "div",
-                    "div_wrapped",
-                    "eq",
-                    "gte",
-                    "gt",
-                    "lte",
-                    "lt",
-                    "mod",
-                    "mul",
-                    "mul_wrapped",
-                    "nand",
-                    "neq",
-                    "nor",
-                    "or",
-                    "pow",
-                    "pow_wrapped",
-                    "rem",
-                    "rem_wrapped",
-                    "shl",
-                    "shl_wrapped",
-                    "shr",
-                    "shr_wrapped",
-                    "sub",
-                    "sub_wrapped",
-                    "xor"
-                )
-            ) {
-                holder.registerProblem(
-                    o,
-                    "[EPAR0370021]: The type of `${o.expressionList.first().text}` has no associated function `$operator`",
-                    ProblemHighlightType.GENERIC_ERROR
-                )
-            }
-        }
-    }
-
     override fun visitAssociatedConstant(o: LeoAssociatedConstant) {
         // Parser #22
         // placeholder as the official compiler is crashing here
@@ -527,30 +459,6 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
     }
 
-    override fun visitIncrementLikeStatement(o: LeoIncrementLikeStatement) {
-        // Type checker #5, #7
-        run {
-            val identifier = o.mappingIdentifier ?: return@run
-            val declaration = identifier.reference?.resolve() as? LeoMappingDeclaration
-            if (declaration == null) {
-                holder.registerProblem(
-                    identifier,
-                    "[ETYC0372005]: Unknown variable `${identifier.text}`",
-                    ProblemHighlightType.ERROR
-                )
-                return@run
-            }
-            LeoUtils.typeToString(declaration.mappingTypeList.first())?.let {
-                val actualKeyType = getExpressionType(o.expressionList.first())
-                checkTYC7(o.expressionList.first(), it, actualKeyType)
-            }
-            LeoUtils.typeToString(declaration.mappingTypeList.last())?.let {
-                val actualValueType = getExpressionType(o.expressionList.last())
-                checkTYC7(o.expressionList.last(), it, actualValueType)
-            }
-        }
-    }
-
     override fun visitPrimaryExpression(o: LeoPrimaryExpression) {
         // Type checker #8
         run {
@@ -595,7 +503,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
     }
 
-    override fun visitStaticFunctionCall(o: LeoStaticFunctionCall) {
+    override fun visitAssociatedFunctionCall(o: LeoAssociatedFunctionCall) {
         // Type checker #6, #9
         run {
             fun registerTYC9Problem() {
@@ -1126,8 +1034,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
 
             is LeoTupleComponentExpression -> getTupleComponentType(element)
             is LeoStructComponentExpression -> getStructComponentType(element)
-            is LeoUnaryOperatorCall -> "pass" // TODO check types
-            is LeoBinaryOperatorCall -> "pass" // TODO check types
+            is LeoAssociatedFunctionCall -> "pass" // TODO check types
 
             is LeoUnaryNotExpression -> getExpressionType(element.expression ?: return "pass")
             is LeoUnaryMinusExpression -> getExpressionType(element.expression ?: return "pass")
@@ -1175,7 +1082,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
 
     private fun getPrimaryExpressionType(expression: LeoPrimaryExpression): String {
         return when (val exp = expression.firstChild) {
-            is LeoStaticFunctionCall -> {
+            is LeoAssociatedFunctionCall -> {
                 val coreStruct = exp.namedType.coreStruct?.text ?: return "pass"
                 val function = exp.identifier.text
                 if (coreStruct.contains("Pedersen") && function == "commit") {
