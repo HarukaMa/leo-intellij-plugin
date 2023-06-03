@@ -50,8 +50,6 @@ class LeoCompilerInspection : LocalInspectionTool() {
 
 private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
 
-    // TODO: TYC7 has more type checks
-
     override fun visitImportProgramId(o: LeoImportProgramId) {
         // Compiler #2
         run {
@@ -108,18 +106,12 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             if (networkIdentifier != "aleo") {
                 holder.registerProblem(
                     o.programId!!,
-                    "[EPAR0370029]: Invalid network identifier. The only supported identifier is `aleo`.",
+                    "[EPAR0370028]: Invalid network identifier. The only supported identifier is `aleo`.",
                     ProblemHighlightType.GENERIC_ERROR,
                     TextRange(o.programId!!.text.indexOf('.') + 1, o.programId!!.text.length),
                 )
             }
         }
-    }
-
-    override fun visitAssociatedConstant(o: LeoAssociatedConstant) {
-        // Parser #22
-        // placeholder as the official compiler is crashing here
-        run {}
     }
 
     override fun visitAnnotation(o: LeoAnnotation) {
@@ -577,6 +569,71 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
     }
 
+    override fun visitMethodCall(o: LeoMethodCall) {
+        // Parser #21
+        run {
+            val unaryList = listOf(
+                "abs",
+                "abs_wrapped",
+                "double",
+                "inv",
+                "neg",
+                "not",
+                "square",
+                "square_root"
+            )
+            val binaryList = listOf(
+                "add",
+                "add_wrapped",
+                "and",
+                "div",
+                "div_wrapped",
+                "eq",
+                "gte",
+                "gt",
+                "lte",
+                "lt",
+                "mod",
+                "mul",
+                "mul_wrapped",
+                "nand",
+                "neq",
+                "nor",
+                "or",
+                "pow",
+                "pow_wrapped",
+                "rem",
+                "rem_wrapped",
+                "shl",
+                "shl_wrapped",
+                "shr",
+                "shr_wrapped",
+                "sub",
+                "sub_wrapped",
+                "xor"
+            )
+            val operator = o.identifier.text
+            val argsSize = o.functionArguments.expressionList.size
+            if (argsSize == 0 && operator in unaryList) {
+                return@run
+            }
+            if (argsSize == 1 && operator in binaryList) {
+                return@run
+            }
+            if (argsSize == 1 && operator == "get") {
+                return@run
+            }
+            if (argsSize == 2 && operator in listOf("get_or_init", "set")) {
+                return@run
+            }
+            holder.registerProblem(
+                o,
+                "[EPAR0370021]: The type of ${o.expression.text} has no associated function $operator that takes $argsSize argument(s).",
+                ProblemHighlightType.GENERIC_ERROR
+            )
+        }
+    }
+
     override fun visitStructLikeDeclaration(o: LeoStructLikeDeclaration) {
         // Type checker #15, #16
         run {
@@ -917,6 +974,16 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                     ProblemHighlightType.GENERIC_ERROR
                 )
             }
+        }
+    }
+
+    override fun visitConsoleStatement(o: LeoConsoleStatement) {
+        run {
+            holder.registerProblem(
+                o,
+                "[EPAR0370032]: `console` statements are not yet supported.\n\nConsider using `assert`, `assert_eq`, or `assert_neq` instead.",
+                ProblemHighlightType.GENERIC_ERROR
+            )
         }
     }
 

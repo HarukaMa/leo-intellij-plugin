@@ -51,7 +51,7 @@
     line-comment = "regexp:(//[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*)"
     block-comment = "regexp:(/[*](?:[^*]|[*][^/])*[*]/)"
     keyword = "regexp:address|async|bool|console|constant|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|inline|let|mapping|private|program|public|record|return|scalar|string|struct|then|transition|u8|u16|u32|u64|u128|self"
-    core_struct = "regexp:BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8"
+    core_struct = "regexp:BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8|Mapping"
     uppercase-letter = "regexp:[A-Z]"
     lowercase-letter = "regexp:[a-z]"
     letter = "regexp:[a-zA-Z]"
@@ -404,11 +404,6 @@ console_statement ::= "console" "." console_call ";" {
 finalize_literal ::= "finalize" {
     implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
     mixin = "im.mrx.leolanguage.leo.psi.LeoFinalizeLiteralImplMixin"
-}
-
-mapping_identifier ::= identifier {
-    implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
-    mixin = "im.mrx.leolanguage.leo.psi.LeoMappingIdentifierImplMixin"
 }
 
 private console_call ::= assert_call
