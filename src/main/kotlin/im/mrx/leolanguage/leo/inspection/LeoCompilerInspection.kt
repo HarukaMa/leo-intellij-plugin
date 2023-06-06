@@ -141,9 +141,20 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     }
 
     override fun visitAssignmentStatement(o: LeoAssignmentStatement) {
+        // Type checker #0
+        run {
+            val expression = o.expressionList.first()
+            if (expression.elementType != VARIABLE) {
+                holder.registerProblem(
+                    expression,
+                    "[ETYC0372000]: invalid assignment target",
+                    ProblemHighlightType.GENERIC_ERROR
+                )
+            }
+        }
+
         // Type checker #3
         run {
-
             val variable = o.expressionList.first().firstChild
             variable.reference?.resolve()?.let { resolved ->
                 val element = resolved as? LeoTypedElement ?: return@run
@@ -496,12 +507,73 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     }
 
     override fun visitAssociatedFunctionCall(o: LeoAssociatedFunctionCall) {
-        // Type checker #6, #9
+
+        val coreFunctions = mapOf(
+            Pair(
+                "BHP256", listOf(
+                    Pair("hash", 1),
+                    Pair("commit", 2),
+                )
+            ),
+            Pair(
+                "BHP512", listOf(
+                    Pair("hash", 1),
+                    Pair("commit", 2),
+                )
+            ),
+            Pair(
+                "BHP768", listOf(
+                    Pair("hash", 1),
+                    Pair("commit", 2),
+                )
+            ),
+            Pair(
+                "BHP1024", listOf(
+                    Pair("hash", 1),
+                    Pair("commit", 2),
+                )
+            ),
+            Pair(
+                "Pedersen64", listOf(
+                    Pair("hash", 1),
+                    Pair("commit", 2),
+                )
+            ),
+            Pair(
+                "Pedersen128", listOf(
+                    Pair("hash", 1),
+                    Pair("commit", 2),
+                )
+            ),
+            Pair(
+                "Poseidon2", listOf(
+                    Pair("hash", 1),
+                )
+            ),
+            Pair(
+                "Poseidon4", listOf(
+                    Pair("hash", 1),
+                )
+            ),
+            Pair(
+                "Poseidon8", listOf(
+                    Pair("hash", 1),
+                )
+            ),
+            Pair(
+                "Mapping", listOf(
+                    Pair("get", 2),
+                    Pair("get_or_init", 3),
+                    Pair("set", 3),
+                )
+            ),
+        )
+        // Type checker #6, #9, #46
         run {
             fun registerTYC9Problem() {
                 holder.registerProblem(
                     o.namedType,
-                    "[ETYC0372009]: The instruction ${o.namedType.text}::${o.identifier.text} is not a valid core function.",
+                    "[ETYC0372009]: ${o.namedType.text}::${o.identifier.text} is not a valid core function.",
                     ProblemHighlightType.GENERIC_ERROR
                 )
             }
@@ -512,15 +584,11 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                 return@run
             }
             val function = o.identifier.text
-            if (function !in listOf("commit", "hash")) {
+            if (function !in (coreFunctions[coreStruct] ?: listOf()).map { it.first }) {
                 registerTYC9Problem()
                 return@run
             }
-            if (function == "commit" && coreStruct.contains("Poseidon")) {
-                registerTYC9Problem()
-                return@run
-            }
-            val args = if (function == "commit") 2 else 1
+            val args = (coreFunctions[coreStruct] ?: listOf()).first { it.first == function }.second
             val actualArgs = o.functionArguments.expressionList.size
             if (actualArgs != args) {
                 holder.registerProblem(
@@ -529,9 +597,6 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                     ProblemHighlightType.GENERIC_ERROR
                 )
             }
-        }
-        // Type checker #46
-        run {
             fun registerTYC46Problem(element: PsiElement, type: String) {
                 holder.registerProblem(
                     element,
@@ -540,10 +605,6 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                 )
             }
 
-            val coreStruct = o.namedType.coreStruct?.text ?: return@run
-            val function = o.identifier.text
-            val args = if (function == "commit") 2 else 1
-            val actualArgs = o.functionArguments.expressionList.size
             val arg1 = o.functionArguments.expressionList.first()
             val type1 = getExpressionType(arg1)
             val arg2 = if (args == 2 && actualArgs > 1) o.functionArguments.expressionList[1] else null

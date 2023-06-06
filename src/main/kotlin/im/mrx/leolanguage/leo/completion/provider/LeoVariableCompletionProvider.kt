@@ -52,12 +52,14 @@ object LeoVariableCompletionProvider : LeoCompletionProvider() {
         } ?: return
         while (statement != null) {
             (statement as? LeoVariableDeclaration)?.let {
-                result.addElement(
-                    LookupElementBuilder
-                        .create(it)
-                        .withIcon(AleoIcons.VARIABLE)
-                        .withTypeText(LeoUtils.typeToString(it))
-                )
+                for (identifier in it.identifierOrIdentifiers?.identifierItemList ?: listOf()) {
+                    result.addElement(
+                        LookupElementBuilder
+                            .create(identifier)
+                            .withIcon(AleoIcons.VARIABLE)
+                            .withTypeText(LeoUtils.typeToString(identifier))
+                    )
+                }
             }
             statement = statement.prevSibling
         }

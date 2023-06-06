@@ -40,10 +40,21 @@ object LeoStructComponentCompletionProvider : LeoCompletionProvider() {
         val element = parameters.position
         // token.owner
         PsiTreeUtil.getParentOfType(element, LeoStructComponentExpression::class.java)?.let {
-            val expression = it.expression as? LeoPrimaryExpression ?: return@let
-            val declaration = expression.variable?.reference?.resolve() ?: return@let
+            val declaration = when (it.expression) {
+                is LeoPrimaryExpression -> {
+                    (it.expression as LeoPrimaryExpression).variable?.reference?.resolve() ?: return@let
+                }
+
+                is LeoStructComponentExpression -> {
+                    it.expression.lastChild.reference?.resolve() ?: return@let
+                }
+
+                else -> {
+                    return@let
+                }
+            }
             val namedType =
-                (declaration as? LeoVariableDeclaration)?.namedType ?: (declaration as? LeoFunctionParameter)?.namedType
+                (declaration as? LeoIdentifierItem)?.namedType ?: (declaration as? LeoFunctionParameter)?.namedType
                 ?: return@let
             val type = namedType.reference?.resolve() ?: return@let
             val componentList =

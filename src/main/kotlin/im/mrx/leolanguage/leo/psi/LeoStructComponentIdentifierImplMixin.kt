@@ -52,6 +52,9 @@ abstract class LeoStructComponentIdentifierImplMixin(node: ASTNode) : ASTWrapper
                             return null
                         }
                     }
+                    if (reference is LeoTypedElement) {
+                        return (reference.namedType ?: reference.tupleType ?: reference.unitType)?.reference?.resolve()
+                    }
                     for (child in reference.children) {
                         if (child is LeoNamedType) {
                             return child.reference?.resolve()
