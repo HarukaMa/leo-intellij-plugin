@@ -48,6 +48,76 @@ class LeoCompilerInspection : LocalInspectionTool() {
     }
 }
 
+
+data class CoreFunction(
+    val parameterCount: Int,
+    val parameterTypes: List<List<String>>,
+    val returnType: String,
+)
+
+val BHPInputDataType = listOf(
+    "address", "bool", "field", "group", "i8", "i16", "i32", "i64", "i128",
+    "u8", "u16", "u32", "u64", "u128", "scalar", "string", "struct",
+)
+
+val PED64InputDataType = listOf(
+    "bool", "i8", "i16", "i32", "i64", "u8", "u16", "u32", "u64", "string", "struct",
+)
+
+val PED128InputDataType = listOf(
+    "bool", "i8", "i16", "i32", "i64", "i128", "u8", "u16", "u32", "u64", "u128", "string", "struct",
+)
+
+val PSDInputDataType = listOf(
+    "field", "i8", "i16", "i32", "i64", "i128", "u8", "u16", "u32", "u64", "u128", "scalar", "string", "struct",
+)
+
+val BHPFunctions = mapOf(
+    Pair("hash", CoreFunction(1, listOf(BHPInputDataType), "field")),
+    Pair("hash_to_group", CoreFunction(1, listOf(BHPInputDataType), "group")),
+    Pair("commit", CoreFunction(2, listOf(BHPInputDataType, listOf("scalar")), "field")),
+    Pair("commit_to_group", CoreFunction(2, listOf(BHPInputDataType, listOf("scalar")), "group")),
+)
+
+val PED64Functions = mapOf(
+    Pair("hash", CoreFunction(1, listOf(PED64InputDataType), "field")),
+    Pair("hash_to_group", CoreFunction(1, listOf(PED64InputDataType), "group")),
+    Pair("commit", CoreFunction(2, listOf(PED64InputDataType, listOf("scalar")), "field")),
+    Pair("commit_to_group", CoreFunction(2, listOf(PED64InputDataType, listOf("scalar")), "group")),
+)
+
+val PED128Functions = mapOf(
+    Pair("hash", CoreFunction(1, listOf(PED128InputDataType), "field")),
+    Pair("hash_to_group", CoreFunction(1, listOf(PED128InputDataType), "group")),
+    Pair("commit", CoreFunction(2, listOf(PED128InputDataType, listOf("scalar")), "field")),
+    Pair("commit_to_group", CoreFunction(2, listOf(PED128InputDataType, listOf("scalar")), "group")),
+)
+
+val PSDFunctions = mapOf(
+    Pair("hash", CoreFunction(1, listOf(PSDInputDataType), "field")),
+    Pair("hash_to_group", CoreFunction(1, listOf(PSDInputDataType), "group")),
+    Pair("hash_to_scalar", CoreFunction(1, listOf(PSDInputDataType), "scalar")),
+)
+
+val MappingFunctions = mapOf(
+    Pair("get", CoreFunction(2, listOf(listOf("string"), listOf("string")), "string")),
+    Pair("get_or_init", CoreFunction(3, listOf(listOf("string"), listOf("string"), listOf("string")), "string")),
+    Pair("set", CoreFunction(3, listOf(listOf("string"), listOf("string"), listOf("string")), "string")),
+)
+
+val coreFunctions = mapOf(
+    Pair("BHP256", BHPFunctions),
+    Pair("BHP512", BHPFunctions),
+    Pair("BHP768", BHPFunctions),
+    Pair("BHP1024", BHPFunctions),
+    Pair("Pedersen64", PED64Functions),
+    Pair("Pedersen128", PED128Functions),
+    Pair("Poseidon2", PSDFunctions),
+    Pair("Poseidon4", PSDFunctions),
+    Pair("Poseidon8", PSDFunctions),
+    Pair("Mapping", MappingFunctions),
+)
+
 private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
 
     override fun visitImportProgramId(o: LeoImportProgramId) {
@@ -184,7 +254,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                 fun registerTYC35Problem() {
                     holder.registerProblem(
                         o,
-                        "[ETYC0372035]: Cannot use a `finalize` statement without a `finalize` block.",
+                        "[ETYC0372036]: Cannot use a `finalize` statement without a `finalize` block.",
                         ProblemHighlightType.GENERIC_ERROR
                     )
                 }
@@ -508,66 +578,6 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
 
     override fun visitAssociatedFunctionCall(o: LeoAssociatedFunctionCall) {
 
-        val coreFunctions = mapOf(
-            Pair(
-                "BHP256", listOf(
-                    Pair("hash", 1),
-                    Pair("commit", 2),
-                )
-            ),
-            Pair(
-                "BHP512", listOf(
-                    Pair("hash", 1),
-                    Pair("commit", 2),
-                )
-            ),
-            Pair(
-                "BHP768", listOf(
-                    Pair("hash", 1),
-                    Pair("commit", 2),
-                )
-            ),
-            Pair(
-                "BHP1024", listOf(
-                    Pair("hash", 1),
-                    Pair("commit", 2),
-                )
-            ),
-            Pair(
-                "Pedersen64", listOf(
-                    Pair("hash", 1),
-                    Pair("commit", 2),
-                )
-            ),
-            Pair(
-                "Pedersen128", listOf(
-                    Pair("hash", 1),
-                    Pair("commit", 2),
-                )
-            ),
-            Pair(
-                "Poseidon2", listOf(
-                    Pair("hash", 1),
-                )
-            ),
-            Pair(
-                "Poseidon4", listOf(
-                    Pair("hash", 1),
-                )
-            ),
-            Pair(
-                "Poseidon8", listOf(
-                    Pair("hash", 1),
-                )
-            ),
-            Pair(
-                "Mapping", listOf(
-                    Pair("get", 2),
-                    Pair("get_or_init", 3),
-                    Pair("set", 3),
-                )
-            ),
-        )
         // Type checker #6, #9, #46
         run {
             fun registerTYC9Problem() {
@@ -578,17 +588,20 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                 )
             }
 
-            val coreStruct = o.namedType.coreStruct?.text
+            val coreStruct = o.namedType.identifier?.text
             if (coreStruct == null) {
                 registerTYC9Problem()
                 return@run
             }
             val function = o.identifier.text
-            if (function !in (coreFunctions[coreStruct] ?: listOf()).map { it.first }) {
+            if (function !in (coreFunctions[coreStruct] ?: mapOf())) {
                 registerTYC9Problem()
                 return@run
             }
-            val args = (coreFunctions[coreStruct] ?: listOf()).first { it.first == function }.second
+            val args = (coreFunctions[coreStruct] ?: mapOf())[function]?.parameterCount ?: run inner@{
+                registerTYC9Problem()
+                return@run
+            }
             val actualArgs = o.functionArguments.expressionList.size
             if (actualArgs != args) {
                 holder.registerProblem(
@@ -596,37 +609,24 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                     "[ETYC0372006]: Call expected `${args}` args, but got `${actualArgs}`",
                     ProblemHighlightType.GENERIC_ERROR
                 )
+                return@run
             }
-            fun registerTYC46Problem(element: PsiElement, type: String) {
+            fun registerTYC7Problem(element: PsiElement, expected: List<String>, type: String) {
                 holder.registerProblem(
                     element,
-                    "[ETYC0372046]: Invalid type `$type`",
+                    "[ETYC0372007]: Expected one type from `${expected.joinToString(", ")}`, but got `$type`",
                     ProblemHighlightType.GENERIC_ERROR
                 )
             }
 
-            val arg1 = o.functionArguments.expressionList.first()
-            val type1 = getExpressionType(arg1)
-            val arg2 = if (args == 2 && actualArgs > 1) o.functionArguments.expressionList[1] else null
-            val type2 = if (arg2 != null) getExpressionType(arg2) else null
-            if (coreStruct.contains("Poseidon") || coreStruct.contains("BHP")) {
-                if (type1.contains('(') || type1 == "unknown") {
-                    registerTYC46Problem(arg1, type1)
-                }
-            } else {
-                val types = mutableListOf("bool", "i8", "i16", "i32", "i64", "u8", "u16", "u32", "u64", "string")
-                if (coreStruct == "Pedersen64" && type1 !in types) {
-                    registerTYC46Problem(arg1, type1)
-                }
-                types += listOf("i128", "u128")
-                if (coreStruct == "Pedersen128" && type1 !in types) {
-                    registerTYC46Problem(arg1, type1)
+            val expectedTypes = coreFunctions[coreStruct]!![function]!!.parameterTypes
+            for (i in 0 until args) {
+                val arg = o.functionArguments.expressionList[i]
+                val type = getExpressionType(arg)
+                if (type !in expectedTypes[i]) {
+                    registerTYC7Problem(arg, expectedTypes[i], type)
                 }
             }
-            if (args == 2 && actualArgs > 1 && type2 != "scalar") {
-                registerTYC46Problem(arg2!!, type2!!)
-            }
-
         }
     }
 
@@ -721,7 +721,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     override fun visitNamedType(o: LeoNamedType) {
         // Type checker #17
         run {
-            if (o.namedPrimitiveType != null || o.coreStruct != null) {
+            if (o.namedPrimitiveType != null || o.identifier != null) {
                 return@run
             }
             o.reference?.resolve() ?: o.locator?.reference?.resolve() ?: run {
@@ -754,7 +754,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         run {
             val members = o.structComponentDeclarations?.structComponentDeclarationList ?: return@run
             val memberNames = members.map { it.name }
-            for ((variable, type) in listOf(Pair("owner", "address"), Pair("gates", "u64"))) {
+            for ((variable, type) in listOf(Pair("owner", "address"))) {
                 if (variable !in memberNames) {
                     holder.registerProblem(
                         o,
@@ -829,14 +829,27 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                 )
             }
         }
+        run {
+            if (PsiTreeUtil.getParentOfType(o, LeoFinalizer::class.java) != null) {
+                if (o.mode != null && o.mode!!.text != "public") {
+                    holder.registerProblem(
+                        o.mode!!,
+                        "[ETYC0372032]: An input to a finalize block must be public.\n\nUse a `public` modifier to the input variable declaration or remove the visibility modifier entirely.",
+                        ProblemHighlightType.GENERIC_ERROR
+                    )
+                }
+            }
+        }
         // Type checker #41
         run {
-            if (o.firstChild.elementType == KEYWORD && o.firstChild.text.contains("const")) {
-                holder.registerProblem(
-                    o.firstChild,
-                    "[ETYC0372041]: Transition functions cannot have constant inputs.",
-                    ProblemHighlightType.GENERIC_ERROR
-                )
+            if (PsiTreeUtil.getParentOfType(o, LeoTransitionDeclaration::class.java) != null) {
+                if (o.mode != null && o.mode!!.text.contains("const")) {
+                    holder.registerProblem(
+                        o.mode!!,
+                        "[ETYC0372041]: Transition functions cannot have constant inputs.",
+                        ProblemHighlightType.GENERIC_ERROR
+                    )
+                }
             }
         }
     }
@@ -845,13 +858,34 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         // Type checker #29
         run {
             o.functionParameterList?.functionParameterList?.forEach { parameter ->
-                if (parameter.firstChild?.elementType == KEYWORD) {
+                if (parameter.mode != null) {
                     holder.registerProblem(
                         parameter.firstChild!!,
-                        "[ETYC0372029]: Standard functions cannot have modes associated with their inputs.\n\nConsider removing the mode or using the keyword `transition` instead of `function`.",
+                        "[ETYC0372028]: Standard functions cannot have modes associated with their inputs.\n\nConsider removing the mode or using the keyword `transition` instead of `function`.",
                         ProblemHighlightType.GENERIC_ERROR
                     )
                 }
+            }
+        }
+        run {
+            if (o.mode != null && o.mode!!.text == "constant") {
+                holder.registerProblem(
+                    o.mode!!,
+                    "[ETYC0372040]: A returned value cannot be a constant.",
+                    ProblemHighlightType.GENERIC_ERROR
+                )
+            }
+        }
+    }
+
+    override fun visitTransitionDeclaration(o: LeoTransitionDeclaration) {
+        run {
+            if (o.mode != null && o.mode!!.text == "constant") {
+                holder.registerProblem(
+                    o.mode!!,
+                    "[ETYC0372040]: A returned value cannot be a constant.",
+                    ProblemHighlightType.GENERIC_ERROR
+                )
             }
         }
     }
@@ -871,7 +905,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                 if (index > returnIndex) {
                     holder.registerProblem(
                         statement,
-                        "[ETYC0372026]: Cannot reach the following statement.\n\nRemove the unreachable code.",
+                        "[ETYC0372025]: Cannot reach the following statement.\n\nRemove the unreachable code.",
                         ProblemHighlightType.GENERIC_ERROR
                     )
                 }
@@ -885,13 +919,13 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             PsiTreeUtil.findChildOfType(o, LeoReturnStatement::class.java)?.let {
                 holder.registerProblem(
                     o,
-                    "[ETYC0372027]: Loop body contains a return statement or always returns.\n\nRemove the code in the loop body that always returns.",
+                    "[ETYC0372026]: Loop body contains a return statement or always returns.\n\nRemove the code in the loop body that always returns.",
                     ProblemHighlightType.GENERIC_ERROR
                 )
                 if (it.finalizeLiteral != null) {
                     holder.registerProblem(
                         o,
-                        "[ETYC0372036]: Loop body contains a finalize statement.\n\nRemove the finalize statement.",
+                        "[ETYC0372037]: Loop body contains a finalize statement.\n\nRemove the finalize statement.",
                         ProblemHighlightType.GENERIC_ERROR
                     )
                 }
@@ -906,7 +940,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                 if (it.finalizeLiteral != null) {
                     holder.registerProblem(
                         o,
-                        "[ETYC0372033]: A finalize block cannot contain a finalize statement.",
+                        "[ETYC0372034]: A finalize block cannot contain a finalize statement.",
                         ProblemHighlightType.GENERIC_ERROR
                     )
                 }
@@ -917,12 +951,31 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             if (PsiTreeUtil.getParentOfType(o, LeoFinalizer::class.java) != null) {
                 return@run
             }
-            if (o.children.any { it is LeoIncrementLikeStatement }) {
+            fun registerTYC35Problem(e: PsiElement) {
                 holder.registerProblem(
-                    o,
-                    "[ETYC0372034]: `increment` or `decrement` statements must be inside a finalize block.",
+                    e,
+                    "[ETYC0372035]: This statement must be inside a finalize block.",
                     ProblemHighlightType.GENERIC_ERROR
                 )
+            }
+            for (statement in o.children) {
+                if (statement is LeoExpressionStatement) {
+                    when (val expression = statement.expression) {
+                        is LeoMethodCall -> {
+                            val primary = expression.expression as? LeoPrimaryExpression ?: return@run
+                            val source = primary.variable?.reference?.resolve() ?: return@run
+                            if (source is LeoMappingDeclaration && expression.identifier.text in coreFunctions["Mapping"]!!) {
+                                registerTYC35Problem(statement)
+                            }
+                        }
+
+                        is LeoAssociatedFunctionCall -> {
+                            if (expression.namedType.text == "Mapping") {
+                                registerTYC35Problem(statement)
+                            }
+                        }
+                    }
+                }
             }
         }
         // Type checker #38, #44
@@ -963,7 +1016,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             if ((o.namedType?.reference?.resolve() as? LeoRecordDeclaration) != null) {
                 holder.registerProblem(
                     o.namedType!!,
-                    "[ETYC0372030]: A struct or record cannot contain another record.",
+                    "[ETYC0372029]: A struct or record cannot contain another record.",
                     ProblemHighlightType.GENERIC_ERROR
                 )
             }
@@ -973,33 +1026,48 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     override fun visitMappingDeclaration(o: LeoMappingDeclaration) {
         // Type checker #31
         run {
-            fun registerTYC31Problem(element: PsiElement, component: String, type: String) {
+            fun registerTYC30Problem(element: PsiElement, component: String, type: String) {
                 holder.registerProblem(
                     element,
-                    "[ETYC0372031]: A mapping's $component cannot be a $type",
+                    "[ETYC0372030]: A mapping's $component cannot be a $type",
                     ProblemHighlightType.GENERIC_ERROR
                 )
             }
             o.mappingTypeList.first().let { key ->
-                if (key.namedType?.reference?.resolve() as? LeoMappingDeclaration != null) {
-                    registerTYC31Problem(key, "key", "mapping")
+                val source = key.namedType?.reference?.resolve()
+                if (source as? LeoMappingDeclaration != null) {
+                    registerTYC30Problem(key, "key", "mapping")
+                } else if (source as? LeoRecordDeclaration != null) {
+                    registerTYC30Problem(key, "key", "record")
                 }
                 if (key.tupleType != null) {
-                    registerTYC31Problem(key, "key", "tuple")
+                    registerTYC30Problem(key, "key", "tuple")
                 }
             }
             o.mappingTypeList.last().let { value ->
-                if (value.namedType?.reference?.resolve() as? LeoMappingDeclaration != null) {
-                    registerTYC31Problem(value, "value", "mapping")
+                val source = value.namedType?.reference?.resolve()
+                if (source as? LeoMappingDeclaration != null) {
+                    registerTYC30Problem(value, "value", "mapping")
+                } else if (source as? LeoRecordDeclaration != null) {
+                    registerTYC30Problem(value, "value", "record")
                 }
                 if (value.tupleType != null) {
-                    registerTYC31Problem(value, "value", "tuple")
+                    registerTYC30Problem(value, "value", "tuple")
                 }
             }
         }
     }
 
     override fun visitFinalizer(o: LeoFinalizer) {
+        run {
+            if (o.mode != null && o.mode!!.text != "public") {
+                holder.registerProblem(
+                    o.mode!!,
+                    "[ETYC0372033]: An output from a finalize block must be public.\n\nUse a `public` modifier to the output type declaration or remove the visibility modifier entirely.",
+                    ProblemHighlightType.GENERIC_ERROR
+                )
+            }
+        }
         // Type checker #39
         run {
             if ((o.block?.children?.size ?: return@run) == 0) {
@@ -1211,13 +1279,9 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     private fun getPrimaryExpressionType(expression: LeoPrimaryExpression): String {
         return when (val exp = expression.firstChild) {
             is LeoAssociatedFunctionCall -> {
-                val coreStruct = exp.namedType.coreStruct?.text ?: return "pass"
+                val coreStruct = exp.namedType.identifier?.text ?: return "pass"
                 val function = exp.identifier.text
-                if (coreStruct.contains("Pedersen") && function == "commit") {
-                    "group"
-                } else {
-                    "field"
-                }
+                coreFunctions[coreStruct]?.get(function)?.returnType ?: "pass"
             }
 
             is LeoAssociatedConstant -> "pass" // TODO check types

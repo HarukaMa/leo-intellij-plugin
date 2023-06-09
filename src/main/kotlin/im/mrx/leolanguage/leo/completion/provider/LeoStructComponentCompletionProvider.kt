@@ -54,8 +54,10 @@ object LeoStructComponentCompletionProvider : LeoCompletionProvider() {
                 }
             }
             val namedType =
-                (declaration as? LeoIdentifierItem)?.namedType ?: (declaration as? LeoFunctionParameter)?.namedType
-                ?: return@let
+                (declaration as? LeoIdentifierItem)?.namedType
+                    ?: (declaration as? LeoFunctionParameter)?.namedType
+                    ?: (declaration as? LeoStructComponentDeclaration)?.namedType
+                    ?: return@let
             val type = namedType.reference?.resolve() ?: return@let
             val componentList =
                 (type as? LeoStructLikeDeclaration)?.structComponentDeclarations?.structComponentDeclarationList

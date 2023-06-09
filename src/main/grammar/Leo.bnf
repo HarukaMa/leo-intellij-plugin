@@ -51,7 +51,8 @@
     line-comment = "regexp:(//[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*)"
     block-comment = "regexp:(/[*](?:[^*]|[*][^/])*[*]/)"
     keyword = "regexp:address|async|bool|console|constant|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|inline|let|mapping|private|program|public|record|return|scalar|string|struct|then|transition|u8|u16|u32|u64|u128|self"
-    core_struct = "regexp:BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8|Mapping"
+//    core_struct = "regexp:BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8|Mapping"
+    mode = "regexp:public|private|constant"
     uppercase-letter = "regexp:[A-Z]"
     lowercase-letter = "regexp:[a-z]"
     letter = "regexp:[a-zA-Z]"
@@ -161,7 +162,7 @@ named_primitive_type ::= boolean_type | arithmetic_type | address_type | string_
 
 unit_type ::= "(" ")"
 
-named_type ::= named_primitive_type | core_struct | ( locator [ ".record" ] ) | ( identifier [ ".record" ] ) {
+named_type ::= named_primitive_type | ( locator [ ".record" ] ) | ( identifier [ ".record" ] ) {
     implements = "im.mrx.leolanguage.leo.psi.LeoReferenceElement"
     mixin = "im.mrx.leolanguage.leo.psi.LeoNamedTypeImplMixin"
 }
@@ -329,7 +330,7 @@ private statement_recover ::= !( "}" | identifier | keyword | line-terminator )
 
 block ::= "{" statement* "}" { pin = 1 }
 
-return_statement ::= "return" [ expression ] [ "then" finalize_literal function_arguments ] ";" {
+return_statement ::= "return" [ expression ] [ "then" finalize_literal function_arguments? ] ";" {
     pin = 1
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
@@ -417,7 +418,7 @@ assert_equal_call ::= "assert_eq" "(" expression "," expression [ "," ] ")"
 assert_not_equal_call ::= "assert_neq" "(" expression "," expression [ "," ] ")"
 
 function_declaration ::= annotation* "function" identifier
-                       function_parameter_list [ "->" type ]
+                       function_parameter_list [ "->" [ mode ] type ]
                        block {
                         pin = 2
                         implements = [
@@ -435,7 +436,7 @@ function_parameter_list ::= "(" [ function_parameter ( "," function_parameter )*
 
 private function_parameter_list_recover ::= !( '->' | '@' | 'function' | 'mapping' | 'record' | 'struct' | 'transition' | '{' | '}' )
 
-function_parameter ::= [ "public" | "private" | "constant" ]
+function_parameter ::= [ mode ]
                      identifier ":" type {
                         pin = 3
                         implements = [
@@ -461,7 +462,7 @@ inline_declaration ::= annotation* "inline" identifier
 private function_parameter_recover ::= !( ')' | ',' | '->' | '@' | 'function' | 'mapping' | 'record' | 'struct' | 'transition' | '{' | '}' )
 
 transition_declaration ::= annotation* "transition" identifier
-                       function_parameter_list [ "->" [ "public" | "private" | "constant" ] type ]
+                       function_parameter_list [ "->" [ mode ] type ]
                        block [ finalizer ] {
                         pin = 2
                         implements = [
@@ -473,7 +474,7 @@ transition_declaration ::= annotation* "transition" identifier
                         }
 
 finalizer ::= "finalize" identifier
-            function_parameter_list [ "->" [ "public" | "private" | "constant" ] type ]
+            function_parameter_list [ "->" [ mode ] type ]
             block {
                 pin = 1
                 implements = [
@@ -498,7 +499,7 @@ struct_component_declarations ::= "{" struct_component_declaration
                                  ( "," struct_component_declaration )*
                                  [ "," ] "}" { pin = 1 }
 
-struct_component_declaration ::= [ "public" | "private" | "constant" ] identifier ":" type  {
+struct_component_declaration ::= [ mode ] identifier ":" type  {
     pin = 2
     implements = [
         "im.mrx.leolanguage.leo.psi.LeoNamedElement"

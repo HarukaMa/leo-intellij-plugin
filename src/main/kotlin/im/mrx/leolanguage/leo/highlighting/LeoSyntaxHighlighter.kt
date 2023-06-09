@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -36,6 +36,7 @@ class LeoSyntaxHighlighter : SyntaxHighlighterBase() {
     override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
         val key = when (tokenType) {
             LeoTypes.KEYWORD -> KEYWORD
+            LeoTypes.MODE -> KEYWORD
             LeoTypes.BOOLEAN_LITERAL -> KEYWORD
             LeoTypes.IDENTIFIER -> IDENTIFIER
             LeoTypes.STRING_LITERAL -> STRING

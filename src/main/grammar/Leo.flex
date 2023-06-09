@@ -31,7 +31,8 @@ WHITESPACE=(\ |\t|\n|\r|\r\n)+
 LINE_COMMENT=\/\/[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*
 BLOCK_COMMENT=\/[*]([^*]|[*][^/])*([*]\/)?
 KEYWORD=address|async|bool|console|constant|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|inline|let|mapping|private|program|public|record|return|scalar|string|struct|then|transition|u8|u16|u32|u64|u128|self
-CORE_STRUCT=BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8|Mapping
+//CORE_STRUCT=BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8|Mapping
+MODE=private|public|constant
 //UPPERCASE_LETTER=[A_Z]
 //LOWERCASE_LETTER=[a_z]
 //LETTER=[a_zA_Z]
@@ -103,8 +104,9 @@ BRACKETS=[\[\]]
   {BLOCK_COMMENT}                                                      { return BLOCK_COMMENT; }
   {BOOLEAN_LITERAL}                                                    { return BOOLEAN_LITERAL; }
   {ADDRESS_LITERAL}                                                    { return ADDRESS_LITERAL; }
+  {MODE}                                                               { return MODE; }
   {KEYWORD}                                                            { return KEYWORD; }
-  {CORE_STRUCT}                                                        { return CORE_STRUCT; }
+//  {CORE_STRUCT}                                                        { return CORE_STRUCT; }
 //  {UPPERCASE_LETTER}                                                   { return UPPERCASE_LETTER; }
 //  {LOWERCASE_LETTER}                                                   { return LOWERCASE_LETTER; }
 //  {LETTER}                                                             { return LETTER; }
