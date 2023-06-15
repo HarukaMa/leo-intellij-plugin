@@ -120,6 +120,29 @@ val coreFunctions = mapOf(
 
 private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
 
+    override fun visitProgramBlock(o: LeoProgramBlock) {
+        run {
+            val transitions = PsiTreeUtil.getChildrenOfType(o, LeoTransitionDeclaration::class.java) ?: return@run
+            if (transitions.size > 31) {
+                holder.registerProblem(
+                    o,
+                    "[ETYC0372052]: The number of transitions exceeds the maximum. snarkVM allows up to 31 transitions within a single program.",
+                    ProblemHighlightType.GENERIC_ERROR
+                )
+            }
+        }
+        run {
+            val mappings = PsiTreeUtil.getChildrenOfType(o, LeoMappingDeclaration::class.java) ?: return@run
+            if (mappings.size > 31) {
+                holder.registerProblem(
+                    o,
+                    "[ETYC0372072]: The number of mappings exceeds the maximum. snarkVM allows up to 31 mappings within a single program.",
+                    ProblemHighlightType.GENERIC_ERROR
+                )
+            }
+        }
+    }
+
     override fun visitImportProgramId(o: LeoImportProgramId) {
         // Compiler #2
         run {
@@ -304,6 +327,27 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             checkTYC3(o.expressionList[0], type, firstType)
             checkTYC3(o.expressionList[1], type, secondType)
         }
+
+        run {
+            if (o.expressionList.size != 2) {
+                return
+            }
+            val firstExpression = o.expressionList[0]
+            val secondExpression = o.expressionList[1]
+            fun checkTYC49(expression: LeoExpression) {
+                (expression as? LeoPrimaryExpression).let {
+                    if (it?.numericLiteral == null) {
+                        holder.registerProblem(
+                            expression,
+                            "[ETYC0372049]: Loop bound must be a literal.",
+                            ProblemHighlightType.GENERIC_ERROR
+                        )
+                    }
+                }
+            }
+            checkTYC49(firstExpression)
+            checkTYC49(secondExpression)
+        }
     }
 
     override fun visitFreeFunctionCall(o: LeoFreeFunctionCall) {
@@ -357,20 +401,22 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
         // Type checker #47
         run {
-            if (PsiTreeUtil.getParentOfType(o, LeoFunctionDeclaration::class.java) != null) {
+            if (PsiTreeUtil.getParentOfType(o, LeoTransitionDeclaration::class.java) == null
+                && o.locator == null
+                && o.functionIdentifier?.reference?.resolve() as? LeoInlineDeclaration == null
+            ) {
                 holder.registerProblem(
                     o,
-                    "[ETYC0372047]: Cannot call another function from a standard function.",
+                    "[ETYC0372047]: Only `inline` can be called from a `function` or `inline`.",
                     ProblemHighlightType.GENERIC_ERROR
                 )
             }
         }
         // Type checker #48
         run {
-            if (PsiTreeUtil.getParentOfType(
-                    o,
-                    LeoTransitionDeclaration::class.java
-                ) != null && o.locator == null && o.functionIdentifier?.reference?.resolve() as? LeoTransitionDeclaration != null
+            if (PsiTreeUtil.getParentOfType(o, LeoTransitionDeclaration::class.java) != null
+                && o.locator == null
+                && o.functionIdentifier?.reference?.resolve() as? LeoTransitionDeclaration != null
             ) {
                 holder.registerProblem(
                     o,
