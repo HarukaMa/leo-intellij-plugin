@@ -1,11 +1,15 @@
 # Changelog
 
 ## [Unreleased]
+
+## [0.7.0]
+
 - Added support for latest Leo and Aleo instructions grammar
 - Fixed broken variable and struct component completion
 - Fixed core struct names can't be used as identifiers
 
 ## [0.6.2]
+
 - Fixed highlighting of identifiers in Aleo instructions
 - Added modes to Leo record components
 - Changed outputs to operands in Aleo instructions

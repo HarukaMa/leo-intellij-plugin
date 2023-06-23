@@ -1329,6 +1329,14 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             is LeoAssociatedFunctionCall -> {
                 val coreStruct = exp.namedType.identifier?.text ?: return "pass"
                 val function = exp.identifier.text
+                if (exp.namedType.text == "Mapping") {
+                    val mappingDeclaration =
+                        (exp.functionArguments.expressionList[0] as LeoPrimaryExpression).variable?.reference?.resolve() as? LeoMappingDeclaration
+                            ?: return "unknown"
+                    if (mappingDeclaration.mappingTypeList.size != 2)
+                        return "unknown"
+                    return LeoUtils.typeToString(mappingDeclaration.mappingTypeList[1]) ?: "unknown"
+                }
                 coreFunctions[coreStruct]?.get(function)?.returnType ?: "pass"
             }
 
