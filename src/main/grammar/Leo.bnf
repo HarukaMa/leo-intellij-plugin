@@ -50,7 +50,7 @@
     not-double-quote-or-backslash-or-line-feed-or-carriage-return = "regexp:[\u0000-\u0009\u000B-\u000C\u000E-\u0021\u0023-\u005B\u005D-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]"
     line-comment = "regexp:(//[\u0000-\u0009\u000B-\u000C\u000E-\u007F\u0080-\u2029\u202F-\u2065\u2070-\uD7FF\uE000-\uFFFF]*)"
     block-comment = "regexp:(/[*](?:[^*]|[*][^/])*[*]/)"
-    keyword = "regexp:address|async|bool|console|constant|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|inline|let|mapping|private|program|public|record|return|scalar|string|struct|then|transition|u8|u16|u32|u64|u128|self"
+    keyword = "regexp:address|async|block|bool|console|constant|else|field|finalize|for|function|group|i8|i16|i32|i64|i128|if|import|in|inline|let|mapping|private|program|public|record|return|scalar|self|struct|then|transition|u8|u16|u32|u64|u128"
 //    core_struct = "regexp:BHP256|BHP512|BHP768|BHP1024|Pedersen64|Pedersen128|Poseidon2|Poseidon4|Poseidon8|Mapping"
     mode = "regexp:public|private|constant"
     uppercase-letter = "regexp:[A-Z]"
@@ -266,7 +266,8 @@ method_call ::= expression "." identifier function_arguments { pin = 4 }
 primary_expression ::= literal
                    | associated_function_call
                    | associated_constant
-                   | self_expression
+                   | self_caller
+                   | block_height
                    | "(" expression ")"
                    | free_function_call
                    | unit_expression
@@ -274,7 +275,11 @@ primary_expression ::= literal
                    | struct_expression
                    | variable
 
-self_expression ::= "self" "." identifier {
+self_caller ::= "self" "." "caller" {
+    extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
+}
+
+block_height ::= "block" "." "height"{
     extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
 }
 

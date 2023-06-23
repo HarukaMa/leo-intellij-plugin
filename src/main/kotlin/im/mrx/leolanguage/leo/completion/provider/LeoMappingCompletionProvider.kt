@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -20,18 +20,17 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.ElementPattern
-import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.LeoUtils
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.LeoMappingDeclaration
-import im.mrx.leolanguage.leo.psi.LeoMappingIdentifier
 
 object LeoMappingCompletionProvider : LeoCompletionProvider() {
     override val elementPattern: ElementPattern<PsiElement>
-        get() = psiElement().withParent(LeoMappingIdentifier::class.java)
+        get() = PlatformPatterns.alwaysFalse() // TODO: add back
 
     override fun addCompletions(
         parameters: CompletionParameters,

@@ -61,48 +61,59 @@ val BHPInputDataType = listOf(
 )
 
 val PED64InputDataType = listOf(
-    "bool", "i8", "i16", "i32", "i64", "u8", "u16", "u32", "u64", "string", "struct",
+    "bool", "i8", "i16", "i32", "u8", "u16", "u32", "string", "struct",
 )
 
 val PED128InputDataType = listOf(
-    "bool", "i8", "i16", "i32", "i64", "i128", "u8", "u16", "u32", "u64", "u128", "string", "struct",
+    "bool", "i8", "i16", "i32", "i64", "u8", "u16", "u32", "u64", "string", "struct",
 )
 
 val PSDInputDataType = listOf(
     "field", "i8", "i16", "i32", "i64", "i128", "u8", "u16", "u32", "u64", "u128", "scalar", "string", "struct",
 )
 
-val BHPFunctions = mapOf(
-    Pair("hash", CoreFunction(1, listOf(BHPInputDataType), "field")),
-    Pair("hash_to_group", CoreFunction(1, listOf(BHPInputDataType), "group")),
-    Pair("commit", CoreFunction(2, listOf(BHPInputDataType, listOf("scalar")), "field")),
-    Pair("commit_to_group", CoreFunction(2, listOf(BHPInputDataType, listOf("scalar")), "group")),
-)
+fun getHashFunctions(inputDataType: List<List<String>>): List<Pair<String, CoreFunction>> {
+    return listOf(
+        Pair("hash_to_address", CoreFunction(1, inputDataType, "address")),
+        Pair("hash_to_field", CoreFunction(1, inputDataType, "field")),
+        Pair("hash_to_group", CoreFunction(1, inputDataType, "group")),
+        Pair("hash_to_i8", CoreFunction(1, inputDataType, "i8")),
+        Pair("hash_to_i16", CoreFunction(1, inputDataType, "i16")),
+        Pair("hash_to_i32", CoreFunction(1, inputDataType, "i32")),
+        Pair("hash_to_i64", CoreFunction(1, inputDataType, "i64")),
+        Pair("hash_to_i128", CoreFunction(1, inputDataType, "i128")),
+        Pair("hash_to_u8", CoreFunction(1, inputDataType, "u8")),
+        Pair("hash_to_u16", CoreFunction(1, inputDataType, "u16")),
+        Pair("hash_to_u32", CoreFunction(1, inputDataType, "u32")),
+        Pair("hash_to_u64", CoreFunction(1, inputDataType, "u64")),
+        Pair("hash_to_u128", CoreFunction(1, inputDataType, "u128")),
+        Pair("hash_to_scalar", CoreFunction(1, inputDataType, "scalar")),
+    )
+}
 
-val PED64Functions = mapOf(
-    Pair("hash", CoreFunction(1, listOf(PED64InputDataType), "field")),
-    Pair("hash_to_group", CoreFunction(1, listOf(PED64InputDataType), "group")),
-    Pair("commit", CoreFunction(2, listOf(PED64InputDataType, listOf("scalar")), "field")),
-    Pair("commit_to_group", CoreFunction(2, listOf(PED64InputDataType, listOf("scalar")), "group")),
-)
+fun getCommitFunctions(inputDataType: List<List<String>>): List<Pair<String, CoreFunction>> {
+    return listOf(
+        Pair("commit_to_address", CoreFunction(2, inputDataType, "address")),
+        Pair("commit_to_field", CoreFunction(2, inputDataType, "field")),
+        Pair("commit_to_group", CoreFunction(2, inputDataType, "group")),
+    )
+}
 
-val PED128Functions = mapOf(
-    Pair("hash", CoreFunction(1, listOf(PED128InputDataType), "field")),
-    Pair("hash_to_group", CoreFunction(1, listOf(PED128InputDataType), "group")),
-    Pair("commit", CoreFunction(2, listOf(PED128InputDataType, listOf("scalar")), "field")),
-    Pair("commit_to_group", CoreFunction(2, listOf(PED128InputDataType, listOf("scalar")), "group")),
-)
+val BHPFunctions =
+    (getHashFunctions(listOf(BHPInputDataType)) + getCommitFunctions(listOf(BHPInputDataType))).associate { it }
 
-val PSDFunctions = mapOf(
-    Pair("hash", CoreFunction(1, listOf(PSDInputDataType), "field")),
-    Pair("hash_to_group", CoreFunction(1, listOf(PSDInputDataType), "group")),
-    Pair("hash_to_scalar", CoreFunction(1, listOf(PSDInputDataType), "scalar")),
-)
+val PED64Functions =
+    (getHashFunctions(listOf(PED64InputDataType)) + getCommitFunctions(listOf(PED64InputDataType))).associate { it }
+
+val PED128Functions =
+    (getHashFunctions(listOf(PED128InputDataType)) + getCommitFunctions(listOf(PED128InputDataType))).associate { it }
+
+val PSDFunctions = getHashFunctions(listOf(PSDInputDataType)).associate { it }
 
 val MappingFunctions = mapOf(
-    Pair("get", CoreFunction(2, listOf(listOf("string"), listOf("string")), "string")),
-    Pair("get_or_init", CoreFunction(3, listOf(listOf("string"), listOf("string"), listOf("string")), "string")),
-    Pair("set", CoreFunction(3, listOf(listOf("string"), listOf("string"), listOf("string")), "string")),
+    Pair("get", CoreFunction(2, listOf(listOf("mapping"), listOf("pass")), "string")),
+    Pair("get_or_use", CoreFunction(3, listOf(listOf("mapping"), listOf("pass"), listOf("pass")), "string")),
+    Pair("set", CoreFunction(3, listOf(listOf("mapping"), listOf("pass"), listOf("pass")), "string")),
 )
 
 val coreFunctions = mapOf(
@@ -657,20 +668,27 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                 )
                 return@run
             }
-            fun registerTYC7Problem(element: PsiElement, expected: List<String>, type: String) {
-                holder.registerProblem(
-                    element,
-                    "[ETYC0372007]: Expected one type from `${expected.joinToString(", ")}`, but got `$type`",
-                    ProblemHighlightType.GENERIC_ERROR
-                )
-            }
 
             val expectedTypes = coreFunctions[coreStruct]!![function]!!.parameterTypes
             for (i in 0 until args) {
                 val arg = o.functionArguments.expressionList[i]
                 val type = getExpressionType(arg)
-                if (type !in expectedTypes[i]) {
-                    registerTYC7Problem(arg, expectedTypes[i], type)
+                checkTYC7(arg, expectedTypes[i], type)
+            }
+
+            if (o.namedType.text == "Mapping") {
+                @Suppress("NAME_SHADOWING")
+                val args = o.functionArguments.expressionList
+                val mapping = (args[0] as? LeoPrimaryExpression)?.variable ?: return@run
+                val mappingDeclaration = mapping.reference?.resolve() as? LeoMappingDeclaration
+                if (mappingDeclaration != null) {
+                    val mappingTypes = mappingDeclaration.mappingTypeList
+                    val keyType = LeoUtils.typeToString(mappingTypes[0]) ?: return@run
+                    val valueType = LeoUtils.typeToString(mappingTypes[1]) ?: return@run
+                    val actualKeyType = getExpressionType(args[1])
+                    val actualValueType = getExpressionType(args[2])
+                    checkTYC7(args[1], listOf(keyType), actualKeyType)
+                    checkTYC7(args[2], listOf(valueType), actualValueType)
                 }
             }
         }
@@ -730,7 +748,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             if (argsSize == 1 && operator == "get") {
                 return@run
             }
-            if (argsSize == 2 && operator in listOf("get_or_init", "set")) {
+            if (argsSize == 2 && operator in listOf("get_or_use", "set")) {
                 return@run
             }
             holder.registerProblem(
@@ -1139,19 +1157,6 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
     }
 
-    override fun visitSelfExpression(o: LeoSelfExpression) {
-        // Type checker #43
-        run {
-            if (o.identifier.text != "caller") {
-                holder.registerProblem(
-                    o.identifier,
-                    "[ETYC0372043]: The allowed accesses to `self` are `self.caller`.",
-                    ProblemHighlightType.GENERIC_ERROR
-                )
-            }
-        }
-    }
-
     override fun visitConsoleStatement(o: LeoConsoleStatement) {
         run {
             holder.registerProblem(
@@ -1259,13 +1264,10 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         )
     }
 
-    private fun checkTYC7(o: PsiElement, type: String, actualType: String) {
-        if (actualType != "pass") {
-            if (actualType.contains('|')) {
-                val actualTypes = actualType.split('|')
-                actualTypes.filter { it != type }.forEach { registerTYC7Problem(o, type, it) }
-            } else if (actualType != type) {
-                registerTYC7Problem(o, type, actualType)
+    private fun checkTYC7(o: PsiElement, type: List<String>, actualType: String) {
+        if ("pass" !in type && actualType != "pass") {
+            if (actualType !in type) {
+                registerTYC7Problem(o, type.joinToString(", "), actualType)
             }
         }
     }
@@ -1331,12 +1333,8 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             }
 
             is LeoAssociatedConstant -> "pass" // TODO check types
-            is LeoSelfExpression ->
-                if (exp.identifier.text == "caller") {
-                    "address"
-                } else {
-                    "pass"
-                }
+            is LeoSelfCaller -> "address"
+            is LeoBlockHeight -> "u32"
 
             is LeoFreeFunctionCall ->
                 (exp.functionIdentifier?.reference?.resolve() as? LeoTypedElement)?.let {
@@ -1349,7 +1347,10 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             } ?: "pass"
 
             is LeoVariable -> exp.reference?.resolve()?.let {
-                LeoUtils.typeToString(it as? LeoTypedElement ?: return@let "unknown") ?: "unknown"
+                if (it is LeoMappingDeclaration)
+                    "mapping"
+                else
+                    LeoUtils.typeToString(it as? LeoTypedElement ?: return@let "unknown") ?: "unknown"
             } ?: "pass"
 
             else ->

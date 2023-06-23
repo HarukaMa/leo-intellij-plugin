@@ -77,6 +77,16 @@ class LeoVariableReference(element: LeoVariable) : LeoReferenceBase<LeoVariable>
                 }
             }
 
+            val assoc = PsiTreeUtil.getParentOfType(element, LeoAssociatedFunctionCall::class.java)
+            if (assoc != null && assoc.namedType.text == "Mapping") {
+                val program = PsiTreeUtil.getParentOfType(element, LeoProgramBlock::class.java) ?: return null
+                program.mappingDeclarationList.forEach { md ->
+                    if (md.identifier?.text == element.text) {
+                        return md
+                    }
+                }
+            }
+
             return null
         }
 
