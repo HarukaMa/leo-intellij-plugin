@@ -331,7 +331,7 @@ private statement ::= return_statement
           | console_statement
           | block { recoverWhile = statement_recover }
 
-private statement_recover ::= !( "}" | identifier | keyword | line-terminator )
+private statement_recover ::= !( "}" | "let" | "if" | "for" | "return" | identifier | line-terminator )
 
 block ::= "{" statement* "}" { pin = 1 }
 
@@ -340,7 +340,7 @@ return_statement ::= "return" [ expression ] [ "then" finalize_literal function_
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
 
-expression_statement ::= expression ";"
+expression_statement ::= expression ";" { pin = 1 }
 
 variable_declaration ::= "let" identifier_or_identifiers ":" type "=" expression ";" {
     pin = 1
@@ -366,6 +366,7 @@ branch ::= "if" no_struct_literal_expression block { pin = 1 }
 conditional_statement ::= branch "else" block
                       | branch "else" conditional_statement
                       | branch {
+    pin(".*") = 1
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
 

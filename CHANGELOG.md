@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Support 2023.2 IDEs
+- Fix leo statement recover rule
+
 ## [0.7.0]
 
 - Added support for latest Leo and Aleo instructions grammar

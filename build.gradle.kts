@@ -16,13 +16,13 @@
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.7.20"
+    id("org.jetbrains.kotlin.jvm") version "1.9.0"
     id("org.jetbrains.intellij") version "1.13.0"
     id("org.jetbrains.changelog") version "1.3.1"
 }
 
 group = "im.mrx"
-version = "0.7.0"
+version = "0.7.1"
 
 sourceSets["main"].java.srcDirs("src/main/gen")
 
@@ -55,7 +55,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("212")
-        untilBuild.set("231.*")
+        untilBuild.set("232.*")
         changeNotes.set(
             changelog.getAll().filter {
                 it.key != "[Unreleased]"
