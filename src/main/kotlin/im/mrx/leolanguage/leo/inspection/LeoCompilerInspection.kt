@@ -330,7 +330,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         // Type checker #0
         run {
             val expression = o.expressionList.first()
-            if (expression.elementType != VARIABLE) {
+            if (expression.firstChild.elementType != VARIABLE) {
                 holder.registerProblem(
                     expression,
                     "[ETYC0372000]: invalid assignment target",

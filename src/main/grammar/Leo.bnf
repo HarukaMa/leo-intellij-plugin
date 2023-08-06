@@ -323,11 +323,11 @@ struct_expression ::= <<checkStructExpressionAllowed>> struct_expression_identif
 struct_component_initializer ::= struct_component_identifier ":" expression | struct_component_identifier { pin(".*") = 2 }
 
 private statement ::= return_statement
-          | expression_statement
           | variable_declaration
           | conditional_statement
           | loop_statement
           | assignment_statement
+          | expression_statement
           | console_statement
           | block { recoverWhile = statement_recover }
 
@@ -366,7 +366,7 @@ branch ::= "if" no_struct_literal_expression block { pin = 1 }
 conditional_statement ::= branch "else" block
                       | branch "else" conditional_statement
                       | branch {
-    pin(".*") = 1
+    pin(".*") = 3
     implements = "im.mrx.leolanguage.leo.psi.LeoStatement"
 }
 
