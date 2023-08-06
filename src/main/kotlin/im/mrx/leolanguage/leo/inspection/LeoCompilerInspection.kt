@@ -56,10 +56,12 @@ data class CoreFunction(
     val returnType: String,
 )
 
+val unsignedTypes = listOf("u8", "u16", "u32", "u64", "u128")
+val signedTypes = listOf("i8", "i16", "i32", "i64", "i128")
+
 val BHPInputDataType = listOf(
-    "address", "bool", "field", "group", "i8", "i16", "i32", "i64", "i128",
-    "u8", "u16", "u32", "u64", "u128", "scalar", "string", "struct",
-)
+    "address", "bool", "field", "group", "scalar", "string", "struct",
+) + unsignedTypes + signedTypes
 
 val PED64InputDataType = listOf(
     "bool", "i8", "i16", "i32", "u8", "u16", "u32", "string", "struct",
@@ -70,8 +72,8 @@ val PED128InputDataType = listOf(
 )
 
 val PSDInputDataType = listOf(
-    "field", "i8", "i16", "i32", "i64", "i128", "u8", "u16", "u32", "u64", "u128", "scalar", "string", "struct",
-)
+    "field", "scalar", "string", "struct",
+) + unsignedTypes + signedTypes
 
 fun getHashFunctions(inputDataType: List<List<String>>): List<Pair<String, CoreFunction>> {
     return listOf(
@@ -101,13 +103,13 @@ fun getCommitFunctions(inputDataType: List<List<String>>): List<Pair<String, Cor
 }
 
 val BHPFunctions =
-    (getHashFunctions(listOf(BHPInputDataType)) + getCommitFunctions(listOf(BHPInputDataType))).associate { it }
+    (getHashFunctions(listOf(BHPInputDataType)) + getCommitFunctions(listOf(BHPInputDataType, listOf("scalar")))).associate { it }
 
 val PED64Functions =
-    (getHashFunctions(listOf(PED64InputDataType)) + getCommitFunctions(listOf(PED64InputDataType))).associate { it }
+    (getHashFunctions(listOf(PED64InputDataType)) + getCommitFunctions(listOf(PED64InputDataType, listOf("scalar")))).associate { it }
 
 val PED128Functions =
-    (getHashFunctions(listOf(PED128InputDataType)) + getCommitFunctions(listOf(PED128InputDataType))).associate { it }
+    (getHashFunctions(listOf(PED128InputDataType)) + getCommitFunctions(listOf(PED128InputDataType, listOf("scalar")))).associate { it }
 
 val PSDFunctions = getHashFunctions(listOf(PSDInputDataType)).associate { it }
 
@@ -115,6 +117,24 @@ val MappingFunctions = mapOf(
     Pair("get", CoreFunction(2, listOf(listOf("mapping"), listOf("pass")), "string")),
     Pair("get_or_use", CoreFunction(3, listOf(listOf("mapping"), listOf("pass"), listOf("pass")), "string")),
     Pair("set", CoreFunction(3, listOf(listOf("mapping"), listOf("pass"), listOf("pass")), "string")),
+)
+
+val ChaChaFunctions = mapOf(
+    Pair("rand_address", CoreFunction(0, listOf(), "address")),
+    Pair("rand_bool", CoreFunction(0, listOf(), "bool")),
+    Pair("rand_field", CoreFunction(0, listOf(), "field")),
+    Pair("rand_group", CoreFunction(0, listOf(), "group")),
+    Pair("rand_i8", CoreFunction(0, listOf(), "i8")),
+    Pair("rand_i16", CoreFunction(0, listOf(), "i16")),
+    Pair("rand_i32", CoreFunction(0, listOf(), "i32")),
+    Pair("rand_i64", CoreFunction(0, listOf(), "i64")),
+    Pair("rand_i128", CoreFunction(0, listOf(), "i128")),
+    Pair("rand_u8", CoreFunction(0, listOf(), "u8")),
+    Pair("rand_u16", CoreFunction(0, listOf(), "u16")),
+    Pair("rand_u32", CoreFunction(0, listOf(), "u32")),
+    Pair("rand_u64", CoreFunction(0, listOf(), "u64")),
+    Pair("rand_u128", CoreFunction(0, listOf(), "u128")),
+    Pair("rand_scalar", CoreFunction(0, listOf(), "scalar")),
 )
 
 val coreFunctions = mapOf(
@@ -128,6 +148,67 @@ val coreFunctions = mapOf(
     Pair("Poseidon4", PSDFunctions),
     Pair("Poseidon8", PSDFunctions),
     Pair("Mapping", MappingFunctions),
+    Pair("ChaCha", ChaChaFunctions),
+)
+
+val unaryMethodCallFunctions = mapOf(
+    Pair("abs", CoreFunction(1, listOf(signedTypes), "same")),
+    Pair("abs_wrapped", CoreFunction(1, listOf(signedTypes), "same")),
+    Pair("double", CoreFunction(1, listOf(listOf("field", "group")), "same")),
+    Pair("inv", CoreFunction(1, listOf(listOf("field")), "same")),
+    Pair("neg", CoreFunction(1, listOf(listOf("field", "group") + signedTypes), "same")),
+    Pair("not", CoreFunction(1, listOf(listOf("bool") + signedTypes + unsignedTypes), "same")),
+    Pair("square", CoreFunction(1, listOf(listOf("field")), "same")),
+    Pair("square_root", CoreFunction(1, listOf(listOf("field")), "same")),
+)
+
+val addLikeInputDataType = listOf("field", "group", "scalar") + signedTypes + unsignedTypes
+
+val wrappedLikeInputDataType = signedTypes + unsignedTypes
+
+val andLikeInputDataType = listOf("bool") + signedTypes + unsignedTypes
+
+val divInputDataType = listOf("field") + signedTypes + unsignedTypes
+
+val eqLikeInputDataType = listOf("address", "bool", "field", "group", "scalar", "struct", "record") + signedTypes + unsignedTypes
+
+val gtLikeInputDataType = listOf("field", "scalar") + signedTypes + unsignedTypes
+
+val powInputDataType = signedTypes + unsignedTypes
+
+val magnitudeDataType = listOf("u8", "u16", "u32")
+
+val subInputDataType = listOf("field", "group") + signedTypes + unsignedTypes
+
+val binaryMethodCallFunctions = mapOf(
+    Pair("add", CoreFunction(2, listOf(addLikeInputDataType, addLikeInputDataType), "same")),
+    Pair("add_wrapped", CoreFunction(2, listOf(wrappedLikeInputDataType, wrappedLikeInputDataType), "same")),
+    Pair("and", CoreFunction(2, listOf(andLikeInputDataType, andLikeInputDataType), "same")),
+    Pair("div", CoreFunction(2, listOf(divInputDataType, divInputDataType), "same")),
+    Pair("div_wrapped", CoreFunction(2, listOf(wrappedLikeInputDataType, wrappedLikeInputDataType), "same")),
+    Pair("eq", CoreFunction(2, listOf(eqLikeInputDataType, eqLikeInputDataType), "bool")),
+    Pair("gt", CoreFunction(2, listOf(gtLikeInputDataType, gtLikeInputDataType), "bool")),
+    Pair("gte", CoreFunction(2, listOf(gtLikeInputDataType, gtLikeInputDataType), "bool")),
+    Pair("lt", CoreFunction(2, listOf(gtLikeInputDataType, gtLikeInputDataType), "bool")),
+    Pair("lte", CoreFunction(2, listOf(gtLikeInputDataType, gtLikeInputDataType), "bool")),
+    Pair("mod", CoreFunction(2, listOf(unsignedTypes, unsignedTypes), "same")),
+    Pair("mul", CoreFunction(2, listOf(addLikeInputDataType, addLikeInputDataType), "same")),
+    Pair("mul_wrapped", CoreFunction(2, listOf(wrappedLikeInputDataType, wrappedLikeInputDataType), "same")),
+    Pair("nand", CoreFunction(2, listOf(listOf("bool"), listOf("bool")), "same")),
+    Pair("neq", CoreFunction(2, listOf(eqLikeInputDataType, eqLikeInputDataType), "bool")),
+    Pair("nor", CoreFunction(2, listOf(listOf("bool"), listOf("bool")), "same")),
+    Pair("or", CoreFunction(2, listOf(andLikeInputDataType, andLikeInputDataType), "same")),
+    Pair("pow", CoreFunction(2, listOf(powInputDataType + listOf("field"), magnitudeDataType + listOf("field")), "same")),
+    Pair("pow_wrapped", CoreFunction(2, listOf(powInputDataType, magnitudeDataType), "same")),
+    Pair("rem", CoreFunction(2, listOf(wrappedLikeInputDataType, wrappedLikeInputDataType), "same")),
+    Pair("rem_wrapped", CoreFunction(2, listOf(wrappedLikeInputDataType, wrappedLikeInputDataType), "same")),
+    Pair("shl", CoreFunction(2, listOf(wrappedLikeInputDataType, magnitudeDataType), "same")),
+    Pair("shl_wrapped", CoreFunction(2, listOf(wrappedLikeInputDataType, magnitudeDataType), "same")),
+    Pair("shr", CoreFunction(2, listOf(wrappedLikeInputDataType, magnitudeDataType), "same")),
+    Pair("shr_wrapped", CoreFunction(2, listOf(wrappedLikeInputDataType, magnitudeDataType), "same")),
+    Pair("sub", CoreFunction(2, listOf(subInputDataType, subInputDataType), "same")),
+    Pair("sub_wrapped", CoreFunction(2, listOf(wrappedLikeInputDataType, wrappedLikeInputDataType), "same")),
+    Pair("xor", CoreFunction(2, listOf(andLikeInputDataType, andLikeInputDataType), "same")),
 )
 
 private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
@@ -635,8 +716,6 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     }
 
     override fun visitAssociatedFunctionCall(o: LeoAssociatedFunctionCall) {
-
-        // Type checker #6, #9, #46
         run {
             fun registerTYC9Problem() {
                 holder.registerProblem(
@@ -696,67 +775,75 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
     }
 
     override fun visitMethodCall(o: LeoMethodCall) {
-        // Parser #21
         run {
-            val unaryList = listOf(
-                "abs",
-                "abs_wrapped",
-                "double",
-                "inv",
-                "neg",
-                "not",
-                "square",
-                "square_root"
-            )
-            val binaryList = listOf(
-                "add",
-                "add_wrapped",
-                "and",
-                "div",
-                "div_wrapped",
-                "eq",
-                "gte",
-                "gt",
-                "lte",
-                "lt",
-                "mod",
-                "mul",
-                "mul_wrapped",
-                "nand",
-                "neq",
-                "nor",
-                "or",
-                "pow",
-                "pow_wrapped",
-                "rem",
-                "rem_wrapped",
-                "shl",
-                "shl_wrapped",
-                "shr",
-                "shr_wrapped",
-                "sub",
-                "sub_wrapped",
-                "xor"
-            )
             val operator = o.identifier.text
             val argsSize = o.functionArguments.expressionList.size
-            if (argsSize == 0 && operator in unaryList) {
+            if (!((argsSize == 0 && operator in unaryMethodCallFunctions.keys)
+                || (argsSize == 1 && operator in binaryMethodCallFunctions.keys)
+                || (argsSize == 1 && operator == "get")
+                || (argsSize == 2 && operator in listOf("get_or_use", "set")))) {
+                holder.registerProblem(
+                    o,
+                    "[EPAR0370021]: The type of ${o.expression.text} has no associated function $operator that takes $argsSize argument(s).",
+                    ProblemHighlightType.GENERIC_ERROR
+                )
                 return@run
             }
-            if (argsSize == 1 && operator in binaryList) {
-                return@run
+            val coreFunction = when (argsSize) {
+                0 -> unaryMethodCallFunctions[operator] ?: return@run
+                1 -> binaryMethodCallFunctions[operator] ?: MappingFunctions[operator] ?: return@run
+                2 -> MappingFunctions[operator] ?: return@run
+                else -> return@run
             }
-            if (argsSize == 1 && operator == "get") {
-                return@run
+            val expressionType = getExpressionType(o.expression)
+            val expectedExpressionType = coreFunction.parameterTypes[0]
+            checkTYC7(o.expression, expectedExpressionType, expressionType)
+            val expectedTypes = coreFunction.parameterTypes.slice(1 until coreFunction.parameterTypes.size)
+            val actualTypes = o.functionArguments.expressionList.map { getExpressionType(it) }
+            for (i in 0 until argsSize) {
+                checkTYC7(o.functionArguments.expressionList[i], expectedTypes[i], actualTypes[i])
             }
-            if (argsSize == 2 && operator in listOf("get_or_use", "set")) {
-                return@run
+            // special treatment: pow
+            if (operator == "pow") {
+                val magTypes = if (expressionType == "field") {
+                    listOf("field")
+                } else {
+                    magnitudeDataType
+                }
+                checkTYC7(o.functionArguments.expressionList[0], magTypes, actualTypes[0])
             }
-            holder.registerProblem(
-                o,
-                "[EPAR0370021]: The type of ${o.expression.text} has no associated function $operator that takes $argsSize argument(s).",
-                ProblemHighlightType.GENERIC_ERROR
-            )
+            // special treatment: mul
+            if (operator == "mul") {
+                if (expressionType == "group") {
+                    checkTYC7(o.functionArguments.expressionList[0], listOf("scalar"), actualTypes[0])
+                } else if (expressionType == "scalar") {
+                    checkTYC7(o.functionArguments.expressionList[0], listOf("group"), actualTypes[0])
+                }
+            }
+            // special treatment: mappings
+            if (expectedExpressionType[0] == "mapping" && expressionType == "mapping") {
+                val mapping = (o.expression as? LeoPrimaryExpression)?.variable ?: return@run
+                val mappingDeclaration = mapping.reference?.resolve() as? LeoMappingDeclaration
+                if (mappingDeclaration != null) {
+                    val mappingTypes = mappingDeclaration.mappingTypeList
+                    val keyType = LeoUtils.typeToString(mappingTypes[0]) ?: return@run
+                    val valueType = LeoUtils.typeToString(mappingTypes[1]) ?: return@run
+                    val actualKeyType = getExpressionType(o.functionArguments.expressionList[0])
+                    when (operator) {
+                        "get" -> {
+                            checkTYC7(o.functionArguments.expressionList[0], listOf(keyType), actualKeyType)
+                        }
+                        "get_or_use" -> {
+                            checkTYC7(o.functionArguments.expressionList[0], listOf(keyType), actualKeyType)
+                            checkTYC7(o.functionArguments.expressionList[1], listOf(valueType), actualTypes[1])
+                        }
+                        "set" -> {
+                            checkTYC7(o.functionArguments.expressionList[0], listOf(keyType), actualKeyType)
+                            checkTYC7(o.functionArguments.expressionList[1], listOf(valueType), actualTypes[1])
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -1281,8 +1368,8 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
             is LeoTupleComponentExpression -> getTupleComponentType(element)
             is LeoStructComponentExpression -> getStructComponentType(element)
 
-            is LeoAssociatedFunctionCall -> "pass" // TODO check types
-            is LeoMethodCall -> "pass" // ditto
+            is LeoAssociatedFunctionCall -> getAssociatedFunctionCallType(element)
+            is LeoMethodCall -> getMethodCallType(element)
 
             is LeoUnaryNotExpression -> getExpressionType(element.expression ?: return "pass")
             is LeoUnaryMinusExpression -> getExpressionType(element.expression ?: return "pass")
@@ -1323,6 +1410,43 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
         }
     }
 
+    private fun getAssociatedFunctionCallType(element: LeoAssociatedFunctionCall): String {
+        val coreStruct = element.namedType.identifier?.text ?: return "pass"
+        val function = element.identifier.text
+        if (element.namedType.text == "Mapping") {
+            val mappingDeclaration =
+                (element.functionArguments.expressionList[0] as LeoPrimaryExpression).variable?.reference?.resolve() as? LeoMappingDeclaration
+                    ?: return "unknown"
+            if (mappingDeclaration.mappingTypeList.size != 2)
+                return "unknown"
+            return LeoUtils.typeToString(mappingDeclaration.mappingTypeList[1]) ?: "unknown"
+        }
+        return coreFunctions[coreStruct]?.get(function)?.returnType ?: "pass"
+    }
+
+    private fun getMethodCallType(element: LeoMethodCall): String {
+        if (getExpressionType(element.expression) == "mapping") {
+            val mapping = element.expression.firstChild.reference?.resolve() as? LeoMappingDeclaration ?: return "pass"
+            val mappingTypes = mapping.mappingTypeList
+            if (mappingTypes.size != 2)
+                return "pass"
+            return LeoUtils.typeToString(mappingTypes[1]) ?: "pass"
+        } else {
+            val operator = element.identifier.text
+            val argsSize = element.functionArguments.expressionList.size
+            val coreFunction = when (argsSize) {
+                0 -> unaryMethodCallFunctions[operator] ?: return "pass"
+                1 -> binaryMethodCallFunctions[operator] ?: MappingFunctions[operator] ?: return "pass"
+                2 -> MappingFunctions[operator] ?: return "pass"
+                else -> return "pass"
+            }
+            if (coreFunction.returnType == "same") {
+                return getExpressionType(element.expression)
+            }
+            return coreFunction.returnType
+        }
+    }
+
     private fun getTupleType(element: LeoTupleExpression): String {
         val types = element.expressionList.map { getExpressionType(it) }
         return "(${types.joinToString(", ")})"
@@ -1330,19 +1454,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
 
     private fun getPrimaryExpressionType(expression: LeoPrimaryExpression): String {
         return when (val exp = expression.firstChild) {
-            is LeoAssociatedFunctionCall -> {
-                val coreStruct = exp.namedType.identifier?.text ?: return "pass"
-                val function = exp.identifier.text
-                if (exp.namedType.text == "Mapping") {
-                    val mappingDeclaration =
-                        (exp.functionArguments.expressionList[0] as LeoPrimaryExpression).variable?.reference?.resolve() as? LeoMappingDeclaration
-                            ?: return "unknown"
-                    if (mappingDeclaration.mappingTypeList.size != 2)
-                        return "unknown"
-                    return LeoUtils.typeToString(mappingDeclaration.mappingTypeList[1]) ?: "unknown"
-                }
-                coreFunctions[coreStruct]?.get(function)?.returnType ?: "pass"
-            }
+            is LeoAssociatedFunctionCall -> getAssociatedFunctionCallType(exp)
 
             is LeoAssociatedConstant -> "pass" // TODO check types
             is LeoSelfCaller -> "address"
