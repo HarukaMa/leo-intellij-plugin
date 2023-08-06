@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -20,32 +20,37 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.ElementPattern
-import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
+import com.intellij.psi.TokenType.WHITE_SPACE
+import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
-import im.mrx.leolanguage.aleo.AleoIcons
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
-import im.mrx.leolanguage.leo.psi.LeoAnnotation
-import im.mrx.leolanguage.leo.psi.LeoProgramBlock
+import im.mrx.leolanguage.leo.psi.LeoPrimaryExpression
+import im.mrx.leolanguage.leo.psi.LeoReturnStatement
+import im.mrx.leolanguage.leo.psi.LeoVariable
 
-object LeoAnnotationCompletionProvider : LeoCompletionProvider() {
+object LeoReturnFinalizeCompletionProvider : LeoCompletionProvider() {
+
+    // Check prev sibling
     override val elementPattern: ElementPattern<PsiElement>
-        get() = PlatformPatterns.or(
-            psiElement().withParent(LeoAnnotation::class.java),
-            psiElement().withParent(LeoProgramBlock::class.java).afterLeaf("@")
-        )
+        get() = psiElement().withParent(psiElement(LeoVariable::class.java).withParent(psiElement(LeoPrimaryExpression::class.java)))
 
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        result.addElement(
-            LookupElementBuilder
-                .create("program")
-                .withIcon(AleoIcons.ANNOTATION)
-        )
+        var element = parameters.position.parent.parent.parent
+        while (element.prevSibling != null && element.prevSibling.elementType == WHITE_SPACE) {
+            element = element.prevSibling
+        }
+        if (element.prevSibling is LeoReturnStatement) {
+            result.addElement(
+                LookupElementBuilder.create("then finalize()")
+            )
+        }
     }
+
 
 }

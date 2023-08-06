@@ -25,7 +25,8 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.TokenType.WHITE_SPACE
+import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import im.mrx.leolanguage.leo.completion.LeoCompletionProvider
 import im.mrx.leolanguage.leo.psi.LeoProgramBlock
@@ -48,15 +49,15 @@ object LeoDeclarationCompletionProvider : LeoCompletionProvider() {
                     }
             )
         }
-        PsiTreeUtil.getTopmostParentOfType(parameters.position, LeoTransitionDeclaration::class.java)?.let {
-            val transitionName = it.name ?: return
+        var element = parameters.position.parent
+        while (element.prevSibling != null && element.prevSibling.elementType == WHITE_SPACE) {
+            element = element.prevSibling
+        }
+        if (element.prevSibling is LeoTransitionDeclaration) {
+            val transitionName = (element.prevSibling as LeoTransitionDeclaration).name ?: return
             result.addElement(
                 LookupElementBuilder
-                    .create("finalize")
-                    .withInsertHandler { ctx, _ ->
-                        ctx.document.insertString(ctx.selectionEndOffset, " ${transitionName}()")
-                        EditorModificationUtil.moveCaretRelatively(ctx.editor, transitionName.length + 2)
-                    }
+                    .create("finalize ${transitionName}()")
             )
         }
     }

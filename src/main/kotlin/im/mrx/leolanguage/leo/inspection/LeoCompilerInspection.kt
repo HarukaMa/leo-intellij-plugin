@@ -23,6 +23,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.TokenType.WHITE_SPACE
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -966,7 +967,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                 if (statement is LeoReturnStatement) {
                     returnIndex = index
                 }
-                if (index > returnIndex) {
+                if (index > returnIndex && statement !is PsiErrorElement) {
                     holder.registerProblem(
                         statement,
                         "[ETYC0372025]: Cannot reach the following statement.\n\nRemove the unreachable code.",
@@ -1097,6 +1098,7 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
                     ProblemHighlightType.GENERIC_ERROR
                 )
             }
+            if (o.mappingTypeList.size == 0) return@run
             o.mappingTypeList.first().let { key ->
                 val source = key.namedType?.reference?.resolve()
                 if (source as? LeoMappingDeclaration != null) {
@@ -1278,7 +1280,9 @@ private class Visitor(private val holder: ProblemsHolder) : LeoVisitor() {
 
             is LeoTupleComponentExpression -> getTupleComponentType(element)
             is LeoStructComponentExpression -> getStructComponentType(element)
+
             is LeoAssociatedFunctionCall -> "pass" // TODO check types
+            is LeoMethodCall -> "pass" // ditto
 
             is LeoUnaryNotExpression -> getExpressionType(element.expression ?: return "pass")
             is LeoUnaryMinusExpression -> getExpressionType(element.expression ?: return "pass")

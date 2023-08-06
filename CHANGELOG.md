@@ -4,6 +4,7 @@
 
 - Support 2023.2 IDEs
 - Fix leo statement recover rule
+- Fix exceptions on code analysis
 
 ## [0.7.0]
 

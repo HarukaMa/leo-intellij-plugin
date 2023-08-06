@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -33,12 +33,12 @@ class LeoCompletionContributor : CompletionContributor() {
         extend(LeoStatementCompletionProvider)
         extend(LeoFunctionCompletionProvider)
         extend(LeoDeclarationCompletionProvider)
-        extend(LeoAnnotationCompletionProvider)
         extend(LeoMappingCompletionProvider)
         extend(LeoRootCompletionProvider)
         extend(LeoImportCompletionProvider)
         extend(LeoProgramIdCompletionProvider)
         extend(LeoVisibilityCompletionProvider)
+        extend(LeoReturnFinalizeCompletionProvider)
     }
 
     private fun extend(p: LeoCompletionProvider) {

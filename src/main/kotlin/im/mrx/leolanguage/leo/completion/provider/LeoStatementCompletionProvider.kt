@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Haruka Ma
+ * Copyright (c) 2022-2023 Haruka Ma
  * This file is part of Leo / Aleo IntelliJ plugin.
  *
  * Leo / Aleo IntelliJ plugin is free software: you can redistribute it and/or modify it
@@ -34,19 +34,13 @@ object LeoStatementCompletionProvider : LeoCompletionProvider() {
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        listOf("if", "let", "console", "const", "for", "return", "increment", "decrement", "finalize").forEach {
+        listOf("if", "let", "console", "const", "for", "return").forEach {
             result.addElement(
                 LookupElementBuilder
                     .create(it)
                     .withInsertHandler { ctx, _ ->
-                        if (it in listOf("if", "let", "const", "for", "return")) {
-                            ctx.document.insertString(ctx.selectionEndOffset, " ")
-                            EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
-                        }
-                        if (it in listOf("increment", "decrement", "finalize")) {
-                            ctx.document.insertString(ctx.selectionEndOffset, "();")
-                            EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
-                        }
+                        ctx.document.insertString(ctx.selectionEndOffset, " ")
+                        EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
                     }
             )
         }
