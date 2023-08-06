@@ -6,6 +6,7 @@
 - Fix leo statement recover rule
 - Fix exceptions on code analysis
 - Add type checking for method calls and associated functions
+- Fix aleo recover rule
 
 ## [0.7.0]
 

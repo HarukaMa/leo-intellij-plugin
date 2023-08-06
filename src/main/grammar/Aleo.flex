@@ -24,7 +24,7 @@ WHITE_SPACE=\s+
 
 LINE_COMMENT=\/\/.*
 BLOCK_COMMENT=\/[*]([^*]|[*][^/])*([*]\/)?
-KEYWORD=const|constant|public|private|address|boolean|field|group|i8|i16|i32|i64|i128|u8|u16|u32|u64|u128|scalar|string|true|false|input|output|as|into|record|owner|function|struct|closure|program|aleo|self|storage|mapping|key|value|global|block|return|break|assert|continue|let|if|else|while|for|switch|case|default|match|enum|union|trait|impl|type
+KEYWORD=const|constant|public|private|address|boolean|field|group|i8|i16|i32|i64|i128|u8|u16|u32|u64|u128|scalar|string|true|false|input|output|as|into|record|function|struct|closure|program|aleo|self|storage|mapping|key|value|global|block|return|break|assert|continue|let|if|else|while|for|switch|case|default|match|enum|union|trait|impl|type
 INSTRUCTION_NAME=cast|call|abs|abs\.w|double|inv|neg|not|square|sqrt|hash\.bhp256|hash\.bhp512|hash\.bhp768|hash\.bhp1024|hash\.ped64|hash\.ped128|hash\.psd2|hash\.psd4|hash\.psd8|hash_many\.psd2|hash_many\.psd4|hash_many\.psd8|add|add\.w|sub|sub\.w|mul|mul\.w|div|div\.w|rem|rem\.w|mod|pow|pow\.w|shl|shl\.w|shr|shr\.w|and|or|xor|nand|nor|gt|gte|lt|lte|is\.eq|is\.neq|commit\.bhp256|commit\.bhp512|commit\.bhp768|commit\.bhp1024|commit\.ped64|commit\.ped128|ternary|assert.eq|assert.neq|contains|get|get\.or_use|set|remove|rand\.chacha|position|branch\.eq|branch\.neq
 ENTRY_VISIBILITY=public|private|constant
 ADDRESS_LITERAL=aleo1[ac-hj-np-z02-9]{58}
